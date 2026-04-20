@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OptimaPD — Professional Development for Optima Educators</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-blue: #3FB9DD;
+    --brand-blue-deep: #1E6F8E;
+    --brand-navy: #0F2438;
+    --brand-gold: #F5B82E;
+    --brand-gold-hover: #E0A61E;
+    --brand-purple: #8D4BE8;
+    --bg-darkest: #0A1420;
+    --bg-dark: #0F1B2B;
+    --bg-card: #162638;
+    --bg-card-hover: #1F3248;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A8B8CC;
+    --text-muted: #6B7D94;
+    --border-subtle: rgba(255,255,255,0.08);
+    --shadow-card: 0 8px 24px rgba(0,0,0,0.35);
+    --success: #3FDDA3;
+    --danger: #E04B6E;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-darkest);
+    color: var(--text-primary);
+    scroll-behavior: smooth;
+  }
+
+  /* ---------- TOP NAV ---------- */
+  .topnav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10, 20, 32, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 14px 48px;
+    display: flex; align-items: center; gap: 32px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer; user-select: none;
+  }
+  .logo-mark {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-deep) 100%);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 2px 8px rgba(63, 185, 221, 0.3);
+  }
+  .logo-text {
+    font-weight: 700; font-size: 22px; letter-spacing: -0.5px;
+  }
+  .logo-text .pd { color: var(--brand-gold); font-weight: 800; }
+
+  .nav-links {
+    display: flex; gap: 24px; flex: 1;
+  }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-links a.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--brand-gold);
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .search-wrap { position: relative; }
+  .search-input {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 9px 14px 9px 38px;
+    border-radius: 8px;
+    width: 260px;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--brand-blue);
+    width: 320px;
+  }
+  .search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted);
+  }
+  .user-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-gold), #E07F2E);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px;
+    color: var(--brand-navy);
+    cursor: pointer;
+  }
+
+  /* ---------- VIEWS ---------- */
+  .view { display: none; }
+  .view.active { display: block; animation: fadein 0.25s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    min-height: 460px;
+    padding: 80px 48px 60px;
+    background:
+      linear-gradient(100deg, rgba(10,20,32,0.95) 0%, rgba(10,20,32,0.6) 55%, rgba(10,20,32,0.2) 100%),
+      radial-gradient(circle at 80% 30%, var(--brand-blue-deep) 0%, transparent 50%),
+      linear-gradient(180deg, #0F2438 0%, #0A1420 100%);
+    display: flex; align-items: center;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; right: -100px; top: 50%; transform: translateY(-50%);
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(63,185,221,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-content { max-width: 680px; position: relative; z-index: 2; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(245, 184, 46, 0.15);
+    color: var(--brand-gold);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 50px; font-weight: 700; line-height: 1.1;
+    margin-bottom: 18px; letter-spacing: -1px;
+  }
+  .hero p {
+    color: var(--text-secondary);
+    font-size: 17px; line-height: 1.6;
+    margin-bottom: 30px; max-width: 560px;
+  }
+  .hero-meta {
+    display: flex; gap: 24px; color: var(--text-muted);
+    font-size: 13px; margin-bottom: 28px; flex-wrap: wrap;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+  .hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 12px 26px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--brand-gold); color: var(--brand-navy);
+  }
+  .btn-primary:hover { background: var(--brand-gold-hover); transform: translateY(-1px); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.12);
+    color: var(--text-primary);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.18); }
+  .btn-danger {
+    background: rgba(224, 75, 110, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(224, 75, 110, 0.3);
+    padding: 6px 14px; font-size: 12px;
+  }
+  .btn-danger:hover { background: rgba(224, 75, 110, 0.25); }
+
+  /* ---------- CONTENT SECTIONS ---------- */
+  .content-section { padding: 40px 48px; }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 20px;
+  }
+  .section-title { font-size: 22px; font-weight: 600; }
+  .section-title .subtitle {
+    display: block; font-size: 13px; font-weight: 400;
+    color: var(--text-muted); margin-top: 2px;
+  }
+  .see-all {
+    color: var(--brand-blue); text-decoration: none;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+  }
+  .see-all:hover { color: #5BC9E8; }
+
+  .card-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .card-row.scroll {
+    display: flex; overflow-x: auto; gap: 16px;
+    scrollbar-width: thin; padding-bottom: 12px;
+  }
+  .card-row.scroll::-webkit-scrollbar { height: 8px; }
+  .card-row.scroll::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+  .card-row.scroll .vid-card { flex: 0 0 280px; }
+
+  /* ---------- VIDEO CARD ---------- */
+  .vid-card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column;
+  }
+  .vid-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(63, 185, 221, 0.15);
+    border-color: rgba(63,185,221,0.4);
+  }
+  .vid-thumb {
+    height: 150px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1E3A5F, #3FB9DD);
+  }
+  .vid-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .vid-thumb .play-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .vid-card:hover .play-overlay { opacity: 1; }
+  .play-btn {
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--brand-gold); color: var(--brand-navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .vid-duration {
+    position: absolute; bottom: 8px; right: 8px;
+    background: rgba(0,0,0,0.7); color: white;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 500;
+  }
+  .vid-category-tag {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(245, 184, 46, 0.95); color: var(--brand-navy);
+    padding: 3px 9px; border-radius: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .vid-category-tag.pedagogy { background: rgba(63, 185, 221, 0.95); }
+  .vid-category-tag.examples { background: rgba(141, 75, 232, 0.95); color: white; }
+  .vid-category-tag.course { background: rgba(180, 130, 240, 0.95); }
+
+  .vid-body {
+    padding: 14px 16px 16px;
+    flex: 1; display: flex; flex-direction: column;
+  }
+  .vid-title {
+    font-size: 14px; font-weight: 600; line-height: 1.35;
+    margin-bottom: 6px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .vid-meta {
+    color: var(--text-muted); font-size: 12px;
+    display: flex; align-items: center; gap: 8px;
+    margin-top: auto;
+  }
+  .vid-meta .dot { opacity: 0.5; }
+
+  /* Default thumb gradient (used when no custom thumbnail) */
+  .thumb-default {
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.9);
+    font-size: 36px; font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .thumb-tech { background: linear-gradient(135deg, #1E6F8E, #3FB9DD); }
+  .thumb-pedagogy { background: linear-gradient(135deg, #6B2DA3, #3FB9DD); }
+  .thumb-examples { background: linear-gradient(135deg, #8D4BE8, #F5B82E); }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 3px; background: rgba(255,255,255,0.15);
+    margin-top: 8px; border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill { height: 100%; background: var(--brand-gold); }
+
+  /* ---------- CATEGORY GRID ---------- */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+  }
+  .cat-tile {
+    position: relative;
+    height: 180px;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex; align-items: flex-end;
+    padding: 28px;
+    transition: transform 0.2s;
+  }
+  .cat-tile:hover { transform: scale(1.02); }
+  .cat-tile.tech {
+    background: linear-gradient(135deg, #0F2438 0%, #1E6F8E 60%, #3FB9DD 100%);
+  }
+  .cat-tile.pedagogy {
+    background: linear-gradient(135deg, #1E3A5F 0%, #6B2DA3 50%, #F5B82E 100%);
+  }
+  .cat-tile.examples {
+    background: linear-gradient(135deg, #8D4BE8 0%, #E04B8D 50%, #F5B82E 100%);
+  }
+  .cat-tile-content h3 {
+    font-size: 26px; font-weight: 700; margin-bottom: 6px;
+  }
+  .cat-tile-content p {
+    font-size: 13px; opacity: 0.9;
+  }
+  .cat-tile .cat-icon {
+    position: absolute; right: 20px; top: 20px;
+    font-size: 42px; opacity: 0.25;
+  }
+  .cat-tile .cat-count {
+    position: absolute; right: 24px; bottom: 24px;
+    background: rgba(0,0,0,0.35);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ---------- EMPTY STATES ---------- */
+  .empty-state {
+    padding: 50px 30px;
+    text-align: center;
+    background: rgba(63, 185, 221, 0.04);
+    border: 2px dashed rgba(63, 185, 221, 0.2);
+    border-radius: 12px;
+    color: var(--text-secondary);
+  }
+  .empty-state .icon { font-size: 42px; margin-bottom: 14px; display: block; opacity: 0.7; }
+  .empty-state h4 { font-size: 16px; margin-bottom: 8px; color: var(--text-primary); font-weight: 600; }
+  .empty-state p { font-size: 13px; max-width: 420px; margin: 0 auto 18px; line-height: 1.55; }
+  .empty-state-small {
+    padding: 30px 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* ---------- BROWSE PAGE ---------- */
+  .browse-header {
+    padding: 50px 48px 30px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .browse-header h1 {
+    font-size: 40px; font-weight: 700; margin-bottom: 8px;
+  }
+  .browse-header p { color: var(--text-secondary); max-width: 640px; }
+  .filter-bar {
+    display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap;
+  }
+  .filter-group-label {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-right: 6px; align-self: center;
+  }
+  .filter-chip {
+    padding: 7px 16px; border-radius: 20px;
+    background: var(--bg-card); color: var(--text-secondary);
+    font-size: 13px; font-weight: 500;
+    border: 1px solid var(--border-subtle);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .filter-chip:hover { background: var(--bg-card-hover); }
+  .filter-chip.active {
+    background: var(--brand-blue); color: var(--brand-navy);
+    border-color: var(--brand-blue);
+  }
+  .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items: center; }
+
+  /* ---------- COURSE DETAIL ---------- */
+  .course-hero {
+    padding: 50px 48px;
+    background: linear-gradient(180deg, rgba(30,111,142,0.3) 0%, var(--bg-darkest) 100%);
+    display: grid; grid-template-columns: 1fr 420px; gap: 40px;
+    align-items: center;
+  }
+  .course-hero h1 {
+    font-size: 42px; font-weight: 700; margin-bottom: 16px; line-height: 1.1;
+  }
+  .course-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(180, 130, 240, 0.2);
+    color: #B482F0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 18px;
+  }
+  .course-meta-row {
+    display: flex; gap: 24px;
+    color: var(--text-secondary); font-size: 14px;
+    margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .course-meta-row span { display: flex; align-items: center; gap: 6px; }
+  .course-desc { color: var(--text-secondary); line-height: 1.65; margin-bottom: 24px; }
+  .course-progress-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid var(--border-subtle);
+  }
+  .course-progress-card h4 {
+    font-size: 14px; color: var(--text-muted); margin-bottom: 10px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  .lesson-list { padding: 30px 48px 60px; }
+  .lesson-list h2 { font-size: 22px; margin-bottom: 20px; }
+  .lesson-item {
+    display: flex; align-items: center; gap: 20px;
+    background: var(--bg-card);
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .lesson-item:hover { background: var(--bg-card-hover); border-color: rgba(63,185,221,0.3); }
+  .lesson-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .lesson-title-wrap { flex: 1; }
+  .lesson-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .lesson-sub { color: var(--text-muted); font-size: 12px; }
+  .lesson-meta { color: var(--text-muted); font-size: 12px; }
+
+  /* ---------- VIDEO PLAYER PAGE ---------- */
+  .player-layout {
+    display: grid; grid-template-columns: 1fr 380px;
+    min-height: calc(100vh - 70px);
+  }
+  .player-main { padding: 30px 40px 60px; }
+  .player-wrap {
+    background: #000; border-radius: 12px; overflow: hidden;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 20px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .player-wrap iframe { width: 100%; height: 100%; border: none; }
+  .player-wrap video { width: 100%; height: 100%; object-fit: contain; }
+  .player-wrap .mock-play {
+    width: 90px; height: 90px; border-radius: 50%;
+    background: rgba(245,184,46,0.95); color: var(--brand-navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .player-wrap .placeholder-msg {
+    text-align: center; color: var(--text-secondary);
+    padding: 40px 20px;
+  }
+  .placeholder-msg .icon { font-size: 56px; margin-bottom: 14px; }
+
+  .player-title { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+  .player-meta-row {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    color: var(--text-muted); font-size: 13px;
+    padding-bottom: 20px; margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .player-meta-row span { display: flex; align-items: center; gap: 5px; }
+  .tag-pill {
+    display: inline-block;
+    background: rgba(63, 185, 221, 0.15);
+    color: var(--brand-blue);
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 500;
+    margin-right: 6px;
+  }
+  .player-desc h3 { font-size: 16px; margin-bottom: 10px; color: var(--text-primary); margin-top: 18px; }
+  .player-desc p { color: var(--text-secondary); line-height: 1.65; font-size: 14px; margin-bottom: 14px; }
+
+  /* Opti side panel */
+  .opti-panel {
+    background: var(--bg-dark);
+    border-left: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column;
+    max-height: calc(100vh - 70px);
+    position: sticky; top: 70px;
+  }
+  .opti-panel-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .opti-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-blue), var(--brand-blue-deep));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 0 0 2px rgba(63,185,221,0.3);
+    flex-shrink: 0;
+  }
+  .opti-panel-header h4 { font-size: 15px; margin-bottom: 2px; }
+  .opti-panel-header p { font-size: 11px; color: var(--text-muted); }
+  .opti-status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--success); display: inline-block; margin-right: 4px;
+  }
+
+  .opti-messages {
+    flex: 1; overflow-y: auto;
+    padding: 20px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .msg { max-width: 85%; padding: 11px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
+  .msg.opti { background: var(--bg-card); border-bottom-left-radius: 4px; align-self: flex-start; }
+  .msg.user { background: var(--brand-blue-deep); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
+  .msg .cite {
+    display: block; margin-top: 8px; padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 11px; color: var(--brand-gold);
+    cursor: pointer;
+  }
+  .opti-input-row {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-subtle);
+    display: flex; gap: 8px;
+  }
+  .opti-input {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text-primary); font-family: inherit; font-size: 13px;
+  }
+  .opti-input:focus { outline: none; border-color: var(--brand-blue); }
+  .opti-send {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--brand-gold); color: var(--brand-navy);
+    border: none; cursor: pointer; font-size: 16px;
+  }
+
+  /* ---------- ADMIN VIEW ---------- */
+  .admin-container {
+    max-width: 1100px; margin: 0 auto; padding: 40px 48px 80px;
+  }
+  .admin-container h1 { font-size: 36px; margin-bottom: 8px; }
+  .admin-container > .lead { color: var(--text-secondary); margin-bottom: 32px; max-width: 700px; line-height: 1.6; }
+
+  .admin-tabs {
+    display: flex; gap: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 28px;
+  }
+  .admin-tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-weight: 500; font-size: 14px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .admin-tab:hover { color: var(--text-primary); }
+  .admin-tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--brand-gold);
+  }
+
+  .admin-panel { display: none; }
+  .admin-panel.active { display: block; }
+
+  .admin-grid {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px;
+  }
+  @media (max-width: 900px) { .admin-grid { grid-template-columns: 1fr; } }
+
+  .admin-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 28px;
+    border: 1px solid var(--border-subtle);
+  }
+  .admin-card h3 {
+    font-size: 17px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .admin-card h3 .help-hint {
+    font-size: 11px; font-weight: 400; color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--text-secondary); margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .form-group .help {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 4px; line-height: 1.4;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: var(--bg-darkest);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-family: inherit; font-size: 13px;
+    transition: border-color 0.15s;
+  }
+  .form-group textarea { min-height: 70px; resize: vertical; }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none; border-color: var(--brand-blue);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .upload-zone {
+    border: 2px dashed rgba(63,185,221,0.4);
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+    background: rgba(63,185,221,0.05);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 16px;
+  }
+  .upload-zone:hover { background: rgba(63,185,221,0.1); border-color: var(--brand-blue); }
+  .upload-zone .icon { font-size: 32px; margin-bottom: 8px; display: block; }
+  .upload-zone h4 { font-size: 14px; margin-bottom: 4px; }
+  .upload-zone p { color: var(--text-muted); font-size: 12px; }
+  .upload-zone input[type=file] { display: none; }
+
+  .video-list-item {
+    display: flex; gap: 14px; align-items: center;
+    padding: 12px;
+    background: var(--bg-darkest);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-subtle);
+  }
+  .video-list-thumb {
+    width: 80px; height: 48px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #1E6F8E, #3FB9DD);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .video-list-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .video-list-info { flex: 1; min-width: 0; }
+  .video-list-info h5 {
+    font-size: 13px; font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .video-list-info p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .success-banner {
+    display: none;
+    background: rgba(63, 221, 163, 0.15);
+    border: 1px solid rgba(63, 221, 163, 0.35);
+    color: var(--success);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .success-banner.show { display: block; animation: fadein 0.3s; }
+
+  .info-callout {
+    background: rgba(63,185,221,0.08);
+    border: 1px solid rgba(63,185,221,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 18px;
+  }
+  .info-callout strong { color: var(--brand-blue); }
+
+  /* ---------- OPTI FAB ---------- */
+  .opti-fab {
+    position: fixed; bottom: 28px; right: 28px;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-blue), var(--brand-blue-deep));
+    box-shadow: 0 10px 30px rgba(63,185,221,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; cursor: pointer; z-index: 99;
+    border: 2px solid rgba(255,255,255,0.15);
+    animation: pulse 3s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 10px 30px rgba(63,185,221,0.5); }
+    50% { box-shadow: 0 10px 40px rgba(63,185,221,0.8); }
+  }
+  .opti-fab:hover { transform: scale(1.05); }
+  .opti-fab-label {
+    position: absolute; right: 72px; top: 50%; transform: translateY(-50%);
+    background: var(--bg-card); padding: 8px 14px;
+    border-radius: 8px; font-size: 12px; font-weight: 500;
+    white-space: nowrap; box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-subtle);
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .opti-fab:hover .opti-fab-label { opacity: 1; }
+
+  /* Modal */
+  .modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(5,10,18,0.85);
+    z-index: 200;
+    align-items: center; justify-content: center;
+    padding: 40px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--bg-dark);
+    border-radius: 16px;
+    max-width: 540px; width: 100%;
+    padding: 32px;
+    border: 1px solid var(--border-subtle);
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal-close {
+    float: right; background: transparent; border: none;
+    color: var(--text-muted); font-size: 22px; cursor: pointer;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .footer {
+    padding: 40px 48px; text-align: center;
+    color: var(--text-muted); font-size: 12px;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 30px;
+  }
+
+  /* ---------- MODE BANNER ---------- */
+  .mode-banner {
+    padding: 10px 48px;
+    font-size: 12px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .mode-banner.local {
+    background: rgba(245, 184, 46, 0.1);
+    color: var(--brand-gold);
+  }
+  .mode-banner.cloud {
+    background: rgba(63, 221, 163, 0.08);
+    color: var(--success);
+  }
+  .mode-banner.error {
+    background: rgba(224, 75, 110, 0.1);
+    color: var(--danger);
+  }
+  .mode-banner strong { font-weight: 600; }
+  .mode-banner a { color: inherit; text-decoration: underline; cursor: pointer; margin-left: auto; }
+
+  @media (max-width: 1100px) {
+    .player-layout { grid-template-columns: 1fr; }
+    .opti-panel { position: relative; max-height: 600px; }
+    .course-hero { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .topnav { padding: 12px 20px; gap: 16px; flex-wrap: wrap; }
+    .nav-links { display: none; }
+    .search-input { width: 160px; }
+    .search-input:focus { width: 200px; }
+    .content-section, .hero, .browse-header, .admin-container { padding-left: 20px; padding-right: 20px; }
+    .hero h1 { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== MODE BANNER (filled in by script) ============== -->
+<div id="modeBanner" class="mode-banner local" style="display:none;"></div>
+
+<!-- ============== TOP NAV ============== -->
+<nav class="topnav">
+  <div class="logo" onclick="window.showView('home')">
+    <div class="logo-mark">🦉</div>
+    <div class="logo-text">Optima<span class="pd">PD</span></div>
+  </div>
+  <div class="nav-links">
+    <a class="active" data-nav="home" onclick="window.showView('home')">Home</a>
+    <a data-nav="tech" onclick="window.showView('browse', {cat:'tech'})">Tech Skills</a>
+    <a data-nav="pedagogy" onclick="window.showView('browse', {cat:'pedagogy'})">Pedagogy Skills</a>
+    <a data-nav="examples" onclick="window.showView('browse', {cat:'examples'})">Example Lessons</a>
+    <a data-nav="mylearning" onclick="alert('My Learning would show in-progress videos, completed courses, saved videos, and personal notes. Coming soon — for now, use the Admin panel to add videos.')">My Learning</a>
+    <a data-nav="admin" onclick="window.showView('admin')">Admin</a>
+  </div>
+  <div class="nav-right">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="Search..." onkeydown=\"if(event.key==='Enter') window.runSearch(this.value)" />
+    </div>
+    <div class="user-avatar" title="Porter Birchum">PB</div>
+  </div>
+</nav>
+
+<!-- ============== HOME VIEW ============== -->
+<div id="view-home" class="view active">
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag" id="welcomeTag">Welcome back, Porter</div>
+      <h1>Upskill your teaching. On your schedule.</h1>
+      <p>The in-house professional development library for Optima educators. Short how-to videos for tech fixes, structured courses for deep skills, teacher-built lesson examples, and Opti — your 24/7 AI teaching assistant.</p>
+      <div class="hero-meta" id="heroStats">
+        <span>📺 0 videos</span>
+        <span>🎓 0 courses</span>
+        <span>🦉 Opti ready</span>
+      </div>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" onclick="window.showView('admin')">+ Add Your First Video</button>
+        <button class="btn btn-secondary" onclick="window.showView('browse', {cat:'tech'})">Browse Library</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="section-header">
+      <div class="section-title">Browse by category</div>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-tile tech" onclick="window.showView('browse', {cat:'tech'})">
+        <div class="cat-icon">💻</div>
+        <div class="cat-count" id="techCount">0 videos</div>
+        <div class="cat-tile-content">
+          <h3>Tech Skills</h3>
+          <p>Engage, Experience Editor, Unity, Blender, Teams, AI tools</p>
+        </div>
+      </div>
+      <div class="cat-tile pedagogy" onclick="window.showView('browse', {cat:'pedagogy'})">
+        <div class="cat-icon">🧠</div>
+        <div class="cat-count" id="pedCount">0 videos</div>
+        <div class="cat-tile-content">
+          <h3>Pedagogy Skills</h3>
+          <p>Thinking Classroom in VR, PICRAT, UDL, AI Pedagogy</p>
+        </div>
+      </div>
+      <div class="cat-tile examples" onclick="window.showView('browse', {cat:'examples'})">
+        <div class="cat-icon">✨</div>
+        <div class="cat-count" id="exCount">0 videos</div>
+        <div class="cat-tile-content">
+          <h3>Example Lessons</h3>
+          <p>Teacher-built VR and AI lesson showcases</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="section-header">
+      <div class="section-title">
+        Tech Skills
+        <span class="subtitle">Platforms, tools, and quick fixes</span>
+      </div>
+      <a class="see-all" onclick="window.showView('browse', {cat:'tech'})">See all →</a>
+    </div>
+    <div id="homeTechRow"></div>
+  </section>
+
+  <section class="content-section">
+    <div class="section-header">
+      <div class="section-title">
+        Pedagogy Skills
+        <span class="subtitle">Instructional frameworks for spatial learning</span>
+      </div>
+      <a class="see-all" onclick="window.showView('browse', {cat:'pedagogy'})">See all →</a>
+    </div>
+    <div id="homePedRow"></div>
+  </section>
+
+  <section class="content-section">
+    <div class="section-header">
+      <div class="section-title">
+        Example Lessons
+        <span class="subtitle">See how your colleagues are teaching with VR and AI</span>
+      </div>
+      <a class="see-all" onclick="window.showView('browse', {cat:'examples'})">See all →</a>
+    </div>
+    <div id="homeExRow"></div>
+  </section>
+
+  <div class="footer">
+    OptimaPD · Internal learning platform for Optima Academy Online educators · Contact Porter Birchum · pbirchum@optimaed.com
+  </div>
+
+</div>
+
+<!-- ============== BROWSE VIEW ============== -->
+<div id="view-browse" class="view">
+  <section class="browse-header">
+    <h1 id="browseTitle">Browse</h1>
+    <p id="browseDesc">Explore the library.</p>
+    <div id="browseFilters"></div>
+  </section>
+  <section class="content-section">
+    <div id="browseResults"></div>
+  </section>
+</div>
+
+<!-- ============== COURSE DETAIL VIEW ============== -->
+<div id="view-course-detail" class="view">
+  <section class="course-hero">
+    <div>
+      <div class="course-badge" id="courseBadge">🎓 Course</div>
+      <h1 id="courseTitle">Course Title</h1>
+      <div class="course-meta-row" id="courseMeta"></div>
+      <p class="course-desc" id="courseDesc"></p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" id="courseStartBtn">▶ Start Course</button>
+      </div>
+    </div>
+    <div class="course-progress-card">
+      <h4>Your Progress</h4>
+      <div style="text-align:center; padding: 20px 0;">
+        <div style="font-size: 36px; font-weight: 700; color: var(--brand-gold);" id="courseProgressPct">0%</div>
+        <p style="color: var(--text-secondary); font-size: 13px;" id="courseProgressText">0 of 0 lessons completed</p>
+      </div>
+    </div>
+  </section>
+  <section class="lesson-list">
+    <h2>Lessons</h2>
+    <div id="lessonList"></div>
+  </section>
+</div>
+
+<!-- ============== VIDEO DETAIL VIEW ============== -->
+<div id="view-video-detail" class="view">
+  <div class="player-layout">
+    <div class="player-main">
+      <div class="player-wrap" id="playerWrap"></div>
+      <h1 class="player-title" id="playerTitle"></h1>
+      <div class="player-meta-row" id="playerMeta"></div>
+      <div id="playerTags" style="margin-bottom: 24px;"></div>
+      <div class="player-desc" id="playerDesc"></div>
+    </div>
+    <aside class="opti-panel">
+      <div class="opti-panel-header">
+        <div class="opti-avatar">🦉</div>
+        <div>
+          <h4>Ask Opti</h4>
+          <p><span class="opti-status-dot"></span>Ready to help</p>
+        </div>
+      </div>
+      <div class="opti-messages" id="optiMessages">
+        <div class="msg opti">
+          Hi Porter 👋 I'm Opti, your OptimaPD AI assistant. Once videos are uploaded, I'll be able to answer questions and point teachers to the exact video and moment where the answer lives.
+        </div>
+      </div>
+      <div class="opti-input-row">
+        <input class="opti-input" id="optiInput" placeholder="Ask Opti a question..." onkeydown=\"if(event.key==='Enter') window.sendOpti()" />
+        <button class="opti-send" onclick="window.sendOpti()">↑</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ============== ADMIN VIEW ============== -->
+<div id="view-admin" class="view">
+  <div class="admin-container">
+    <h1>Admin · Content Library</h1>
+    <p class="lead">Add videos and courses to OptimaPD. Everything you add shows up immediately in the browse pages, category rows, and search. Your data is saved in this browser — when you deploy to Netlify or another real host, the same admin panel will work there too.</p>
+
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="window.switchAdminTab(event,'add')">+ Add Video</div>
+      <div class="admin-tab" onclick="window.switchAdminTab(event,'library')">Video Library</div>
+      <div class="admin-tab" onclick="window.switchAdminTab(event,'courses')">Manage Courses</div>
+      <div class="admin-tab" onclick="window.switchAdminTab(event,'help')">Help</div>
+    </div>
+
+    <!-- ADD VIDEO PANEL -->
+    <div class="admin-panel active" id="panel-add">
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3>📤 Add a New Video</h3>
+
+          <div class="success-banner" id="addSuccess"></div>
+
+          <div class="info-callout">
+            <strong>Two ways to add a video.</strong> Paste a <em>video URL</em> (from Microsoft Stream, YouTube, Vimeo, or any embeddable service) — this is the recommended approach. Or upload a video file directly for quick local testing — note that direct uploads only work in this browser session and aren't saved long-term.
+          </div>
+
+          <form onsubmit="window.handleAddVideo(event)">
+
+            <div class="form-group">
+              <label>Video URL <span style="color:var(--text-muted); font-weight:400;">(recommended)</span></label>
+              <input type="url" id="f_videoUrl" placeholder="https://youtube.com/watch?v=... or Microsoft Stream URL" />
+              <p class="help">Paste the share link from YouTube, Microsoft Stream, Vimeo, or any video host. For YouTube, use the standard watch link.</p>
+            </div>
+
+            <div class="form-group">
+              <label>— OR — Upload Video File</label>
+              <label class="upload-zone" for="f_videoFile">
+                <span class="icon">⬆️</span>
+                <h4>Click to select a video file</h4>
+                <p id="f_videoFileName">MP4, MOV, WebM</p>
+                <input type="file" id="f_videoFile" accept="video/*" onchange="document.getElementById('f_videoFileName').textContent = this.files[0] ? this.files[0].name : 'MP4, MOV, WebM'" />
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>Title *</label>
+              <input type="text" id="f_title" required placeholder="e.g., How To Add OAO Decals to VR Avatar" />
+            </div>
+
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="f_desc" placeholder="What does this video teach? A short summary helps teachers find it."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Main Category *</label>
+                <select id="f_category" required onchange="window.updateSubcategoryOptions()">
+                  <option value="tech">Tech Skills</option>
+                  <option value="pedagogy">Pedagogy Skills</option>
+                  <option value="examples">Example Lessons</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Subcategory</label>
+                <select id="f_subcategory"></select>
+              </div>
+            </div>
+
+            <div class="form-row" id="exampleExtraFields" style="display:none;">
+              <div class="form-group">
+                <label>Subject (for Example Lessons)</label>
+                <select id="f_subject">
+                  <option value="">— any —</option>
+                  <option value="math">Math</option>
+                  <option value="science">Science</option>
+                  <option value="ela">ELA / English</option>
+                  <option value="social">Social Studies</option>
+                  <option value="arts">Arts</option>
+                  <option value="elective">Elective</option>
+                  <option value="pe">PE / Health</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Grade Band</label>
+                <select id="f_grade">
+                  <option value="">— any —</option>
+                  <option value="elementary">Elementary (K–5)</option>
+                  <option value="middle">Middle (6–8)</option>
+                  <option value="high">High (9–12)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Part of a Course?</label>
+                <select id="f_course">
+                  <option value="">No — standalone video</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Duration</label>
+                <input type="text" id="f_duration" placeholder="e.g., 4:12" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Tags</label>
+              <input type="text" id="f_tags" placeholder="engage, avatar, keyframes (comma-separated)" />
+              <p class="help">Tags help Opti and search find this video. Be generous — more tags = easier to discover.</p>
+            </div>
+
+            <div class="form-group">
+              <label>Thumbnail Image (optional)</label>
+              <label class="upload-zone" for="f_thumbFile" style="padding: 14px 20px;">
+                <span id="f_thumbName">Click to choose an image · falls back to a colored card</span>
+                <input type="file" id="f_thumbFile" accept="image/*" onchange="document.getElementById('f_thumbName').textContent = this.files[0] ? this.files[0].name : 'Click to choose an image · falls back to a colored card'" />
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Publish Video</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h3>📖 Quick Tips</h3>
+
+          <div style="margin-bottom: 18px;">
+            <h5 style="font-size: 13px; color: var(--brand-blue); margin-bottom: 6px;">Where should I host my video files?</h5>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">The simplest option: upload to Microsoft Stream (part of your Office 365) and paste the share URL here. YouTube Unlisted works too — the video won't appear in public search but anyone with the link can watch. For quick demos you can drop a file directly, but those won't persist when you close the browser.</p>
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <h5 style="font-size: 13px; color: var(--brand-blue); margin-bottom: 6px;">How do categories work?</h5>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;"><strong>Tech Skills</strong> = tools and platforms (Engage, Teams, Blender). <strong>Pedagogy Skills</strong> = teaching frameworks (UDL, PICRAT). <strong>Example Lessons</strong> = teacher showcases of actual VR and AI lessons — filtered by subject and grade.</p>
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <h5 style="font-size: 13px; color: var(--brand-blue); margin-bottom: 6px;">One-offs vs. Courses</h5>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">A standalone video ("How to invite subs to a Teams meeting") is a one-off. If you're building a multi-video deep dive on one topic, create a course first in the <em>Manage Courses</em> tab, then assign videos to it. Course videos still appear in search and category rows.</p>
+          </div>
+
+          <div>
+            <h5 style="font-size: 13px; color: var(--brand-blue); margin-bottom: 6px;">Testing with your 3 sample videos</h5>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">Try adding:<br>
+              • "How To Add OAO Decals to VR Avatar" → Tech Skills / Engage / one-off<br>
+              • "How to Invite & Add Subs as Co-Organizers" → Tech Skills / Microsoft Teams / one-off<br>
+              • "How To Keyframes" → Tech Skills / Experience Editor / assign to an Experience Editor course
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIBRARY PANEL -->
+    <div class="admin-panel" id="panel-library">
+      <div class="admin-card">
+        <h3>🎥 Your Video Library <span class="help-hint" id="libCount">0 videos</span></h3>
+        <div id="videoLibraryList"></div>
+      </div>
+    </div>
+
+    <!-- COURSES PANEL -->
+    <div class="admin-panel" id="panel-courses">
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3>🎓 Create a New Course</h3>
+          <form onsubmit="window.handleAddCourse(event)">
+            <div class="form-group">
+              <label>Course Title *</label>
+              <input type="text" id="c_title" required placeholder="e.g., Mastering the Experience Editor" />
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="c_desc" placeholder="What will teachers learn by completing this course?"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="c_category" required>
+                <option value="tech">Tech Skills</option>
+                <option value="pedagogy">Pedagogy Skills</option>
+                <option value="examples">Example Lessons</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Difficulty</label>
+              <select id="c_difficulty">
+                <option value="Beginner">Beginner</option>
+                <option value="Beginner → Intermediate">Beginner → Intermediate</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Create Course</button>
+          </form>
+        </div>
+        <div class="admin-card">
+          <h3>Existing Courses</h3>
+          <div id="coursesList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HELP PANEL -->
+    <div class="admin-panel" id="panel-help">
+      <div class="admin-card" style="max-width: 800px; margin: 0 auto;">
+        <h3>📚 How OptimaPD Works</h3>
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 20px 0 8px;">How data is saved</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 12px;">
+          In <strong>local testing mode</strong>, videos and courses are saved in this browser's localStorage — a small storage area every web browser has built in. Data persists across reloads but doesn't sync across devices. In <strong>cloud mode</strong> (Firebase configured), data lives in a Firestore database that syncs live across every device, browser, and user.
+        </p>
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 20px 0 8px;">Migrate local data to Firebase</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 12px;">
+          Already added videos in local mode and now have Firebase configured? Push them all to the cloud database in one click.
+        </p>
+        <button class="btn btn-secondary" onclick="window.migrateToCloud()">☁️ Push Local Data to Firebase</button>
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 20px 0 8px;">Resetting / clearing</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 12px;">
+          Want to start fresh? Click the button below. This will clear all videos and courses you've added.
+        </p>
+        <button class="btn btn-danger" onclick="if(confirm('Clear ALL videos and courses? This cannot be undone.')) { localStorage.removeItem('optimapd_db'); location.reload(); }">Clear All Data</button>
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">Export / Backup</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 12px;">
+          Download your entire library as a JSON file for safekeeping or to move to another browser.
+        </p>
+        <button class="btn btn-secondary" onclick="window.exportData()">⬇ Export Data (JSON)</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">⬆ Import Data</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="window.importData(event)" />
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">Video URL tips</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">
+          <strong>YouTube:</strong> paste the standard watch URL (like <code>https://youtube.com/watch?v=abc123</code>). It'll automatically embed.<br>
+          <strong>Microsoft Stream:</strong> use the "share" link from Stream.<br>
+          <strong>Direct MP4 files</strong> (hosted anywhere): paste the direct URL ending in .mp4 or .webm.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============== OPTI FLOATING BUTTON ============== -->
+<div class="opti-fab" onclick="window.openOpti()">
+  🦉
+  <span class="opti-fab-label">Ask Opti</span>
+</div>
+
+<!-- ============== OPTI MODAL ============== -->
+<div class="modal-backdrop" id="optiModal" onclick="if(event.target===this) closeOpti()">
+  <div class="modal" style="max-width: 620px;">
+    <button class="modal-close" onclick="window.closeOpti()">×</button>
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom: 20px;">
+      <div class="opti-avatar" style="width:56px; height:56px; font-size: 28px;">🦉</div>
+      <div>
+        <h2 style="margin-bottom: 2px;">Opti</h2>
+        <p style="margin: 0;"><span class="opti-status-dot"></span>Your OptimaPD AI assistant</p>
+      </div>
+    </div>
+    <div class="opti-messages" id="optiModalMessages" style="max-height: 400px; padding: 0;">
+      <div class="msg opti">
+        Hi Porter! I'll learn from every video you upload. Once the library has content, ask me anything and I'll point you to the right video.
+      </div>
+    </div>
+    <div class="opti-input-row" style="padding: 16px 0 0;">
+      <input class="opti-input" id="optiModalInput" placeholder="Ask Opti a question..." onkeydown=\"if(event.key==='Enter') window.sendOptiModal()" />
+      <button class="opti-send" onclick="window.sendOptiModal()">↑</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ============================================================
+// 🔥 FIREBASE CONFIG — FILL THIS IN AFTER YOU CREATE YOUR PROJECT
+// ============================================================
+// Paste the 6 values from your Firebase Console > Project Settings > Your App
+// Until these are filled in, the site runs in local-testing mode (localStorage).
+// ============================================================
+
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyA5Oo3QiSlF_LN3vD0hZ5NC4MKWW30jOp4",
+  authDomain:        "optimapd-2026.firebaseapp.com",
+  projectId:         "optimapd-2026",
+  storageBucket:     "optimapd-2026.firebasestorage.app",
+  messagingSenderId: "117646856706",
+  appId:             "1:117646856706:web:20e01a3373a82187ae0d1b",
+  measurementId:     "G-H74E7NWHKC"
+};
+
+// ============================================================
+// DATA LAYER — shared between Firebase mode and localStorage mode
+// ============================================================
+
+const STORAGE_KEY = 'optimapd_db';
+let USE_FIREBASE = false;
+let firestore = null;
+let unsubVideos = null, unsubCourses = null;
+
+const SUBCATEGORIES = {
+  tech: ['Engage', 'Experience Editor', 'Unity', 'Blender', 'Microsoft Teams', 'Canvas', 'AI Tools', 'Other'],
+  pedagogy: ['Thinking Classroom in VR', 'PICRAT', 'UDL in Metaverse', 'Gifted Learning', 'AI Pedagogy', 'Other'],
+  examples: ['VR Lesson', 'AI Lesson', 'VR + AI Lesson', 'Other']
+};
+
+const CATEGORY_META = {
+  tech: { label: 'Tech Skills', desc: 'Tutorials and courses for every tool in the Optima stack.', icon: '💻', color: 'tech' },
+  pedagogy: { label: 'Pedagogy Skills', desc: 'Research-backed instructional frameworks for spatial learning.', icon: '🧠', color: 'pedagogy' },
+  examples: { label: 'Example Lessons', desc: 'Teacher-built VR and AI lesson showcases — filter by subject or grade.', icon: '✨', color: 'examples' }
+};
+
+let DB = { videos: [], courses: [] };
+
+// ============================================================
+// STORAGE — dual mode (Firebase OR localStorage)
+// ============================================================
+
+async function initStorage() {
+  const configured = FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith('PASTE_');
+  if (configured) {
+    try {
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+      const firestoreMod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      window._fs = firestoreMod;
+      const app = initializeApp(FIREBASE_CONFIG);
+      firestore = firestoreMod.getFirestore(app);
+      USE_FIREBASE = true;
+      showBanner('cloud', `<strong>Cloud mode</strong> — shared database active. Videos sync live across every device. <span style="opacity:0.7;">Project: ${FIREBASE_CONFIG.projectId}</span>`);
+      subscribeFirestore();
+    } catch (err) {
+      console.error('Firebase init failed:', err);
+      showBanner('error', `<strong>Firebase error:</strong> ${err.message} — falling back to local testing mode.`);
+      loadLocal();
+    }
+  } else {
+    showBanner('local', `<strong>Local testing mode</strong> — videos saved only in this browser. Fill in FIREBASE_CONFIG in the HTML to switch to the shared cloud database. <a onclick="document.getElementById('modeBanner').style.display='none'">hide</a>`);
+    loadLocal();
+  }
+}
+
+function showBanner(kind, html) {
+  const b = document.getElementById('modeBanner');
+  b.className = 'mode-banner ' + kind;
+  b.innerHTML = html;
+  b.style.display = '';
+}
+
+function loadLocal() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try { DB = JSON.parse(saved); } catch(e) { DB = { videos: [], courses: [] }; }
+  }
+  if (!DB.videos) DB.videos = [];
+  if (!DB.courses) DB.courses = [];
+  renderHome();
+}
+function saveLocal() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
+}
+
+function subscribeFirestore() {
+  const { collection, onSnapshot } = window._fs;
+  unsubVideos = onSnapshot(collection(firestore, 'videos'), snap => {
+    DB.videos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    reRenderCurrentView();
+  });
+  unsubCourses = onSnapshot(collection(firestore, 'courses'), snap => {
+    DB.courses = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    reRenderCurrentView();
+  });
+}
+
+let currentView = 'home';
+let currentViewParams = {};
+function reRenderCurrentView() {
+  if (currentView === 'home') renderHome();
+  else if (currentView === 'browse') renderBrowse(currentViewParams.cat);
+  else if (currentView === 'admin') {
+    // Only re-render library/courses lists; don't disturb the form
+    if (document.getElementById('panel-library').classList.contains('active')) renderVideoLibrary();
+    if (document.getElementById('panel-courses').classList.contains('active')) renderCoursesList();
+    updateCourseDropdown(document.getElementById('f_category').value);
+  }
+  else if (currentView === 'course-detail') renderCourseDetail(currentViewParams.id);
+  // video-detail intentionally not auto re-rendered (avoids interrupting playback)
+}
+
+// Unified save/delete — dispatches to Firebase or localStorage
+async function saveVideo(video) {
+  if (USE_FIREBASE) {
+    const { collection, addDoc } = window._fs;
+    const data = { ...video };
+    delete data.id;
+    delete data.blobUrl;
+    await addDoc(collection(firestore, 'videos'), data);
+  } else {
+    video.id = uid();
+    DB.videos.push(video);
+    saveLocal();
+    reRenderCurrentView();
+  }
+}
+async function removeVideo(id) {
+  if (USE_FIREBASE) {
+    const { doc, deleteDoc } = window._fs;
+    await deleteDoc(doc(firestore, 'videos', id));
+  } else {
+    DB.videos = DB.videos.filter(v => v.id !== id);
+    saveLocal();
+    reRenderCurrentView();
+    renderVideoLibrary();
+  }
+}
+async function saveCourse(course) {
+  if (USE_FIREBASE) {
+    const { collection, addDoc } = window._fs;
+    const data = { ...course };
+    delete data.id;
+    await addDoc(collection(firestore, 'courses'), data);
+  } else {
+    course.id = uid();
+    DB.courses.push(course);
+    saveLocal();
+    reRenderCurrentView();
+  }
+}
+async function removeCourse(id) {
+  if (USE_FIREBASE) {
+    const { doc, deleteDoc, updateDoc, collection, getDocs, query, where } = window._fs;
+    // Unassign videos from this course
+    for (const v of DB.videos.filter(v => v.courseId === id)) {
+      await updateDoc(doc(firestore, 'videos', v.id), { courseId: null, lessonNumber: null });
+    }
+    await deleteDoc(doc(firestore, 'courses', id));
+  } else {
+    DB.videos.forEach(v => { if (v.courseId === id) { v.courseId = null; v.lessonNumber = null; } });
+    DB.courses = DB.courses.filter(c => c.id !== id);
+    saveLocal();
+    reRenderCurrentView();
+    renderCoursesList();
+  }
+}
+
+// Migrate localStorage → Firestore (one-time push)
+async function migrateToCloud() {
+  if (!USE_FIREBASE) { alert('Firebase is not configured yet. Fill in FIREBASE_CONFIG in the HTML first.'); return; }
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) { alert('Nothing in local storage to migrate.'); return; }
+  const local = JSON.parse(saved);
+  if (!confirm(`Push ${local.videos.length} video(s) and ${local.courses.length} course(s) to your Firebase project? This adds them on top of anything already there.`)) return;
+  const { collection, addDoc } = window._fs;
+  for (const c of (local.courses || [])) {
+    const data = { ...c }; delete data.id;
+    await addDoc(collection(firestore, 'courses'), data);
+  }
+  for (const v of (local.videos || [])) {
+    const data = { ...v }; delete data.id; delete data.blobUrl;
+    await addDoc(collection(firestore, 'videos'), data);
+  }
+  alert('✓ Migration complete. Your local data is still safe — you can clear it manually from the Help tab if you want to.');
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function uid() { return 'id_' + Math.random().toString(36).slice(2,10); }
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function toYouTubeEmbed(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  if (m) return 'https://www.youtube.com/embed/' + m[1];
+  return null;
+}
+
+function buildEmbedOrVideo(video) {
+  if (video.blobUrl) {
+    return `<video controls autoplay><source src="${video.blobUrl}"></video>`;
+  }
+  if (!video.videoUrl) {
+    return `<div class="placeholder-msg"><div class="icon">🎬</div>This video has no URL yet. Edit it in Admin → Video Library to add one.</div>`;
+  }
+  const yt = toYouTubeEmbed(video.videoUrl);
+  if (yt) return `<iframe src="${yt}?autoplay=1" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`;
+  if (/\.(mp4|webm|ogg|mov)(\?|$)/i.test(video.videoUrl)) {
+    return `<video controls autoplay><source src="${video.videoUrl}"></video>`;
+  }
+  return `<iframe src="${escapeHtml(video.videoUrl)}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+
+function renderVideoCard(v) {
+  const cat = CATEGORY_META[v.category];
+  const catClass = cat ? cat.color : 'tech';
+  const thumbBg = v.thumbnailData
+    ? `<img src="${v.thumbnailData}" alt="">`
+    : `<div class="thumb-default thumb-${catClass}" style="width:100%; height:100%;">🦉</div>`;
+  const courseInfo = v.courseId ? (() => {
+    const c = DB.courses.find(c => c.id === v.courseId);
+    return c ? `<span>${escapeHtml(c.title)}</span><span class="dot">•</span><span>Lesson ${v.lessonNumber || '?'}</span>` : `<span>One-off</span>`;
+  })() : `<span>One-off</span>`;
+  const subLabel = v.subcategory || (cat ? cat.label : '');
+
+  return `
+    <div class="vid-card" onclick="window.showView('video-detail', {id:'${v.id}'})">
+      <div class="vid-thumb">
+        ${thumbBg}
+        <span class="vid-category-tag ${v.category === 'pedagogy' ? 'pedagogy' : (v.category === 'examples' ? 'examples' : '')}">${escapeHtml(cat ? cat.label : 'Video')}</span>
+        ${v.duration ? `<span class="vid-duration">${escapeHtml(v.duration)}</span>` : ''}
+        <div class="play-overlay"><div class="play-btn">▶</div></div>
+      </div>
+      <div class="vid-body">
+        <div class="vid-title">${escapeHtml(v.title)}</div>
+        <div class="vid-meta">
+          <span>${escapeHtml(subLabel)}</span><span class="dot">•</span>${courseInfo}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderEmptyState(category) {
+  const cat = CATEGORY_META[category];
+  return `
+    <div class="empty-state">
+      <span class="icon">${cat ? cat.icon : '📺'}</span>
+      <h4>No videos in ${cat ? cat.label : 'this category'} yet</h4>
+      <p>Head to the Admin panel to add your first video. Once it's published, it'll show up here and in search.</p>
+      <button class="btn btn-primary" onclick="window.showView('admin')">+ Add a Video</button>
+    </div>
+  `;
+}
+
+function renderHomeCategoryRow(containerId, category) {
+  const videos = DB.videos.filter(v => v.category === category).slice(0, 8);
+  const el = document.getElementById(containerId);
+  if (videos.length === 0) {
+    el.className = '';
+    el.innerHTML = renderEmptyState(category);
+    return;
+  }
+  el.className = 'card-row scroll';
+  el.innerHTML = videos.map(renderVideoCard).join('');
+}
+
+function renderHome() {
+  currentView = 'home';
+  const totalVids = DB.videos.length;
+  const totalCourses = DB.courses.length;
+  document.getElementById('heroStats').innerHTML = `
+    <span>📺 ${totalVids} video${totalVids === 1 ? '' : 's'}</span>
+    <span>🎓 ${totalCourses} course${totalCourses === 1 ? '' : 's'}</span>
+    <span>🦉 Opti ready</span>
+  `;
+  document.getElementById('techCount').textContent = `${DB.videos.filter(v => v.category === 'tech').length} videos`;
+  document.getElementById('pedCount').textContent = `${DB.videos.filter(v => v.category === 'pedagogy').length} videos`;
+  document.getElementById('exCount').textContent = `${DB.videos.filter(v => v.category === 'examples').length} videos`;
+
+  renderHomeCategoryRow('homeTechRow', 'tech');
+  renderHomeCategoryRow('homePedRow', 'pedagogy');
+  renderHomeCategoryRow('homeExRow', 'examples');
+}
+
+// ----- BROWSE -----
+let currentBrowse = { cat: 'tech', sub: null, subject: null, grade: null };
+
+function renderBrowse(cat) {
+  currentView = 'browse';
+  currentViewParams = { cat };
+  currentBrowse = { cat: cat, sub: null, subject: null, grade: null };
+  const meta = CATEGORY_META[cat];
+  document.getElementById('browseTitle').textContent = meta.label;
+  document.getElementById('browseDesc').textContent = meta.desc;
+
+  const subs = SUBCATEGORIES[cat];
+  const filtersHtml = `
+    <div class="filter-row">
+      <span class="filter-group-label">Topic:</span>
+      <div class="filter-chip active" data-sub="all" onclick="window.applyBrowseFilter('sub', null)">All</div>
+      ${subs.map(s => `<div class="filter-chip" data-sub="${escapeHtml(s)}" onclick="window.applyBrowseFilter('sub', '${escapeHtml(s)}')">${escapeHtml(s)}</div>`).join('')}
+    </div>
+    ${cat === 'examples' ? `
+      <div class="filter-row">
+        <span class="filter-group-label">Subject:</span>
+        <div class="filter-chip active" data-subject="all" onclick="window.applyBrowseFilter('subject', null)">All</div>
+        ${['Math','Science','ELA','Social','Arts','Elective','PE'].map(s =>
+          `<div class="filter-chip" data-subject="${s.toLowerCase()}" onclick="window.applyBrowseFilter('subject', '${s.toLowerCase()}')">${s}</div>`
+        ).join('')}
+      </div>
+      <div class="filter-row">
+        <span class="filter-group-label">Grade:</span>
+        <div class="filter-chip active" data-grade="all" onclick="window.applyBrowseFilter('grade', null)">All</div>
+        <div class="filter-chip" data-grade="elementary" onclick="window.applyBrowseFilter('grade', 'elementary')">Elementary</div>
+        <div class="filter-chip" data-grade="middle" onclick="window.applyBrowseFilter('grade', 'middle')">Middle</div>
+        <div class="filter-chip" data-grade="high" onclick="window.applyBrowseFilter('grade', 'high')">High</div>
+      </div>
+    ` : ''}
+  `;
+  document.getElementById('browseFilters').innerHTML = filtersHtml;
+  renderBrowseResults();
+}
+
+function applyBrowseFilter(type, value) {
+  currentBrowse[type] = value;
+  document.querySelectorAll('#browseFilters .filter-chip').forEach(chip => {
+    const attr = chip.dataset.sub !== undefined ? 'sub' : (chip.dataset.subject !== undefined ? 'subject' : 'grade');
+    if (attr !== type) return;
+    const chipVal = chip.dataset[type];
+    chip.classList.toggle('active', (value === null && chipVal === 'all') || chipVal === value);
+  });
+  renderBrowseResults();
+}
+
+function renderBrowseResults() {
+  let filtered = DB.videos.filter(v => v.category === currentBrowse.cat);
+  if (currentBrowse.sub) filtered = filtered.filter(v => v.subcategory === currentBrowse.sub);
+  if (currentBrowse.subject) filtered = filtered.filter(v => v.subject === currentBrowse.subject);
+  if (currentBrowse.grade) filtered = filtered.filter(v => v.grade === currentBrowse.grade);
+
+  const el = document.getElementById('browseResults');
+  if (filtered.length === 0) {
+    el.className = '';
+    el.innerHTML = renderEmptyState(currentBrowse.cat);
+    return;
+  }
+  el.className = 'card-row';
+  el.innerHTML = filtered.map(renderVideoCard).join('');
+}
+
+function renderVideoDetail(id) {
+  currentView = 'video-detail';
+  currentViewParams = { id };
+  const v = DB.videos.find(x => x.id === id);
+  if (!v) { showView('home'); return; }
+  document.getElementById('playerTitle').textContent = v.title;
+  document.getElementById('playerWrap').innerHTML = buildEmbedOrVideo(v);
+
+  const cat = CATEGORY_META[v.category];
+  let metaBits = [`📚 ${cat.label}`];
+  if (v.subcategory) metaBits.push(`🏷 ${v.subcategory}`);
+  if (v.duration) metaBits.push(`⏱ ${v.duration}`);
+  if (v.courseId) {
+    const c = DB.courses.find(c => c.id === v.courseId);
+    if (c) metaBits.push(`🎓 ${c.title} · Lesson ${v.lessonNumber || '?'}`);
+  }
+  if (v.subject) metaBits.push(`📖 ${v.subject.toUpperCase()}`);
+  if (v.grade) metaBits.push(`🎒 ${v.grade}`);
+  document.getElementById('playerMeta').innerHTML = metaBits.map(b => `<span>${escapeHtml(b)}</span>`).join('');
+
+  const tags = (v.tags || []).map(t => `<span class="tag-pill">#${escapeHtml(t)}</span>`).join('');
+  document.getElementById('playerTags').innerHTML = tags;
+
+  document.getElementById('playerDesc').innerHTML = v.description
+    ? `<h3>About this video</h3><p>${escapeHtml(v.description)}</p>`
+    : `<p style="color: var(--text-muted); font-style: italic;">No description yet.</p>`;
+}
+
+function renderCourseDetail(id) {
+  currentView = 'course-detail';
+  currentViewParams = { id };
+  const c = DB.courses.find(x => x.id === id);
+  if (!c) { showView('home'); return; }
+
+  const lessons = DB.videos.filter(v => v.courseId === c.id).sort((a,b) => (a.lessonNumber || 0) - (b.lessonNumber || 0));
+
+  document.getElementById('courseTitle').textContent = c.title;
+  document.getElementById('courseBadge').innerHTML = `🎓 ${lessons.length}-Lesson Course`;
+  document.getElementById('courseDesc').textContent = c.description || '';
+
+  const metaBits = [
+    `📺 ${lessons.length} video${lessons.length === 1 ? '' : 's'}`,
+    `📚 ${c.difficulty || 'All Levels'}`,
+    `🗂 ${CATEGORY_META[c.category].label}`
+  ];
+  document.getElementById('courseMeta').innerHTML = metaBits.map(b => `<span>${escapeHtml(b)}</span>`).join('');
+
+  document.getElementById('courseProgressPct').textContent = '0%';
+  document.getElementById('courseProgressText').textContent = `0 of ${lessons.length} lessons completed`;
+
+  const listEl = document.getElementById('lessonList');
+  if (lessons.length === 0) {
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <span class="icon">📚</span>
+        <h4>No lessons in this course yet</h4>
+        <p>Head to Admin → Add Video and assign videos to this course.</p>
+        <button class="btn btn-primary" onclick="window.showView('admin')">+ Add a Lesson</button>
+      </div>
+    `;
+  } else {
+    listEl.innerHTML = lessons.map((l, i) => `
+      <div class="lesson-item" onclick="window.showView('video-detail', {id: '${l.id}'})">
+        <div class="lesson-num">${l.lessonNumber || (i+1)}</div>
+        <div class="lesson-title-wrap">
+          <div class="lesson-title">${escapeHtml(l.title)}</div>
+          <div class="lesson-sub">${escapeHtml(l.description ? l.description.slice(0, 80) : (l.subcategory || ''))}</div>
+        </div>
+        <div class="lesson-meta">${escapeHtml(l.duration || '')}</div>
+      </div>
+    `).join('');
+  }
+
+  const startBtn = document.getElementById('courseStartBtn');
+  if (lessons.length > 0) {
+    startBtn.style.display = '';
+    startBtn.onclick = () => showView('video-detail', { id: lessons[0].id });
+  } else {
+    startBtn.style.display = 'none';
+  }
+}
+
+// ============================================================
+// ADMIN — FORM HANDLING
+// ============================================================
+
+function switchAdminTab(ev, name) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  ev.target.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'library') renderVideoLibrary();
+  if (name === 'courses') renderCoursesList();
+}
+
+function updateSubcategoryOptions() {
+  const cat = document.getElementById('f_category').value;
+  const subSel = document.getElementById('f_subcategory');
+  subSel.innerHTML = SUBCATEGORIES[cat].map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+  document.getElementById('exampleExtraFields').style.display = (cat === 'examples') ? 'grid' : 'none';
+  updateCourseDropdown(cat);
+}
+
+function updateCourseDropdown(category) {
+  const sel = document.getElementById('f_course');
+  const matching = DB.courses.filter(c => c.category === category);
+  sel.innerHTML = `<option value="">No — standalone video</option>` +
+    matching.map(c => `<option value="${c.id}">${escapeHtml(c.title)}</option>`).join('');
+}
+
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+async function handleAddVideo(e) {
+  e.preventDefault();
+  const videoUrl = document.getElementById('f_videoUrl').value.trim();
+  const videoFile = document.getElementById('f_videoFile').files[0];
+  const title = document.getElementById('f_title').value.trim();
+  const desc = document.getElementById('f_desc').value.trim();
+  const category = document.getElementById('f_category').value;
+  const subcategory = document.getElementById('f_subcategory').value;
+  const subject = document.getElementById('f_subject').value;
+  const grade = document.getElementById('f_grade').value;
+  const courseId = document.getElementById('f_course').value;
+  const duration = document.getElementById('f_duration').value.trim();
+  const tags = document.getElementById('f_tags').value.split(',').map(t => t.trim()).filter(Boolean);
+  const thumbFile = document.getElementById('f_thumbFile').files[0];
+
+  if (!title) { alert('Title is required.'); return; }
+  if (!videoUrl && !videoFile) {
+    if (!confirm('No video URL or file provided. Add anyway (placeholder)?')) return;
+  }
+
+  const video = {
+    title, description: desc,
+    category, subcategory,
+    subject: subject || null,
+    grade: grade || null,
+    courseId: courseId || null,
+    duration,
+    tags,
+    videoUrl: videoUrl || null,
+    thumbnailData: null,
+    createdAt: new Date().toISOString()
+  };
+
+  if (videoFile && !USE_FIREBASE) {
+    video.blobUrl = URL.createObjectURL(videoFile);
+    video.fileName = videoFile.name;
+  } else if (videoFile && USE_FIREBASE) {
+    alert('In cloud mode, direct file upload is disabled to avoid using up your database quota. Upload your video to Microsoft Stream or YouTube first, then paste the URL here.');
+    return;
+  }
+
+  if (thumbFile) {
+    try {
+      if (thumbFile.size > 500 * 1024) {
+        if (!confirm(`Thumbnail is ${Math.round(thumbFile.size/1024)}KB — large images can slow the database. Continue anyway? Recommended: under 500KB.`)) return;
+      }
+      video.thumbnailData = await readFileAsDataURL(thumbFile);
+    } catch(e) { console.warn('Thumb read failed', e); }
+  }
+
+  if (courseId) {
+    const siblings = DB.videos.filter(v => v.courseId === courseId);
+    video.lessonNumber = siblings.length + 1;
+  }
+
+  try {
+    await saveVideo(video);
+    const b = document.getElementById('addSuccess');
+    b.textContent = `✓ "${title}" published. It's now live in the ${CATEGORY_META[category].label} section.`;
+    b.classList.add('show');
+    setTimeout(() => b.classList.remove('show'), 4000);
+
+    e.target.reset();
+    document.getElementById('f_videoFileName').textContent = 'MP4, MOV, WebM';
+    document.getElementById('f_thumbName').textContent = 'Click to choose an image · falls back to a colored card';
+    updateSubcategoryOptions();
+  } catch (err) {
+    alert('Failed to save: ' + err.message);
+  }
+}
+
+async function handleAddCourse(e) {
+  e.preventDefault();
+  const course = {
+    title: document.getElementById('c_title').value.trim(),
+    description: document.getElementById('c_desc').value.trim(),
+    category: document.getElementById('c_category').value,
+    difficulty: document.getElementById('c_difficulty').value,
+    createdAt: new Date().toISOString()
+  };
+  if (!course.title) { alert('Course title is required.'); return; }
+  try {
+    await saveCourse(course);
+    e.target.reset();
+    renderCoursesList();
+    updateCourseDropdown(document.getElementById('f_category').value);
+    alert(`✓ Course "${course.title}" created. Now add videos and assign them to it.`);
+  } catch(err) {
+    alert('Failed to save course: ' + err.message);
+  }
+}
+
+function renderVideoLibrary() {
+  const el = document.getElementById('videoLibraryList');
+  document.getElementById('libCount').textContent = `${DB.videos.length} video${DB.videos.length === 1 ? '' : 's'}`;
+  if (DB.videos.length === 0) {
+    el.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:30px;">No videos yet. Head to <strong>+ Add Video</strong> to upload your first one.</p>`;
+    return;
+  }
+  el.innerHTML = DB.videos.map(v => {
+    const cat = CATEGORY_META[v.category];
+    const thumb = v.thumbnailData
+      ? `<img src="${v.thumbnailData}">`
+      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1E6F8E,#3FB9DD);display:flex;align-items:center;justify-content:center;font-size:18px;">🦉</div>`;
+    const course = v.courseId ? (DB.courses.find(c => c.id === v.courseId) || {}).title : null;
+    return `
+      <div class="video-list-item">
+        <div class="video-list-thumb">${thumb}</div>
+        <div class="video-list-info">
+          <h5>${escapeHtml(v.title)}</h5>
+          <p>${escapeHtml(cat.label)}${v.subcategory ? ' · ' + escapeHtml(v.subcategory) : ''}${course ? ' · 📚 ' + escapeHtml(course) : ''}${v.duration ? ' · ' + escapeHtml(v.duration) : ''}</p>
+        </div>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.showView('video-detail', {id:'${v.id}'})">View</button>
+        <button class="btn btn-danger" onclick="window.deleteVideo('${v.id}')">Delete</button>
+      </div>
+    `;
+  }).join('');
+}
+
+async function deleteVideo(id) {
+  if (!confirm('Delete this video? This cannot be undone.')) return;
+  await removeVideo(id);
+  if (USE_FIREBASE) renderVideoLibrary();
+}
+
+function renderCoursesList() {
+  const el = document.getElementById('coursesList');
+  if (DB.courses.length === 0) {
+    el.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:30px;">No courses yet. Create one to group videos into a sequenced series.</p>`;
+    return;
+  }
+  el.innerHTML = DB.courses.map(c => {
+    const videoCount = DB.videos.filter(v => v.courseId === c.id).length;
+    return `
+      <div class="video-list-item">
+        <div class="video-list-thumb" style="background:linear-gradient(135deg,#8D4BE8,#F5B82E); display:flex; align-items:center; justify-content:center; font-size:20px;">🎓</div>
+        <div class="video-list-info">
+          <h5>${escapeHtml(c.title)}</h5>
+          <p>${escapeHtml(CATEGORY_META[c.category].label)} · ${videoCount} lesson${videoCount === 1 ? '' : 's'} · ${escapeHtml(c.difficulty || '')}</p>
+        </div>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.showView('course-detail', {id:'${c.id}'})">View</button>
+        <button class="btn btn-danger" onclick="window.deleteCourse('${c.id}')">Delete</button>
+      </div>
+    `;
+  }).join('');
+}
+
+async function deleteCourse(id) {
+  const videoCount = DB.videos.filter(v => v.courseId === id).length;
+  const msg = videoCount > 0
+    ? `This course has ${videoCount} video(s) assigned. Deleting it will make them standalone (they won't be deleted). Continue?`
+    : `Delete this course?`;
+  if (!confirm(msg)) return;
+  await removeCourse(id);
+  if (USE_FIREBASE) renderCoursesList();
+}
+
+// ============================================================
+// EXPORT / IMPORT
+// ============================================================
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(DB, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `optimapd-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async evt => {
+    try {
+      const parsed = JSON.parse(evt.target.result);
+      if (!parsed.videos) throw new Error('Invalid file');
+      if (USE_FIREBASE) {
+        if (!confirm(`Push ${parsed.videos.length} video(s) and ${(parsed.courses||[]).length} course(s) into Firebase? (Adds on top of existing data.)`)) return;
+        const { collection, addDoc } = window._fs;
+        for (const c of (parsed.courses || [])) {
+          const d = { ...c }; delete d.id;
+          await addDoc(collection(firestore, 'courses'), d);
+        }
+        for (const v of (parsed.videos || [])) {
+          const d = { ...v }; delete d.id; delete d.blobUrl;
+          await addDoc(collection(firestore, 'videos'), d);
+        }
+        alert('✓ Import complete.');
+      } else {
+        if (confirm('This will replace your current local library. Continue?')) {
+          DB = parsed; saveLocal(); location.reload();
+        }
+      }
+    } catch(err) {
+      alert('Could not read that file. Make sure it\'s a JSON backup exported from OptimaPD.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+
+function showView(name, params) {
+  const viewMap = {
+    'home': 'home',
+    'browse': 'browse',
+    'course-detail': 'course-detail',
+    'video-detail': 'video-detail',
+    'admin': 'admin'
+  };
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + viewMap[name]).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  let navKey = name;
+  if (name === 'browse' && params) navKey = params.cat;
+  if (name === 'course-detail' || name === 'video-detail') navKey = null;
+  const activeNav = document.querySelector(`.nav-links a[data-nav="${navKey}"]`);
+  if (activeNav) activeNav.classList.add('active');
+
+  if (name === 'home') renderHome();
+  if (name === 'browse') renderBrowse(params.cat);
+  if (name === 'course-detail') renderCourseDetail(params.id);
+  if (name === 'video-detail') renderVideoDetail(params.id);
+  if (name === 'admin') {
+    currentView = 'admin';
+    updateSubcategoryOptions();
+    updateCourseDropdown(document.getElementById('f_category').value);
+  }
+}
+
+function runSearch(q) {
+  q = q.trim().toLowerCase();
+  if (!q) return;
+  const results = DB.videos.filter(v => {
+    const hay = [v.title, v.description, v.subcategory, ...(v.tags||[])].filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-browse').classList.add('active');
+  document.getElementById('browseTitle').textContent = `Search: "${q}"`;
+  document.getElementById('browseDesc').textContent = `${results.length} result${results.length === 1 ? '' : 's'} found.`;
+  document.getElementById('browseFilters').innerHTML = '';
+  const el = document.getElementById('browseResults');
+  if (results.length === 0) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <span class="icon">🔍</span>
+        <h4>No results for "${escapeHtml(q)}"</h4>
+        <p>Try a different term, or upload a video on this topic.</p>
+      </div>`;
+  } else {
+    el.className = 'card-row';
+    el.innerHTML = results.map(renderVideoCard).join('');
+  }
+}
+
+// ============================================================
+// OPTI CHAT
+// ============================================================
+
+function optiReply(question) {
+  const q = question.toLowerCase();
+  const matches = DB.videos.filter(v => {
+    const hay = [v.title, v.description, v.subcategory, ...(v.tags||[])].filter(Boolean).join(' ').toLowerCase();
+    return q.split(/\s+/).some(word => word.length > 2 && hay.includes(word));
+  });
+  if (matches.length > 0) {
+    const v = matches[0];
+    return {
+      text: `I found something that might help. "${v.title}" covers this — ${v.description ? v.description.slice(0,140) : 'check it out'}.`,
+      cite: `📺 ${v.title}${v.duration ? ' · ' + v.duration : ''}`,
+      videoId: v.id
+    };
+  }
+  if (DB.videos.length === 0) {
+    return { text: `I don't have any videos to reference yet. Once you upload content in the Admin panel, I'll be able to answer questions and cite specific videos.`, cite: null };
+  }
+  return { text: `I couldn't find a matching video in the library for that question. Want me to flag this as a content gap so Porter knows to record a tutorial on it?`, cite: null };
+}
+
+function appendMsg(container, text, role, cite, videoId) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = text;
+  if (cite) {
+    const c = document.createElement('span');
+    c.className = 'cite';
+    c.textContent = cite;
+    if (videoId) c.onclick = () => { closeOpti(); showView('video-detail', { id: videoId }); };
+    div.appendChild(c);
+  }
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendOpti() {
+  const input = document.getElementById('optiInput');
+  const q = input.value.trim(); if (!q) return;
+  const c = document.getElementById('optiMessages');
+  appendMsg(c, q, 'user');
+  input.value = '';
+  setTimeout(() => {
+    const r = optiReply(q);
+    appendMsg(c, r.text, 'opti', r.cite, r.videoId);
+  }, 400);
+}
+function sendOptiModal() {
+  const input = document.getElementById('optiModalInput');
+  const q = input.value.trim(); if (!q) return;
+  const c = document.getElementById('optiModalMessages');
+  appendMsg(c, q, 'user');
+  input.value = '';
+  setTimeout(() => {
+    const r = optiReply(q);
+    appendMsg(c, r.text, 'opti', r.cite, r.videoId);
+  }, 400);
+}
+
+function openOpti() {
+  document.getElementById('optiModal').classList.add('open');
+  setTimeout(() => document.getElementById('optiModalInput').focus(), 100);
+}
+function closeOpti() { document.getElementById('optiModal').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOpti(); });
+
+// ============================================================
+// EXPOSE TO WINDOW (so inline onclick handlers can find them)
+// ============================================================
+window.showView = showView;
+window.runSearch = runSearch;
+window.sendOpti = sendOpti;
+window.sendOptiModal = sendOptiModal;
+window.openOpti = openOpti;
+window.closeOpti = closeOpti;
+window.switchAdminTab = switchAdminTab;
+window.handleAddVideo = handleAddVideo;
+window.handleAddCourse = handleAddCourse;
+window.updateSubcategoryOptions = updateSubcategoryOptions;
+window.deleteVideo = deleteVideo;
+window.deleteCourse = deleteCourse;
+window.applyBrowseFilter = applyBrowseFilter;
+window.exportData = exportData;
+window.importData = importData;
+window.migrateToCloud = migrateToCloud;
+
+// ============================================================
+// INIT
+// ============================================================
+initStorage();
+updateSubcategoryOptions();
+</script>
+
+</body>
+</html>
