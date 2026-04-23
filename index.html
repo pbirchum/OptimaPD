@@ -3668,11 +3668,12 @@ function importData(e) {
 // ============================================================
 
 function stopActiveVideo() {
-  // Stop any iframe (YouTube, Stream, etc.) by blanking its src
   const wrap = document.getElementById('playerWrap');
   if (!wrap) return;
+  // Remove the iframe entirely — setting src = '' would push a history entry,
+  // causing the user to need extra back-presses to leave the video page.
   const iframe = wrap.querySelector('iframe');
-  if (iframe) { iframe.src = ''; }
+  if (iframe) { iframe.remove(); }
   // Stop any native <video> element
   const vid = wrap.querySelector('video');
   if (vid) { try { vid.pause(); vid.currentTime = 0; } catch(e) {} }
