@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>OptimaPD — Professional Development for Optima Educators</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- jsPDF for certificate generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- EmailJS for certificate email delivery -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<!-- MSAL.js for Microsoft 365 authentication -->
+<script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js" crossorigin="anonymous"></script>
 <style>
   :root {
     --brand-blue: #3FB9DD;
@@ -743,7 +749,7 @@
   /* ---------- OPTI FAB ---------- */
   .opti-fab {
     position: fixed; bottom: 28px; right: 28px;
-    width: 74px; height: 74px; border-radius: 50%;
+    width: 84px; height: 84px; border-radius: 18px;
     background-image: var(--owl-logo);
     background-color: transparent;
     background-size: contain;
@@ -1135,6 +1141,138 @@
   }
   .vl-row-actions button:hover { border-color: var(--brand-blue); color: var(--text-primary); }
   .vl-row-actions button.danger { color: var(--danger); }
+
+  /* ── BADGES ── */
+  .badge-shelf { display: flex; flex-wrap: wrap; gap: 16px; padding: 4px 0; min-height: 40px; }
+  .badge-item {
+    width: 72px; height: 72px; cursor: pointer; position: relative;
+    transition: transform 0.18s; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .badge-item:hover { transform: scale(1.1); }
+  .badge-item img { width: 72px; height: 72px; object-fit: contain; display: block; }
+  .badge-placeholder {
+    width: 72px; height: 72px; border-radius: 50%; font-size: 28px;
+    background: linear-gradient(135deg, #1E3A5F, #3FB9DD);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .badge-tooltip {
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: #0b1522; color: #fff; font-size: 11px; padding: 5px 9px;
+    border-radius: 5px; pointer-events: none; opacity: 0;
+    transition: opacity 0.15s; z-index: 30;
+    max-width: 160px; text-align: center; white-space: normal; line-height: 1.4;
+  }
+  .badge-item:hover .badge-tooltip { opacity: 1; }
+  .badge-complete-check {
+    position: absolute; top: -4px; right: -4px; width: 18px; height: 18px;
+    background: #2ecc71; border-radius: 50%; font-size: 10px;
+    display: flex; align-items: center; justify-content: center; color: #fff;
+  }
+
+  /* ── QUIZ ── */
+  .lesson-quiz-item {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    border-radius: 8px; margin-bottom: 8px;
+    background: var(--bg-elevated); border: 1.5px dashed var(--brand-gold);
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  }
+  .lesson-quiz-item:hover { background: var(--bg-card); }
+  .lesson-quiz-item.quiz-done { border-color: #2ecc71; border-style: solid; }
+  .quiz-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--brand-gold); color: var(--brand-navy);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .quiz-icon.done { background: #2ecc71; color: #fff; }
+  .quiz-item-info { flex: 1; }
+  .quiz-item-info strong { display: block; font-size: 14px; color: var(--text-primary); }
+  .quiz-item-info span { font-size: 12px; color: var(--text-secondary); }
+  .quiz-passed-tag { font-size: 11px; font-weight: 600; color: #2ecc71; white-space: nowrap; }
+
+  /* quiz player */
+  .quiz-q-block { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border-subtle); }
+  .quiz-q-block:last-child { border-bottom: none; padding-bottom: 0; }
+  .quiz-q-num { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+  .quiz-q-prompt { font-size: 14px; font-weight: 600; color: var(--text-primary); line-height: 1.55; margin-bottom: 12px; }
+  .quiz-opt {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    border-radius: 8px; border: 1.5px solid var(--border-subtle);
+    background: var(--bg-elevated); cursor: pointer; margin-bottom: 6px;
+    transition: border-color .15s, background .15s; font-size: 13px; color: var(--text-primary);
+  }
+  .quiz-opt:hover { border-color: var(--brand-blue); background: var(--bg-card); }
+  .quiz-opt.selected { border-color: var(--brand-blue); background: rgba(63,185,221,.1); }
+  .quiz-opt.correct { border-color: #2ecc71; background: rgba(46,204,113,.1); color: #2ecc71; }
+  .quiz-opt.wrong   { border-color: #e74c3c; background: rgba(231,76,60,.08); color: #e74c3c; }
+  .quiz-opt input[type=radio] { accent-color: var(--brand-blue); width: 15px; height: 15px; flex-shrink: 0; pointer-events: none; }
+  .quiz-fr-area {
+    width: 100%; min-height: 90px; padding: 10px 12px;
+    background: var(--bg-elevated); border: 1.5px solid var(--border-subtle);
+    border-radius: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;
+    resize: vertical; box-sizing: border-box;
+  }
+  .quiz-match-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+  .quiz-match-left { flex: 1; padding: 8px 12px; background: var(--bg-elevated); border-radius: 6px; border: 1px solid var(--border-subtle); }
+  .quiz-match-sel { flex: 1; padding: 8px 10px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-primary); font-family: inherit; font-size: 13px; }
+  .quiz-result-wrap { text-align: center; padding: 24px 0 12px; }
+  .quiz-result-pct { font-size: 52px; font-weight: 800; }
+  .quiz-result-pct.pass { color: var(--brand-gold); }
+  .quiz-result-pct.fail { color: #e74c3c; }
+  .quiz-result-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* quiz editor */
+  .qtype-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .qtype-btn { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg-elevated); color: var(--text-secondary); font-family: inherit; font-size: 12px; cursor: pointer; transition: border-color .15s, color .15s; }
+  .qtype-btn:hover { border-color: var(--brand-blue); color: var(--text-primary); }
+
+  /* ── CERTIFICATE ── */
+  .cert-live-preview {
+    background: #fff; border-radius: 8px; padding: 28px 24px; text-align: center;
+    border: 3px solid #F5B82E; color: #111; min-height: 180px;
+    font-family: Georgia, serif;
+  }
+  .cert-live-preview h2 { font-size: 20px; color: #0F2438; margin: 0 0 6px; font-family: Georgia, serif; }
+  .cert-live-preview .cert-subtitle { font-size: 12px; color: #666; margin: 0 0 14px; font-family: Georgia, serif; }
+  .cert-live-preview .cert-name { font-size: 17px; font-weight: 700; color: #0F2438; display: inline-block; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin: 8px 0; font-family: Georgia, serif; }
+  .cert-live-preview .cert-course { font-size: 15px; font-weight: 600; color: #1E6F8E; margin: 8px 0; font-family: Georgia, serif; }
+  .cert-live-preview .cert-date-line { font-size: 11px; color: #888; margin-top: 12px; font-family: Georgia, serif; }
+  .cert-live-preview .cert-sig-line { font-size: 12px; color: #555; margin-top: 10px; border-top: 1px solid #eee; padding-top: 8px; font-family: Georgia, serif; }
+
+  /* ── ANALYTICS ── */
+  .analytics-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 26px; }
+  .stat-box { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px; text-align: center; }
+  .stat-box .s-num { font-size: 34px; font-weight: 800; color: var(--brand-gold); }
+  .stat-box .s-lbl { font-size: 11px; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; letter-spacing: .04em; }
+  .a-section { margin-bottom: 26px; }
+  .a-section h4 { font-size: 13px; color: var(--brand-blue); margin: 0 0 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .a-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .a-table th { text-align: left; padding: 7px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); font-weight: 600; font-size: 12px; }
+  .a-table td { padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--text-primary); }
+  .a-table tr:hover td { background: var(--bg-elevated); }
+  .pbar { background: rgba(255,255,255,.07); border-radius: 4px; height: 7px; overflow: hidden; width: 80px; display: inline-block; vertical-align: middle; margin-left: 6px; }
+  .pbar-fill { height: 100%; background: var(--brand-teal); border-radius: 4px; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 7px; }
+  .tag-chip { padding: 3px 10px; border-radius: 20px; font-size: 12px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); color: var(--text-secondary); }
+  .tag-chip strong { color: var(--text-primary); }
+
+  /* ── MICROSOFT SIGN-IN ── */
+  .ms-signin-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-subtle);
+    background: var(--bg-elevated); color: var(--text-primary); font-family: inherit; font-size: 13px; cursor: pointer;
+    transition: border-color .15s, background .15s; white-space: nowrap;
+  }
+  .ms-signin-btn:hover { border-color: var(--brand-blue); background: var(--bg-card); }
+  .ms-signin-btn img { width: 18px; height: 18px; }
+  .user-chip {
+    display: flex; align-items: center; gap: 7px; padding: 6px 12px;
+    border-radius: 20px; background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+    font-size: 12px; color: var(--text-primary); cursor: pointer;
+    transition: border-color .15s;
+  }
+  .user-chip:hover { border-color: var(--brand-blue); }
+  .user-avatar-sm { width: 24px; height: 24px; border-radius: 50%; background: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--brand-navy); flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -1151,7 +1289,7 @@
   <div class="nav-links">
     <a class="active" data-nav="home" onclick="window.showView('home')">Home</a>
     <span class="nav-dropdown">
-      <a data-nav="browse-all" class="dropdown-trigger" onclick="window.showView('browse', {cat:'all'})">Browse Library</a>
+      <a data-nav="browse-all" class="dropdown-trigger" onclick="window.openBrowseType('all')">Browse Library</a>
       <div class="nav-dropdown-menu">
         <a onclick="window.openBrowseType('videos')">All Videos</a>
         <a onclick="window.openBrowseType('courses')">All Courses</a>
@@ -1254,9 +1392,14 @@
 <div id="view-mylearning" class="view">
   <section class="browse-header">
     <h1>My Learning</h1>
-    <p>Your favorites, playlists, and watch history. Saved locally on this device.</p>
+    <p id="mlWelcomeMsg">Your favorites, playlists, and watch history. Saved locally on this device.</p>
+    <div id="mlAuthRow" style="margin-top: 14px;"></div>
   </section>
   <section class="content-section">
+    <div class="ml-section" id="mlBadgesSection" style="display:none;">
+      <div class="section-header"><div class="section-title">🏅 Earned Badges <span class="subtitle" id="badgeCount">0 badges</span></div></div>
+      <div id="mlBadgesRow" class="badge-shelf"></div>
+    </div>
     <div class="ml-section">
       <div class="section-header"><div class="section-title">⭐ Favorites <span class="subtitle" id="favCount">0 videos</span></div></div>
       <div id="mlFavoritesRow"></div>
@@ -1326,6 +1469,7 @@
       <div class="player-desc" id="playerDesc"></div>
       <div id="playerAttachments"></div>
       <div id="playerComments"></div>
+      <div id="playerRelated"></div>
     </div>
     <aside class="opti-panel">
       <div class="opti-panel-header">
@@ -1359,6 +1503,7 @@
       <div class="admin-tab" onclick="window.switchAdminTab(event,'library')">Video Library</div>
       <div class="admin-tab" onclick="window.switchAdminTab(event,'courses')">Manage Courses</div>
       <div class="admin-tab" onclick="window.switchAdminTab(event,'categories')">Categories</div>
+      <div class="admin-tab" onclick="window.switchAdminTab(event,'analytics')">📊 Analytics</div>
       <div class="admin-tab" onclick="window.switchAdminTab(event,'help')">Help</div>
       <div class="admin-tab" style="margin-left:auto; color: var(--danger);" onclick="window.adminLogout()">Log out</div>
     </div>
@@ -1590,6 +1735,23 @@
         <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-light);">
           <button class="btn btn-secondary" onclick="window.resetCategoriesToDefaults()">Reset to defaults</button>
           <span style="font-size:12px; color:var(--text-muted); margin-left:10px;">Restores the original OptimaEd tool list (Engage, Experience Editor, Teams, etc.).</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS PANEL -->
+    <div class="admin-panel" id="panel-analytics">
+      <div class="admin-card" style="max-width: 960px;">
+        <h3>📊 Site Analytics</h3>
+        <p style="color:var(--text-secondary); font-size:13px; margin-bottom:20px; line-height:1.6;">
+          Tracks completions, video views, and tag usage stored in this browser. Once Microsoft authentication is configured, per-user data will be tracked here. Use <strong>Export Data</strong> in the Help tab to back up analytics data.
+        </p>
+        <div id="analyticsBody">
+          <p style="color:var(--text-muted); font-size:13px;">Loading analytics…</p>
+        </div>
+        <div style="margin-top: 18px;">
+          <button class="btn btn-secondary" onclick="window.renderAnalytics()">↻ Refresh</button>
+          <button class="btn btn-danger" style="margin-left:8px;" onclick="window.clearAnalyticsData()">Clear Analytics Data</button>
         </div>
       </div>
     </div>
@@ -1868,6 +2030,8 @@ function recordView(videoId) {
   const h = getHistory().filter(x => x.id !== videoId);
   h.unshift({ id: videoId, when: new Date().toISOString() });
   saveHistory(h.slice(0, 50));
+  // Check if completing this video finishes a course
+  setTimeout(() => checkCourseCompletion(videoId), 300);
 }
 
 function getPlaylists() {
@@ -2248,10 +2412,11 @@ function renderVideoCard(v) {
   const subLabel = v.subcategory || (cat ? cat.label : '');
 
   const catKey = v.category === 'pedagogy' ? 'pedagogy' : (v.category === 'examples' ? 'examples' : 'tech');
+  const cornerLabel = (CATEGORY_META[v.category] && CATEGORY_META[v.category].label) || 'Tech Skills';
   return `
     <div class="vid-card" onclick="window.showView('video-detail', {id:'${v.id}'})">
       <div class="vid-thumb">
-        <span class="card-corner-label card-corner-label--video ${catKey}">Video</span>
+        <span class="card-corner-label card-corner-label--video ${catKey}">${escapeHtml(cornerLabel)}</span>
         ${thumbBg}
         ${v.duration ? `<span class="vid-duration">${escapeHtml(v.duration)}</span>` : ''}
         <div class="play-overlay"><div class="play-btn">▶</div></div>
@@ -2416,6 +2581,8 @@ function renderCoursesListView() {
 
 function renderMyLearning() {
   currentView = 'mylearning';
+  renderMyLearningBadges();
+  renderMyLearningAuthRow();
 
   // Favorites
   const favIds = getFavorites();
@@ -2598,9 +2765,9 @@ function renderBrowseResults() {
   }
 }
 
-function renderVideoDetail(id) {
+function renderVideoDetail(id, fromCourse) {
   currentView = 'video-detail';
-  currentViewParams = { id };
+  currentViewParams = { id, fromCourse: fromCourse || null };
   const v = DB.videos.find(x => x.id === id);
   if (!v) { showView('home'); return; }
 
@@ -2651,10 +2818,79 @@ function renderVideoDetail(id) {
   try { renderPlayerDesc(v); } catch (err) { console.error('[OptimaPD] desc render failed:', err); }
   try { renderPlayerAttachments(v); } catch (err) { console.error('[OptimaPD] attachments render failed:', err); }
   try { renderPlayerComments(v); } catch (err) { console.error('[OptimaPD] comments render failed:', err); }
+  try { renderRelatedVideos(v, fromCourse); } catch (err) { console.error('[OptimaPD] related videos render failed:', err); }
 
   // Hide floating Opti button (side panel is present)
   const fab = document.getElementById('optiFab');
   if (fab) fab.classList.add('hide-on-video');
+}
+
+function renderRelatedVideos(v, fromCourse) {
+  const el = document.getElementById('playerRelated');
+  if (!el) return;
+
+  // If this video was opened from within a course, keep the experience
+  // contained — no related videos shown.
+  if (fromCourse) { el.innerHTML = ''; return; }
+
+  // Score every other video by how closely it relates to this one.
+  const currentMoves = (v.teaching_moves || []).map(m => (m.name || '').toLowerCase()).filter(Boolean);
+  const currentTags  = (v.tags || []).map(t => t.toLowerCase());
+
+  const scored = DB.videos
+    .filter(x => x.id !== v.id)
+    .map(x => {
+      let score = 0;
+      // Teaching move overlap — strongest signal
+      const xMoves = (x.teaching_moves || []).map(m => (m.name || '').toLowerCase());
+      for (const mv of currentMoves) { if (xMoves.includes(mv)) score += 3; }
+      // Tag overlap
+      const xTags = (x.tags || []).map(t => t.toLowerCase());
+      for (const tg of currentTags) { if (xTags.includes(tg)) score += 2; }
+      // Same category — weak signal
+      if (x.category === v.category) score += 1;
+      return { x, score };
+    })
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map(s => s.x);
+
+  if (scored.length === 0) { el.innerHTML = ''; return; }
+
+  el.innerHTML = `
+    <div style="margin-top: 40px; border-top: 1px solid var(--border-subtle); padding-top: 28px;">
+      <h3 style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin: 0 0 16px;">Related Videos</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px;">
+        ${scored.map(rel => {
+          const thumb = rel.thumbnailUrl
+            ? `<img src="${escapeHtml(rel.thumbnailUrl)}" alt="" loading="lazy" />`
+            : (rel.youtubeId
+                ? `<img src="https://img.youtube.com/vi/${escapeHtml(rel.youtubeId)}/mqdefault.jpg" alt="" loading="lazy" />`
+                : '');
+          const catMeta = CATEGORY_META[rel.category] || CATEGORY_META.tech || {};
+          const sharedMoves = (rel.teaching_moves || [])
+            .map(m => m.name)
+            .filter(mn => currentMoves.includes((mn || '').toLowerCase()))
+            .slice(0, 2);
+          const reasonHtml = sharedMoves.length > 0
+            ? `<div style="font-size:11px; color: var(--brand-teal); margin-top: 4px;">🎯 ${escapeHtml(sharedMoves.join(' · '))}</div>`
+            : '';
+          return `
+            <div class="vid-card" onclick="window.showView('video-detail', {id:'${rel.id}'})" style="cursor:pointer;">
+              <div class="vid-thumb">
+                ${thumb}
+                <div class="play-overlay"><div class="play-btn">▶</div></div>
+                ${rel.duration ? `<span class="vid-duration">${escapeHtml(rel.duration)}</span>` : ''}
+              </div>
+              <div class="vid-info">
+                <div class="vid-title">${escapeHtml(rel.title)}</div>
+                ${reasonHtml}
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`;
 }
 
 function renderPlayerActions(v) {
@@ -2914,8 +3150,9 @@ function renderCourseDetail(id) {
   ];
   document.getElementById('courseMeta').innerHTML = metaBits.map(b => `<span>${escapeHtml(b)}</span>`).join('');
 
-  document.getElementById('courseProgressPct').textContent = '0%';
-  document.getElementById('courseProgressText').textContent = `0 of ${lessons.length} lessons completed`;
+  const prog = getCourseProgress(c.id);
+  document.getElementById('courseProgressPct').textContent = prog.percent + '%';
+  document.getElementById('courseProgressText').textContent = `${prog.watched} of ${lessons.length} lessons completed${prog.complete ? ' · ✅ Course Complete' : ''}`;
 
   const listEl = document.getElementById('lessonList');
   const isAdmin = isAdminLoggedIn();
@@ -2929,7 +3166,36 @@ function renderCourseDetail(id) {
       </div>
     `;
   } else {
-    listEl.innerHTML = lessons.map((l, i) => {
+    const historyIds = new Set(getHistory().map(h => h.id));
+    const quizzes = c.quizzes || [];
+    // Build interleaved list: lessons + quizzes sorted by position
+    const items = [];
+    lessons.forEach((l, i) => {
+      items.push({ type: 'lesson', data: l, index: i });
+      // quizzes that go after this lesson (insertAfterLesson === i)
+      quizzes.filter(q => q.insertAfterLesson === i).forEach(q => items.push({ type: 'quiz', data: q }));
+    });
+    // quizzes at end (insertAfterLesson === -1)
+    quizzes.filter(q => q.insertAfterLesson === -1).forEach(q => items.push({ type: 'quiz', data: q }));
+
+    listEl.innerHTML = items.map(item => {
+      if (item.type === 'quiz') {
+        const q = item.data;
+        const passed = isQuizPassed(q.id);
+        const result = getQuizScore(q.id);
+        return `
+          <div class="lesson-quiz-item ${passed ? 'quiz-done' : ''}" onclick="window.openQuizPlayer('${c.id}','${q.id}')">
+            <div class="quiz-icon ${passed ? 'done' : ''}">📝</div>
+            <div class="quiz-item-info">
+              <strong>${escapeHtml(q.title || 'Quiz')}</strong>
+              <span>${q.questions ? q.questions.length : 0} questions · ${q.required ? 'Required' : 'Optional'} · Passing: ${q.passingScore || 70}%</span>
+            </div>
+            ${passed ? `<span class="quiz-passed-tag">✓ Passed${result ? ' · ' + result.score + '%' : ''}</span>` : '<span style="font-size:12px;color:var(--text-muted);">Tap to take</span>'}
+          </div>`;
+      }
+      const l = item.data;
+      const i = item.index;
+      const watched = historyIds.has(l.id);
       const isFirst = i === 0;
       const isLast = i === lessons.length - 1;
       const reorderCtrls = isAdmin ? `
@@ -2937,8 +3203,8 @@ function renderCourseDetail(id) {
         <button class="move-btn" title="Move down" onclick="event.stopPropagation(); window.moveLesson('${l.id}', 1)" ${isLast ? 'disabled' : ''}>▼</button>
       ` : '';
       return `
-      <div class="lesson-item" onclick="window.showView('video-detail', {id: '${l.id}'})">
-        <div class="lesson-num">${i+1}</div>
+      <div class="lesson-item" onclick="window.showView('video-detail', {id: '${l.id}', fromCourse: '${c.id}'})">
+        <div class="lesson-num" style="${watched ? 'background:rgba(46,204,113,.15);color:#2ecc71;' : ''}">${watched ? '✓' : i+1}</div>
         <div class="lesson-title-wrap">
           <div class="lesson-title">${escapeHtml(l.title)}</div>
           <div class="lesson-sub">${escapeHtml((l.description || '').replace(/<[^>]+>/g, '').slice(0, 80) || (l.subcategory || ''))}</div>
@@ -2947,15 +3213,14 @@ function renderCourseDetail(id) {
           ${reorderCtrls}
           <span>${escapeHtml(l.duration || '')}</span>
         </div>
-      </div>
-    `;
+      </div>`;
     }).join('');
   }
 
   const startBtn = document.getElementById('courseStartBtn');
   if (lessons.length > 0) {
     startBtn.style.display = '';
-    startBtn.onclick = () => showView('video-detail', { id: lessons[0].id });
+    startBtn.onclick = () => showView('video-detail', { id: lessons[0].id, fromCourse: c.id });
   } else {
     startBtn.style.display = 'none';
   }
@@ -2974,6 +3239,7 @@ function switchAdminTab(ev, name) {
   if (name === 'library') renderVideoLibrary();
   if (name === 'courses') renderCoursesList();
   if (name === 'categories') renderCategoryEditor();
+  if (name === 'analytics') renderAnalytics();
 }
 
 function switchAdminTabByName(name) {
@@ -2986,6 +3252,7 @@ function switchAdminTabByName(name) {
   if (name === 'library') renderVideoLibrary();
   if (name === 'courses') renderCoursesList();
   if (name === 'categories') renderCategoryEditor();
+  if (name === 'analytics') renderAnalytics();
 }
 
 function updateSubcategoryOptions() {
@@ -3214,6 +3481,9 @@ function renderCoursesList() {
         </div>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.showView('course-detail', {id:'${c.id}'})">View</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.promptCourseThumbnail('${c.id}')">Thumbnail</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openQuizEditor('${c.id}')">📝 Quizzes (${(c.quizzes||[]).length})</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.promptCourseBadge('${c.id}')">${c.badgeData ? '🏅 Badge ✓' : '🏅 Badge'}</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openCertEditor('${c.id}')">${c.certificate && c.certificate.enabled ? '🎓 Cert ✓' : '🎓 Cert'}</button>
         <button class="btn btn-danger" onclick="window.deleteCourse('${c.id}')">Delete</button>
       </div>
     `;
@@ -3422,7 +3692,7 @@ function showView(name, params, __fromPopState) {
   if (name === 'courses') renderCoursesListView();
   if (name === 'mylearning') renderMyLearning();
   if (name === 'course-detail') renderCourseDetail(params.id);
-  if (name === 'video-detail') renderVideoDetail(params.id);
+  if (name === 'video-detail') renderVideoDetail(params.id, (params && params.fromCourse) || null);
   if (name === 'admin') {
     currentView = 'admin';
     updateSubcategoryOptions();
@@ -3578,12 +3848,26 @@ function searchLibrary(q) {
   const tokens = qn.split(' ').filter(t => t.length >= 3);
   if (tokens.length === 0) return [];
   const scored = DB.videos.map(v => {
-    const hay = normalize([v.title, v.description, v.bodyHeading, v.subcategory, ...(v.tags || [])].filter(Boolean).join(' '));
+    // Build haystack — include new rich fields when present
+    const moveText = (v.teaching_moves || []).map(m => [m.name, m.description].filter(Boolean).join(' ')).join(' ');
+    const chunkText = (v.transcript_chunks || []).map(c => [c.topic, c.key_quote].filter(Boolean).join(' ')).join(' ');
+    const hintText  = (v.bot_search_hints || []).join(' ');
+    const hay = normalize([
+      v.title, v.description, v.bodyHeading, v.subcategory,
+      v.summary, v.cross_subject_applications,
+      moveText, chunkText, hintText,
+      ...(v.tags || [])
+    ].filter(Boolean).join(' '));
+
     let score = 0;
     for (const t of tokens) {
       if (hay.includes(t)) score += 1;
       if (normalize(v.title).includes(t)) score += 2;
       if ((v.tags || []).some(tag => normalize(tag).includes(t))) score += 1;
+      // Extra weight for teaching move name matches
+      if ((v.teaching_moves || []).some(m => normalize(m.name || '').includes(t))) score += 2;
+      // Extra weight for bot search hint matches
+      if ((v.bot_search_hints || []).some(h => normalize(h).includes(t))) score += 2;
     }
     return { v, score };
   });
@@ -3599,40 +3883,70 @@ function knowledgeHit(q) {
   return null;
 }
 
-function optiReply(question) {
+function optiReply(question, contextVideoId) {
   const q = question.trim();
   if (!q) return { text: 'Ask me a question and I\'ll do my best to help.', cite: null };
 
-  // Step 1: Search the library
+  const qn = normalize(q);
+  const contextVideo = contextVideoId ? DB.videos.find(x => x.id === contextVideoId) : null;
+
+  // ── Cross-subject question? ("how could I use this in science / math / etc.") ──
+  const subjectWords = ['science','math','mathematics','ela','english','history','social studies','art','music','pe','physical education','social emotional','sel'];
+  const askedSubject = subjectWords.find(s => qn.includes(s));
+  if (contextVideo && askedSubject && (qn.includes('use') || qn.includes('apply') || qn.includes('similar') || qn.includes('adapt') || qn.includes('transfer'))) {
+    const moves = (contextVideo.teaching_moves || []).slice(0, 2).map(m => m.name).filter(Boolean);
+    const crossApp = contextVideo.cross_subject_applications || '';
+    if (moves.length > 0 || crossApp) {
+      let text = '';
+      if (moves.length > 0) text += `"${contextVideo.title}" demonstrates ${moves.join(' and ')}. `;
+      if (crossApp) text += crossApp;
+      else if (moves.length > 0) text += `These strategies can transfer to ${askedSubject} — look for natural moments to apply the same structure in your content.`;
+      return { text, cite: null };
+    }
+  }
+
+  // ── Teaching move question? ("what teaching move / strategy is this?") ──
+  if (contextVideo && (qn.includes('teaching move') || qn.includes('strategy') || qn.includes('what does this') || qn.includes('what move'))) {
+    const moves = (contextVideo.teaching_moves || []);
+    if (moves.length > 0) {
+      const moveList = moves.map(m => `• ${m.name}: ${m.description || ''}`).join('\n');
+      return { text: `This video demonstrates these teaching moves:\n${moveList}`, cite: null };
+    }
+  }
+
+  // ── Step 1: Search the library ──
   const matches = searchLibrary(q);
   if (matches.length > 0) {
     const v = matches[0];
-    const snippet = v.description ? v.description.slice(0, 140) + (v.description.length > 140 ? '…' : '') : 'Take a look — it should answer this.';
+    // If we have a summary, prefer it over raw description
+    const snippet = v.summary
+      ? v.summary
+      : (v.description ? v.description.replace(/<[^>]+>/g, '').slice(0, 140) + (v.description.length > 140 ? '…' : '') : 'Take a look — it should answer this.');
+    // Surface the top teaching move if available
+    const topMove = (v.teaching_moves || [])[0];
+    const moveHint = topMove ? ` It demonstrates "${topMove.name}".` : '';
     return {
-      text: `I found "${v.title}" in the library — ${snippet}`,
+      text: `I found "${v.title}" in the library.${moveHint} ${snippet}`,
       cite: `📺 ${v.title}${v.duration ? ' · ' + v.duration : ''}`,
       videoId: v.id
     };
   }
 
-  // Step 2: Check built-in knowledge base for common PD terms
+  // ── Step 2: Check built-in knowledge base for common PD terms ──
   const hit = knowledgeHit(q);
   if (hit) {
     const libraryHint = DB.videos.length > 0
       ? ' (I couldn\'t find a video that directly covers this, but if you\'d like one recorded, let Porter know.)'
       : '';
-    return {
-      text: `${hit.text}${libraryHint}`,
-      cite: null
-    };
+    return { text: `${hit.text}${libraryHint}`, cite: null };
   }
 
-  // Step 3: Generic helpful fallback
+  // ── Step 3: Generic helpful fallback ──
   if (DB.videos.length === 0) {
     return { text: 'There aren\'t any videos in the library yet. Once they\'re uploaded, I\'ll cite the exact video that answers your question. For now: can you rephrase, or give me a specific topic like "PICRAT" or "Experience Editor"?', cite: null };
   }
   return {
-    text: 'I couldn\'t find a library video that matches, and I don\'t have a built-in answer for this one. If you can rephrase or mention a specific tool or framework (Engage, PICRAT, UDL, Experience Editor, etc.), I\'ll search again. You can also flag this as a content gap so Porter knows to record a tutorial.',
+    text: 'I couldn\'t find a library video that matches. Try rephrasing — mention a specific tool, framework, or teaching strategy (like "think-aloud," "exit tickets," "Engage," "PICRAT," "UDL"). You can also flag this as a content gap so Porter knows to record a tutorial.',
     cite: null
   };
 }
@@ -3658,8 +3972,10 @@ function sendOpti() {
   const c = document.getElementById('optiMessages');
   appendMsg(c, q, 'user');
   input.value = '';
+  // Pass the currently-playing video id so Opti can give context-aware answers
+  const ctxId = (currentView === 'video-detail' && currentViewParams && currentViewParams.id) ? currentViewParams.id : null;
   setTimeout(() => {
-    const r = optiReply(q);
+    const r = optiReply(q, ctxId);
     appendMsg(c, r.text, 'opti', r.cite, r.videoId);
   }, 300);
 }
@@ -3670,7 +3986,7 @@ function sendOptiModal() {
   appendMsg(c, q, 'user');
   input.value = '';
   setTimeout(() => {
-    const r = optiReply(q);
+    const r = optiReply(q, null);
     appendMsg(c, r.text, 'opti', r.cite, r.videoId);
   }, 300);
 }
@@ -4066,10 +4382,11 @@ function renderCourseCardUnified(c) {
     ? `<img src="${c.thumbnailData || c.thumbDataUrl}" alt="">`
     : `<div class="thumb-default thumb-${catClass}" style="width:100%; height:100%;"></div>`;
   const catLabel = cat === 'tech' ? 'Tech Skills' : cat === 'pedagogy' ? 'Pedagogy' : 'Examples';
+  const cornerLabel = (CATEGORY_META[cat] && CATEGORY_META[cat].label) || 'Tech Skills';
   return `
     <div class="vid-card" onclick="window.showView('course-detail', {id:'${c.id}'})">
       <div class="vid-thumb">
-        <span class="card-corner-label card-corner-label--course ${catClass}">Course</span>
+        <span class="card-corner-label card-corner-label--course ${catClass}">${escapeHtml(cornerLabel)}</span>
         ${thumb}
         <span class="vid-duration">${lessonCount} lesson${lessonCount === 1 ? '' : 's'}</span>
       </div>
@@ -4124,8 +4441,8 @@ function renderBrowseLanding() {
 }
 
 function openBrowseType(type) {
-  // type is 'videos' or 'courses' — navigate to Browse Library (all categories) with the type filter pre-applied.
-  BROWSE_TYPE_FILTER = type;
+  // type is 'all' | 'videos' | 'courses' — navigate to Browse Library (all categories) with the type filter pre-applied.
+  BROWSE_TYPE_FILTER = (type === 'videos' || type === 'courses') ? type : 'all';
   showView('browse', { cat: 'all' });
 }
 
@@ -4162,6 +4479,978 @@ function renderBrowseLandingResults() {
 function setBrowseTypeFilter(val) {
   BROWSE_TYPE_FILTER = val;
   if (currentView === 'browse') renderBrowse(currentViewParams && currentViewParams.cat ? currentViewParams.cat : 'all');
+}
+
+// ============================================================
+// MICROSOFT AUTH CONFIGURATION
+// ============================================================
+// ── SETUP INSTRUCTIONS ──────────────────────────────────────
+// 1. Go to portal.azure.com → Azure Active Directory → App registrations → New registration
+// 2. Name it "OptimaPD", set "Accounts in this organizational directory only"
+// 3. Redirect URI: Single-page application → https://pbirchum.github.io/OptimaPD/
+// 4. After creation, copy the "Application (client) ID" into MSAL_CLIENT_ID below
+// 5. Copy the "Directory (tenant) ID" into MSAL_TENANT_ID below
+// 6. In API permissions, confirm "openid", "profile", "email" are present (they're default)
+// ────────────────────────────────────────────────────────────
+const MSAL_CLIENT_ID = 'YOUR_CLIENT_ID_HERE';   // ← replace after Azure app registration
+const MSAL_TENANT_ID = 'YOUR_TENANT_ID_HERE';   // ← replace after Azure app registration
+const MSAL_AUTH_ENABLED = (MSAL_CLIENT_ID !== 'YOUR_CLIENT_ID_HERE');
+
+// ── EmailJS CONFIGURATION ────────────────────────────────────
+// 1. Sign up at emailjs.com (free tier: 200 emails/month)
+// 2. Add a service (connect your Outlook/Microsoft account)
+// 3. Create an email template with variables: {{to_email}}, {{to_name}}, {{course_name}}, {{completion_date}}
+// 4. Copy Service ID, Template ID, and Public Key below
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // ← from emailjs.com
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // ← from emailjs.com
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // ← from emailjs.com
+const EMAILJS_ENABLED = (EMAILJS_SERVICE_ID !== 'YOUR_SERVICE_ID');
+
+let _msalInstance = null;
+let _userSession  = null;  // { name, email, userId, initials }
+
+function getUserSession() {
+  if (_userSession) return _userSession;
+  try {
+    const s = sessionStorage.getItem('optimapd_user');
+    return s ? JSON.parse(s) : null;
+  } catch(e) { return null; }
+}
+function setUserSession(u) {
+  _userSession = u;
+  try { sessionStorage.setItem('optimapd_user', JSON.stringify(u)); } catch(e) {}
+  renderMyLearningAuthRow();
+}
+
+async function initMsalAuth() {
+  if (!MSAL_AUTH_ENABLED || typeof msal === 'undefined') return;
+  try {
+    _msalInstance = new msal.PublicClientApplication({
+      auth: {
+        clientId: MSAL_CLIENT_ID,
+        authority: `https://login.microsoftonline.com/${MSAL_TENANT_ID}`,
+        redirectUri: location.origin + location.pathname
+      },
+      cache: { cacheLocation: 'sessionStorage', storeAuthStateInCookie: false }
+    });
+    await _msalInstance.initialize();
+    // Handle redirect response
+    const resp = await _msalInstance.handleRedirectPromise();
+    if (resp) {
+      const u = {
+        name: resp.account.name || resp.account.username,
+        email: resp.account.username,
+        userId: resp.account.homeAccountId,
+        initials: (resp.account.name || 'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()
+      };
+      setUserSession(u);
+    } else {
+      const accounts = _msalInstance.getAllAccounts();
+      if (accounts.length > 0) {
+        const a = accounts[0];
+        setUserSession({
+          name: a.name || a.username,
+          email: a.username,
+          userId: a.homeAccountId,
+          initials: (a.name || 'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()
+        });
+      }
+    }
+    renderMyLearningAuthRow();
+  } catch(err) {
+    console.warn('[OptimaPD] MSAL init error:', err.message);
+  }
+}
+
+async function msSignIn() {
+  if (!_msalInstance) return;
+  try {
+    await _msalInstance.loginRedirect({ scopes: ['openid', 'profile', 'email', 'User.Read'] });
+  } catch(err) { console.warn('[OptimaPD] MSAL sign-in error:', err); }
+}
+
+async function msSignOut() {
+  if (!_msalInstance) return;
+  setUserSession(null);
+  sessionStorage.removeItem('optimapd_user');
+  try { await _msalInstance.logoutRedirect(); } catch(e) {}
+}
+
+function renderMyLearningAuthRow() {
+  const el = document.getElementById('mlAuthRow');
+  if (!el) return;
+  const u = getUserSession();
+  if (!MSAL_AUTH_ENABLED) {
+    el.innerHTML = `<p style="font-size:12px;color:var(--text-muted);">Tip: Configure Microsoft authentication to track completions by teacher account.</p>`;
+    return;
+  }
+  if (u) {
+    el.innerHTML = `
+      <div class="user-chip" onclick="window.msSignOut()" title="Click to sign out">
+        <div class="user-avatar-sm">${escapeHtml(u.initials)}</div>
+        <span>${escapeHtml(u.name)}</span>
+        <span style="color:var(--text-muted); font-size:11px;">· Sign out</span>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <button class="ms-signin-btn" onclick="window.msSignIn()">
+        <svg width="18" height="18" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#00a4ef"/><rect x="1" y="11" width="9" height="9" fill="#7fba00"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+        Sign in with Microsoft
+      </button>`;
+  }
+}
+
+// ============================================================
+// COMPLETION & PROGRESS TRACKING
+// ============================================================
+const COMPLETED_KEY  = 'optimapd_completions';
+const QUIZ_RES_KEY   = 'optimapd_quiz_results';
+
+function getCompletedCourses() {
+  try { return JSON.parse(localStorage.getItem(COMPLETED_KEY)) || []; } catch(e) { return []; }
+}
+function saveCompletedCourses(arr) { localStorage.setItem(COMPLETED_KEY, JSON.stringify(arr)); }
+function isCourseCompleted(courseId) {
+  const uid = (getUserSession() || {}).userId || 'anon';
+  return getCompletedCourses().some(c => c.courseId === courseId && c.userId === uid);
+}
+function getQuizResults() {
+  try { return JSON.parse(localStorage.getItem(QUIZ_RES_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveQuizResult(quizId, result) {
+  const uid = (getUserSession() || {}).userId || 'anon';
+  const all = getQuizResults();
+  all[quizId + '_' + uid] = result;
+  localStorage.setItem(QUIZ_RES_KEY, JSON.stringify(all));
+}
+function isQuizPassed(quizId) {
+  const uid = (getUserSession() || {}).userId || 'anon';
+  const r = (getQuizResults())[quizId + '_' + uid];
+  return !!(r && r.passed);
+}
+function getQuizScore(quizId) {
+  const uid = (getUserSession() || {}).userId || 'anon';
+  return (getQuizResults())[quizId + '_' + uid] || null;
+}
+function getCourseProgress(courseId) {
+  const lessons = DB.videos.filter(v => v.courseId === courseId)
+    .sort((a,b) => (a.lessonNumber||0) - (b.lessonNumber||0));
+  if (!lessons.length) return { watched: 0, total: 0, percent: 0, complete: false };
+  const histIds = new Set(getHistory().map(h => h.id));
+  const watched = lessons.filter(l => histIds.has(l.id)).length;
+  const percent = Math.round((watched / lessons.length) * 100);
+  const course = DB.courses.find(x => x.id === courseId);
+  const reqQuizzes = (course && course.quizzes || []).filter(q => q.required);
+  const allQuizzesDone = reqQuizzes.every(q => isQuizPassed(q.id));
+  const complete = watched === lessons.length && allQuizzesDone;
+  return { watched, total: lessons.length, percent, complete };
+}
+function checkCourseCompletion(videoId, courseIdOverride) {
+  const courseId = courseIdOverride || (DB.videos.find(x => x.id === videoId) || {}).courseId;
+  if (!courseId) return;
+  const prog = getCourseProgress(courseId);
+  if (prog.complete && !isCourseCompleted(courseId)) {
+    const c = DB.courses.find(x => x.id === courseId);
+    const uid = (getUserSession() || {}).userId || 'anon';
+    const uName = (getUserSession() || {}).name || 'Teacher';
+    const uEmail = (getUserSession() || {}).email || '';
+    const completions = getCompletedCourses().filter(x => !(x.courseId === courseId && x.userId === uid));
+    completions.push({ courseId, userId: uid, userName: uName, userEmail: uEmail, completedAt: new Date().toISOString() });
+    saveCompletedCourses(completions);
+    if (c) triggerCourseCompletion(c, uName, uEmail);
+    if (currentView === 'mylearning') renderMyLearning();
+    if (currentView === 'course-detail') renderCourseDetail(courseId);
+  }
+}
+
+function triggerCourseCompletion(course, userName, userEmail) {
+  // Show download modal
+  const certEl = document.getElementById('certDownloadModal');
+  if (certEl) {
+    const hasCert = course.certificate && course.certificate.enabled;
+    document.getElementById('certDlTitle').textContent = `🎉 You completed "${course.title}"!`;
+    document.getElementById('certDlBody').textContent = hasCert
+      ? `Congratulations, ${userName}! Your certificate of completion is ready.`
+      : `Congratulations, ${userName}! You've finished all lessons${course.quizzes && course.quizzes.some(q=>q.required) ? ' and passed all required quizzes' : ''}.`;
+    const dlBtn = document.getElementById('certDlDownloadBtn');
+    const emailBtn = document.getElementById('certDlEmailBtn');
+    if (hasCert) {
+      dlBtn.style.display = '';
+      dlBtn.onclick = () => generateCertificatePDF(course, userName, true);
+      emailBtn.style.display = EMAILJS_ENABLED ? '' : 'none';
+      emailBtn.onclick = () => emailCertificate(course, userName, userEmail);
+    } else {
+      dlBtn.style.display = 'none';
+      emailBtn.style.display = 'none';
+    }
+    certEl.classList.add('open');
+  }
+}
+function closeCertDownload() {
+  document.getElementById('certDownloadModal').classList.remove('open');
+}
+
+// ============================================================
+// BADGE SYSTEM
+// ============================================================
+async function promptCourseBadge(courseId) {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 400 * 1024 && !confirm(`Badge is ${Math.round(file.size/1024)}KB. Badges work best under 400KB. Continue?`)) return;
+    try {
+      const data = await readFileAsDataURL(file);
+      await updateCourse(courseId, { badgeData: data });
+      if (!USE_FIREBASE) { const c = DB.courses.find(c=>c.id===courseId); if(c) c.badgeData = data; }
+      renderCoursesList();
+      alert('✓ Badge saved! Teachers who complete this course will see it in My Learning.');
+    } catch(err) { alert('Failed to save badge: ' + err.message); }
+  };
+  input.click();
+}
+
+function renderMyLearningBadges() {
+  const section = document.getElementById('mlBadgesSection');
+  const shelf = document.getElementById('mlBadgesRow');
+  const countEl = document.getElementById('badgeCount');
+  if (!section || !shelf) return;
+  const completions = getCompletedCourses();
+  const uid = (getUserSession() || {}).userId || 'anon';
+  const myCompletions = completions.filter(c => c.userId === uid);
+  const earnedCourses = myCompletions.map(c => DB.courses.find(x => x.id === c.courseId)).filter(Boolean);
+  const badgeCourses = earnedCourses.filter(c => c.badgeData);
+  countEl.textContent = `${earnedCourses.length} badge${earnedCourses.length !== 1 ? 's' : ''}`;
+  if (earnedCourses.length === 0) {
+    section.style.display = 'none'; return;
+  }
+  section.style.display = '';
+  shelf.innerHTML = earnedCourses.map(c => {
+    const inner = c.badgeData
+      ? `<img src="${c.badgeData}" alt="${escapeHtml(c.title)}" />`
+      : `<div class="badge-placeholder">🎓</div>`;
+    return `
+      <div class="badge-item" onclick="window.showView('course-detail',{id:'${c.id}'})" title="${escapeHtml(c.title)}">
+        ${inner}
+        <div class="badge-tooltip">${escapeHtml(c.title)}</div>
+        <div class="badge-complete-check">✓</div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+// QUIZ SYSTEM — ADMIN EDITOR
+// ============================================================
+let _qeCourseId = null, _qeQuizId = null, _qNewType = null;
+
+function openQuizEditor(courseId) {
+  _qeCourseId = courseId;
+  const c = DB.courses.find(x => x.id === courseId);
+  if (!c) return;
+  document.getElementById('quizEditorTitle').textContent = `Quizzes — ${c.title}`;
+  renderQuizEditorList(c);
+  document.getElementById('addQuizForm').style.display = 'none';
+  document.getElementById('quizEditorModal').classList.add('open');
+}
+function closeQuizEditor() {
+  document.getElementById('quizEditorModal').classList.remove('open');
+  _qeCourseId = null;
+}
+
+function renderQuizEditorList(c) {
+  const el = document.getElementById('quizEditorList');
+  const quizzes = c.quizzes || [];
+  if (!quizzes.length) {
+    el.innerHTML = `<p style="color:var(--text-muted);font-size:13px;padding:8px 0;">No quizzes yet — click "Add Quiz" to create one.</p>`;
+    return;
+  }
+  const lessons = DB.videos.filter(v=>v.courseId===c.id).sort((a,b)=>(a.lessonNumber||0)-(b.lessonNumber||0));
+  el.innerHTML = quizzes.map(q => {
+    const pos = q.insertAfterLesson === -1 ? 'End of course'
+      : (lessons[q.insertAfterLesson] ? `After "${lessons[q.insertAfterLesson].title}"` : `After lesson ${q.insertAfterLesson+1}`);
+    return `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;margin-bottom:8px;">
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);">${escapeHtml(q.title||'Untitled')}</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:3px;">
+            ${pos} · ${(q.questions||[]).length} questions · ${q.required?'Required':'Optional'} · Pass at ${q.passingScore||70}%
+          </div>
+        </div>
+        <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="window.openQuizQuestions('${c.id}','${q.id}')">✎ Questions</button>
+        <button class="btn btn-danger" style="padding:4px 8px;font-size:11px;" onclick="window.deleteQuizById('${c.id}','${q.id}')">✕</button>
+      </div>`;
+  }).join('');
+}
+
+function openAddQuizForm() {
+  const c = DB.courses.find(x => x.id === _qeCourseId);
+  if (!c) return;
+  const lessons = DB.videos.filter(v=>v.courseId===c.id).sort((a,b)=>(a.lessonNumber||0)-(b.lessonNumber||0));
+  const sel = document.getElementById('aq_position');
+  sel.innerHTML = lessons.map((l,i) => `<option value="${i}">After Lesson ${i+1}: ${escapeHtml(l.title.slice(0,40))}</option>`).join('') +
+    `<option value="-1">At end of course</option>`;
+  document.getElementById('aq_title').value = '';
+  document.getElementById('aq_passing').value = '70';
+  document.getElementById('aq_required').checked = true;
+  document.getElementById('addQuizForm').style.display = '';
+  document.getElementById('aq_title').focus();
+}
+
+async function saveNewQuiz() {
+  const title = document.getElementById('aq_title').value.trim();
+  if (!title) { alert('Please enter a quiz title.'); return; }
+  const c = DB.courses.find(x => x.id === _qeCourseId);
+  if (!c) return;
+  const quiz = {
+    id: 'quiz_' + Date.now(),
+    title,
+    insertAfterLesson: parseInt(document.getElementById('aq_position').value, 10),
+    required: document.getElementById('aq_required').checked,
+    passingScore: Math.min(100, Math.max(0, parseInt(document.getElementById('aq_passing').value, 10) || 70)),
+    questions: []
+  };
+  const quizzes = [...(c.quizzes || []), quiz];
+  await updateCourse(_qeCourseId, { quizzes });
+  if (!USE_FIREBASE) c.quizzes = quizzes;
+  document.getElementById('addQuizForm').style.display = 'none';
+  renderQuizEditorList(c);
+  // Auto-open question editor
+  openQuizQuestions(_qeCourseId, quiz.id);
+}
+
+async function deleteQuizById(courseId, quizId) {
+  if (!confirm('Delete this quiz? This cannot be undone.')) return;
+  const c = DB.courses.find(x => x.id === courseId);
+  if (!c) return;
+  const quizzes = (c.quizzes || []).filter(q => q.id !== quizId);
+  await updateCourse(courseId, { quizzes });
+  if (!USE_FIREBASE) c.quizzes = quizzes;
+  renderQuizEditorList(c);
+}
+
+// ── QUESTION EDITOR ─────────────────────────────────────────
+function openQuizQuestions(courseId, quizId) {
+  _qeCourseId = courseId; _qeQuizId = quizId;
+  const c = DB.courses.find(x => x.id === courseId);
+  const quiz = (c && c.quizzes || []).find(q => q.id === quizId);
+  if (!c || !quiz) return;
+  document.getElementById('qEditorTitle').textContent = `Questions — ${quiz.title}`;
+  renderQEditorList(c, quiz);
+  document.getElementById('questionForm').style.display = 'none';
+  document.getElementById('questionEditorModal').classList.add('open');
+}
+function closeQuestionEditor() {
+  document.getElementById('questionEditorModal').classList.remove('open');
+  if (_qeCourseId) { const c = DB.courses.find(x=>x.id===_qeCourseId); if(c) renderQuizEditorList(c); }
+  _qeQuizId = null;
+}
+
+function renderQEditorList(c, quiz) {
+  const el = document.getElementById('qEditorList');
+  const qs = quiz.questions || [];
+  const typeLabels = { multiple_choice:'Multiple Choice', true_false:'True / False', free_response:'Free Response', matching:'Matching' };
+  if (!qs.length) {
+    el.innerHTML = `<p style="color:var(--text-muted);font-size:13px;padding:4px 0 12px;">No questions yet. Use the buttons below to add your first question.</p>`;
+    return;
+  }
+  el.innerHTML = qs.map((q, i) => {
+    let detail = '';
+    if (q.type === 'multiple_choice') {
+      detail = (q.options||[]).map((o, oi) => `<div style="font-size:12px;color:${oi===q.correctAnswer?'#2ecc71':'var(--text-muted)'};padding:1px 0;">${oi===q.correctAnswer?'✓':'○'} ${escapeHtml(o)}</div>`).join('');
+    } else if (q.type === 'true_false') {
+      detail = `<div style="font-size:12px;color:#2ecc71;">✓ ${q.correctAnswer===0?'True':'False'}</div>`;
+    } else if (q.type === 'free_response') {
+      detail = `<div style="font-size:12px;color:var(--text-muted);">Open-ended · no auto-grading</div>`;
+    } else if (q.type === 'matching') {
+      detail = (q.pairs||[]).map(p=>`<div style="font-size:12px;color:var(--text-muted);">${escapeHtml(p.left)} → ${escapeHtml(p.right)}</div>`).join('');
+    }
+    return `
+      <div style="padding:12px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+          <div style="flex:1;">
+            <div style="font-size:11px;color:var(--brand-blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">${typeLabels[q.type]||q.type} · Q${i+1}</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:7px;">${escapeHtml(q.prompt)}</div>
+            ${detail}
+          </div>
+          <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="window.deleteQuestion('${q.id}')">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openQuestionForm(type) {
+  _qNewType = type;
+  const typeLabels = { multiple_choice:'Multiple Choice', true_false:'True / False', free_response:'Free Response', matching:'Matching' };
+  let formHtml = `<h4 style="margin:0 0 14px;font-size:14px;">New ${typeLabels[type]} Question</h4>
+    <div class="form-group"><label>Question Prompt *</label><textarea id="qf_prompt" rows="2" style="width:100%;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);padding:10px;font-family:inherit;font-size:13px;resize:vertical;box-sizing:border-box;" placeholder="Enter the question..."></textarea></div>`;
+  if (type === 'multiple_choice') {
+    formHtml += `
+      <div class="form-group"><label>Answer choices (one per line, prefix correct answer with *)</label>
+        <textarea id="qf_options" rows="5" style="width:100%;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);padding:10px;font-family:inherit;font-size:13px;resize:vertical;box-sizing:border-box;" placeholder="Option A&#10;*Option B (correct)&#10;Option C&#10;Option D"></textarea>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Put * at the start of the correct answer line.</p>
+      </div>`;
+  } else if (type === 'true_false') {
+    formHtml += `<div class="form-group"><label>Correct Answer</label>
+      <select id="qf_tf" style="background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);padding:9px 12px;font-family:inherit;font-size:13px;width:100%;">
+        <option value="0">True</option><option value="1">False</option>
+      </select></div>`;
+  } else if (type === 'matching') {
+    formHtml += `<div class="form-group"><label>Pairs (format: Left | Right, one per line)</label>
+      <textarea id="qf_pairs" rows="5" style="width:100%;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);padding:10px;font-family:inherit;font-size:13px;resize:vertical;box-sizing:border-box;" placeholder="Think-aloud | Modeling metacognition&#10;Exit ticket | Formative assessment&#10;Think-pair-share | Collaborative processing"></textarea>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Separate each left/right pair with | (pipe character).</p>
+    </div>`;
+  } else {
+    formHtml += `<p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;">Free response questions are open-ended. Teachers review responses; they do not affect passing score.</p>`;
+  }
+  formHtml += `<div style="display:flex;gap:8px;margin-top:8px;">
+    <button class="btn btn-primary" onclick="window.saveQuestion()">Save Question</button>
+    <button class="btn btn-secondary" onclick="document.getElementById('questionForm').style.display='none'">Cancel</button>
+  </div>`;
+  document.getElementById('questionForm').innerHTML = formHtml;
+  document.getElementById('questionForm').style.display = '';
+  document.getElementById('qf_prompt').focus();
+}
+
+async function saveQuestion() {
+  const prompt_text = (document.getElementById('qf_prompt').value || '').trim();
+  if (!prompt_text) { alert('Please enter a question prompt.'); return; }
+  const c = DB.courses.find(x => x.id === _qeCourseId);
+  const quiz = (c && c.quizzes || []).find(q => q.id === _qeQuizId);
+  if (!c || !quiz) return;
+  const q = { id: 'q_' + Date.now(), type: _qNewType, prompt: prompt_text };
+  if (_qNewType === 'multiple_choice') {
+    const lines = (document.getElementById('qf_options').value || '').split('\n').map(l=>l.trim()).filter(Boolean);
+    q.options = lines.map(l => l.startsWith('*') ? l.slice(1).trim() : l);
+    q.correctAnswer = lines.findIndex(l => l.startsWith('*'));
+    if (q.correctAnswer === -1) q.correctAnswer = 0;
+  } else if (_qNewType === 'true_false') {
+    q.correctAnswer = parseInt(document.getElementById('qf_tf').value, 10);
+  } else if (_qNewType === 'matching') {
+    const lines = (document.getElementById('qf_pairs').value || '').split('\n').map(l=>l.trim()).filter(l=>l.includes('|'));
+    q.pairs = lines.map(l => { const [left, right] = l.split('|'); return { left: left.trim(), right: right.trim() }; });
+  }
+  quiz.questions = [...(quiz.questions || []), q];
+  await updateCourse(_qeCourseId, { quizzes: c.quizzes });
+  document.getElementById('questionForm').style.display = 'none';
+  renderQEditorList(c, quiz);
+}
+
+async function deleteQuestion(questionId) {
+  const c = DB.courses.find(x => x.id === _qeCourseId);
+  const quiz = (c && c.quizzes || []).find(q => q.id === _qeQuizId);
+  if (!c || !quiz) return;
+  quiz.questions = (quiz.questions || []).filter(q => q.id !== questionId);
+  await updateCourse(_qeCourseId, { quizzes: c.quizzes });
+  renderQEditorList(c, quiz);
+}
+
+// ============================================================
+// QUIZ SYSTEM — PLAYER
+// ============================================================
+let _playerCourseId = null, _playerQuizId = null;
+
+function openQuizPlayer(courseId, quizId) {
+  _playerCourseId = courseId; _playerQuizId = quizId;
+  const c = DB.courses.find(x => x.id === courseId);
+  const quiz = (c && c.quizzes || []).find(q => q.id === quizId);
+  if (!c || !quiz) return;
+  renderQuizPlayer(c, quiz, false);
+  document.getElementById('quizPlayerModal').classList.add('open');
+}
+function closeQuizPlayer() {
+  document.getElementById('quizPlayerModal').classList.remove('open');
+  // Refresh course detail progress if visible
+  if (currentView === 'course-detail' && currentViewParams && currentViewParams.id) {
+    renderCourseDetail(currentViewParams.id);
+  }
+}
+
+function renderQuizPlayer(c, quiz, showResults, answers, score) {
+  const qs = quiz.questions || [];
+  const el = document.getElementById('quizPlayerContent');
+  if (showResults) {
+    const pct = score;
+    const passed = pct >= (quiz.passingScore || 70);
+    el.innerHTML = `
+      <div class="quiz-result-wrap">
+        <div class="quiz-result-pct ${passed?'pass':'fail'}">${pct}%</div>
+        <div class="quiz-result-label">${passed ? '✓ Passed' : '✗ Not passed'} · ${quiz.title}</div>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:8px;">
+          ${passed ? `You met the passing score of ${quiz.passingScore||70}%.` : `Passing score is ${quiz.passingScore||70}%. Review the material and try again.`}
+        </p>
+      </div>
+      <div style="margin-top: 20px; border-top: 1px solid var(--border-subtle); padding-top: 16px;">
+        <h4 style="font-size:13px;margin-bottom:12px;color:var(--text-secondary);">Answer Review</h4>
+        ${qs.map((q, i) => {
+          if (q.type === 'free_response') {
+            return `<div class="quiz-q-block">
+              <div class="quiz-q-num">Q${i+1} · Free Response</div>
+              <div class="quiz-q-prompt">${escapeHtml(q.prompt)}</div>
+              <div style="font-size:13px;color:var(--text-secondary);font-style:italic;">"${escapeHtml((answers[i]||{}).value||'(no answer)')}"</div>
+            </div>`;
+          }
+          const userAns = (answers[i]||{}).value;
+          let correct = false, correctLabel = '', userLabel = '';
+          if (q.type === 'multiple_choice') {
+            correct = userAns === q.correctAnswer;
+            correctLabel = q.options && q.options[q.correctAnswer] ? q.options[q.correctAnswer] : '';
+            userLabel = q.options && q.options[userAns] !== undefined ? q.options[userAns] : '(no answer)';
+          } else if (q.type === 'true_false') {
+            correct = userAns === q.correctAnswer;
+            correctLabel = q.correctAnswer === 0 ? 'True' : 'False';
+            userLabel = userAns === 0 ? 'True' : userAns === 1 ? 'False' : '(no answer)';
+          } else if (q.type === 'matching') {
+            const userPairs = (answers[i]||{}).pairs || {};
+            correct = (q.pairs||[]).every((p,pi) => userPairs[pi] === p.right);
+            correctLabel = 'All pairs matched correctly';
+            userLabel = correct ? 'Correct' : 'Some pairs incorrect';
+          }
+          return `<div class="quiz-q-block">
+            <div class="quiz-q-num">Q${i+1}</div>
+            <div class="quiz-q-prompt">${escapeHtml(q.prompt)}</div>
+            <div style="font-size:13px;color:${correct?'#2ecc71':'#e74c3c'};">${correct?'✓ Correct':'✗ Incorrect'}</div>
+            ${!correct ? `<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Correct answer: ${escapeHtml(correctLabel)}</div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        ${!passed ? `<button class="btn btn-primary" onclick="window.retakeQuiz()">↩ Retake Quiz</button>` : ''}
+        <button class="btn btn-secondary" onclick="window.closeQuizPlayer()">Close</button>
+      </div>`;
+    return;
+  }
+  // Render quiz questions
+  el.innerHTML = `
+    <div style="margin-bottom:16px;">
+      <h3 style="font-size:17px;margin:0 0 4px;">${escapeHtml(quiz.title)}</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin:0;">${qs.length} question${qs.length!==1?'s':''} · Passing score: ${quiz.passingScore||70}%</p>
+    </div>
+    <form id="quizForm">
+      ${qs.map((q,i) => {
+        if (q.type === 'multiple_choice') {
+          return `<div class="quiz-q-block">
+            <div class="quiz-q-num">Question ${i+1} of ${qs.length}</div>
+            <div class="quiz-q-prompt">${escapeHtml(q.prompt)}</div>
+            ${(q.options||[]).map((opt,oi) => `
+              <label class="quiz-opt" onclick="this.classList.toggle('selected'); this.querySelectorAll('.quiz-opt').forEach(o=>o!==this&&o.classList.remove('selected'))">
+                <input type="radio" name="q${i}" value="${oi}" style="pointer-events:none;" />
+                ${escapeHtml(opt)}
+              </label>`).join('')}
+          </div>`;
+        } else if (q.type === 'true_false') {
+          return `<div class="quiz-q-block">
+            <div class="quiz-q-num">Question ${i+1} of ${qs.length}</div>
+            <div class="quiz-q-prompt">${escapeHtml(q.prompt)}</div>
+            <label class="quiz-opt"><input type="radio" name="q${i}" value="0" /> True</label>
+            <label class="quiz-opt"><input type="radio" name="q${i}" value="1" /> False</label>
+          </div>`;
+        } else if (q.type === 'free_response') {
+          return `<div class="quiz-q-block">
+            <div class="quiz-q-num">Question ${i+1} of ${qs.length} · Free Response</div>
+            <div class="quiz-q-prompt">${escapeHtml(q.prompt)}</div>
+            <textarea class="quiz-fr-area" name="q${i}" placeholder="Type your response here…"></textarea>
+          </div>`;
+        } else if (q.type === 'matching') {
+          const rights = (q.pairs||[]).map(p=>p.right).sort(()=>Math.random()-.5);
+          return `<div class="quiz-q-block">
+            <div class="quiz-q-num">Question ${i+1} of ${qs.length} · Matching</div>
+            <div class="quiz-q-prompt">${escapeHtml(q.prompt)}</div>
+            ${(q.pairs||[]).map((p,pi) => `
+              <div class="quiz-match-row">
+                <div class="quiz-match-left">${escapeHtml(p.left)}</div>
+                <span style="color:var(--text-muted);">→</span>
+                <select class="quiz-match-sel" name="q${i}_p${pi}">
+                  <option value="">Select a match…</option>
+                  ${rights.map(r=>`<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('')}
+                </select>
+              </div>`).join('')}
+          </div>`;
+        }
+        return '';
+      }).join('')}
+    </form>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-primary" onclick="window.submitQuiz()">Submit Quiz</button>
+      <button class="btn btn-secondary" onclick="window.closeQuizPlayer()">Cancel</button>
+    </div>`;
+  // Add radio-button selected styling
+  el.querySelectorAll('input[type=radio]').forEach(r => {
+    r.addEventListener('change', () => {
+      const name = r.name;
+      el.querySelectorAll(`input[name="${name}"]`).forEach(rb => rb.closest('.quiz-opt').classList.remove('selected'));
+      r.closest('.quiz-opt').classList.add('selected');
+    });
+  });
+}
+
+function retakeQuiz() {
+  const c = DB.courses.find(x => x.id === _playerCourseId);
+  const quiz = (c && c.quizzes || []).find(q => q.id === _playerQuizId);
+  if (c && quiz) renderQuizPlayer(c, quiz, false);
+}
+
+function submitQuiz() {
+  const c = DB.courses.find(x => x.id === _playerCourseId);
+  const quiz = (c && c.quizzes || []).find(q => q.id === _playerQuizId);
+  if (!c || !quiz) return;
+  const form = document.getElementById('quizForm');
+  const qs = quiz.questions || [];
+  let autoCorrect = 0, autoTotal = 0;
+  const answers = qs.map((q, i) => {
+    if (q.type === 'free_response') return { value: (form.elements['q'+i] && form.elements['q'+i].value) || '' };
+    if (q.type === 'multiple_choice' || q.type === 'true_false') {
+      const el = form.elements['q'+i];
+      const val = el ? parseInt([...el].find(r=>r.checked)?.value ?? '-1', 10) : -1;
+      autoTotal++;
+      if (val === q.correctAnswer) autoCorrect++;
+      return { value: val };
+    }
+    if (q.type === 'matching') {
+      const pairs = {};
+      (q.pairs||[]).forEach((p, pi) => {
+        const sel = form.elements[`q${i}_p${pi}`];
+        pairs[pi] = sel ? sel.value : '';
+      });
+      autoTotal++;
+      if ((q.pairs||[]).every((p,pi) => pairs[pi] === p.right)) autoCorrect++;
+      return { pairs };
+    }
+    return {};
+  });
+  const score = autoTotal > 0 ? Math.round((autoCorrect / autoTotal) * 100) : 100;
+  const passed = score >= (quiz.passingScore || 70);
+  saveQuizResult(quiz.id, { passed, score, completedAt: new Date().toISOString() });
+  renderQuizPlayer(c, quiz, true, answers, score);
+  // Check if this quiz completion finishes the course
+  setTimeout(() => checkCourseCompletion(null, c.id), 200);
+}
+
+// ============================================================
+// CERTIFICATE SYSTEM
+// ============================================================
+let _certCourseId = null;
+const _certBgData = { data: null };
+
+function openCertEditor(courseId) {
+  _certCourseId = courseId;
+  const c = DB.courses.find(x => x.id === courseId);
+  if (!c) return;
+  document.getElementById('certEditorTitle').textContent = `Certificate — ${c.title}`;
+  const cert = c.certificate || {};
+  document.getElementById('cert_enabled').checked = !!cert.enabled;
+  document.getElementById('cert_title').value = cert.titleText || 'Certificate of Completion';
+  document.getElementById('cert_body').value = cert.bodyText || 'This certifies that {name} has successfully completed';
+  document.getElementById('cert_sig').value = cert.signatureText || 'OptimaPD · Optima Education';
+  _certBgData.data = cert.backgroundData || null;
+  document.getElementById('cert_bgName').textContent = _certBgData.data ? '✓ Background image loaded' : 'Click to upload background · white by default';
+  updateCertPreview();
+  document.getElementById('certEditorModal').classList.add('open');
+}
+function closeCertEditor() {
+  document.getElementById('certEditorModal').classList.remove('open');
+  _certCourseId = null;
+}
+
+async function onCertBgChange() {
+  const file = document.getElementById('cert_bgFile').files[0];
+  if (!file) return;
+  try {
+    _certBgData.data = await readFileAsDataURL(file);
+    document.getElementById('cert_bgName').textContent = file.name;
+    updateCertPreview();
+  } catch(e) { alert('Could not load image: ' + e.message); }
+}
+
+function updateCertPreview() {
+  const c = DB.courses.find(x => x.id === _certCourseId);
+  const preview = document.getElementById('certPreview');
+  if (!preview || !c) return;
+  const title = document.getElementById('cert_title').value || 'Certificate of Completion';
+  const body = (document.getElementById('cert_body').value || 'This certifies that {name} has successfully completed')
+    .replace('{name}', '<span class="cert-name">Your Name</span>')
+    .replace('{course}', `<span class="cert-course">${escapeHtml(c.title)}</span>`);
+  const sig = document.getElementById('cert_sig').value || 'OptimaPD';
+  const today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  const bgStyle = _certBgData.data ? `background-image:url(${_certBgData.data});background-size:cover;background-position:center;` : '';
+  preview.style.cssText = bgStyle ? `background:#fff;border-radius:8px;padding:28px 24px;text-align:center;border:3px solid #F5B82E;color:#111;min-height:180px;font-family:Georgia,serif;${bgStyle}` : '';
+  preview.innerHTML = `
+    <h2>${escapeHtml(title)}</h2>
+    <div class="cert-subtitle">${body}</div>
+    <div class="cert-course">${escapeHtml(c.title)}</div>
+    <div class="cert-date-line">Completed on · ${today}</div>
+    <div class="cert-sig-line">${escapeHtml(sig)}</div>`;
+}
+
+async function saveCertSettings() {
+  const c = DB.courses.find(x => x.id === _certCourseId);
+  if (!c) return;
+  const cert = {
+    enabled: document.getElementById('cert_enabled').checked,
+    titleText: document.getElementById('cert_title').value.trim() || 'Certificate of Completion',
+    bodyText: document.getElementById('cert_body').value.trim(),
+    signatureText: document.getElementById('cert_sig').value.trim(),
+    backgroundData: _certBgData.data
+  };
+  await updateCourse(_certCourseId, { certificate: cert });
+  if (!USE_FIREBASE) c.certificate = cert;
+  renderCoursesList();
+  alert('✓ Certificate settings saved.');
+  closeCertEditor();
+}
+
+function previewDownloadCert() {
+  const c = DB.courses.find(x => x.id === _certCourseId);
+  if (!c) return;
+  const cert = {
+    titleText: document.getElementById('cert_title').value || 'Certificate of Completion',
+    bodyText: document.getElementById('cert_body').value || 'This certifies that {name} has successfully completed',
+    signatureText: document.getElementById('cert_sig').value || 'OptimaPD',
+    backgroundData: _certBgData.data
+  };
+  generateCertificatePDF({ ...c, certificate: cert }, 'Preview Name', true);
+}
+
+function generateCertificatePDF(course, recipientName, download) {
+  if (typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined') {
+    alert('PDF library is still loading. Please try again in a moment.');
+    return;
+  }
+  const { jsPDF } = window.jspdf || jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const cert = course.certificate || {};
+  const W = 297, H = 210;
+
+  // Background
+  if (cert.backgroundData) {
+    try { doc.addImage(cert.backgroundData, 'JPEG', 0, 0, W, H); } catch(e) {}
+  } else {
+    doc.setFillColor(255, 255, 255); doc.rect(0, 0, W, H, 'F');
+  }
+  // Gold border
+  doc.setDrawColor(245, 184, 46); doc.setLineWidth(3);
+  doc.rect(8, 8, W - 16, H - 16, 'S');
+  doc.setLineWidth(1);
+  doc.rect(11, 11, W - 22, H - 22, 'S');
+
+  // Title
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(28); doc.setTextColor(15, 36, 56);
+  doc.text(cert.titleText || 'Certificate of Completion', W/2, 55, { align: 'center' });
+
+  // Body text
+  const bodyRaw = (cert.bodyText || 'This certifies that {name} has successfully completed')
+    .replace('{name}', recipientName).replace('{course}', course.title);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(14); doc.setTextColor(60, 60, 60);
+  const bodyLines = doc.splitTextToSize(bodyRaw, W - 60);
+  doc.text(bodyLines, W/2, 85, { align: 'center' });
+
+  // Course name
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20); doc.setTextColor(30, 111, 142);
+  doc.text(course.title, W/2, 105, { align: 'center' });
+
+  // Recipient name with underline
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18); doc.setTextColor(15, 36, 56);
+  doc.text(recipientName, W/2, 128, { align: 'center' });
+  const nameWidth = doc.getTextWidth(recipientName);
+  doc.setDrawColor(200,200,200); doc.setLineWidth(0.5);
+  doc.line(W/2 - nameWidth/2 - 4, 131, W/2 + nameWidth/2 + 4, 131);
+
+  // Date
+  const today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11); doc.setTextColor(100,100,100);
+  doc.text(`Completed on ${today}`, W/2, 148, { align: 'center' });
+
+  // Signature
+  doc.setFontSize(10);
+  doc.text(cert.signatureText || 'OptimaPD · Optima Education', W/2, H - 20, { align: 'center' });
+
+  if (download) {
+    const safeName = (course.title || 'Certificate').replace(/[^a-zA-Z0-9 ]/g, '').trim();
+    doc.save(`OptimaPD_Certificate_${safeName}.pdf`);
+  }
+  return doc;
+}
+
+async function emailCertificate(course, userName, userEmail) {
+  const statusEl = document.getElementById('certEmailStatus');
+  if (!EMAILJS_ENABLED) { if(statusEl) { statusEl.textContent = 'Email not configured. See setup instructions in the code.'; statusEl.style.display=''; } return; }
+  if (!userEmail) { if(statusEl) { statusEl.textContent = 'No email address — sign in with Microsoft first.'; statusEl.style.display=''; } return; }
+  if (statusEl) { statusEl.textContent = 'Sending…'; statusEl.style.display=''; }
+  try {
+    if (typeof emailjs !== 'undefined') emailjs.init(EMAILJS_PUBLIC_KEY);
+    const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: userEmail, to_name: userName,
+      course_name: course.title, completion_date: today,
+      site_name: 'OptimaPD'
+    });
+    if (statusEl) { statusEl.textContent = `✓ Confirmation sent to ${userEmail}`; statusEl.style.display=''; }
+  } catch(err) {
+    if (statusEl) { statusEl.textContent = `Could not send email: ${err.text || err.message}`; statusEl.style.display=''; }
+  }
+}
+
+// ============================================================
+// ANALYTICS DASHBOARD
+// ============================================================
+function renderAnalytics() {
+  const el = document.getElementById('analyticsBody');
+  if (!el) return;
+  const completions = getCompletedCourses();
+  const history = getHistory();
+  const quizResults = getQuizResults();
+
+  // Site-wide stats
+  const totalCompletions = completions.length;
+  const totalWatches = history.length;
+  const totalQuizAttempts = Object.keys(quizResults).length;
+  const uniqueUsers = [...new Set(completions.map(c=>c.userId).filter(u=>u!=='anon'))].length;
+
+  // Per-course completions
+  const courseCompletionMap = {};
+  completions.forEach(c => {
+    if (!courseCompletionMap[c.courseId]) courseCompletionMap[c.courseId] = [];
+    courseCompletionMap[c.courseId].push(c);
+  });
+
+  // Most watched videos
+  const watchMap = {};
+  history.forEach(h => { watchMap[h.id] = (watchMap[h.id]||0)+1; });
+  const topVideos = Object.entries(watchMap)
+    .sort((a,b)=>b[1]-a[1]).slice(0,10)
+    .map(([id, count]) => ({ v: DB.videos.find(x=>x.id===id), count }))
+    .filter(x => x.v);
+
+  // Category distribution
+  const catMap = {};
+  history.forEach(h => {
+    const v = DB.videos.find(x=>x.id===h.id);
+    if (v) catMap[v.category] = (catMap[v.category]||0)+1;
+  });
+
+  // Tag analytics
+  const tagMap = {};
+  history.forEach(h => {
+    const v = DB.videos.find(x=>x.id===h.id);
+    if (v) (v.tags||[]).forEach(t => { tagMap[t]=(tagMap[t]||0)+1; });
+  });
+  const topTags = Object.entries(tagMap).sort((a,b)=>b[1]-a[1]).slice(0,20);
+
+  // Teaching moves popularity
+  const moveMap = {};
+  history.forEach(h => {
+    const v = DB.videos.find(x=>x.id===h.id);
+    if (v) (v.teaching_moves||[]).forEach(m => { if(m.name) moveMap[m.name]=(moveMap[m.name]||0)+1; });
+  });
+  const topMoves = Object.entries(moveMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  el.innerHTML = `
+    <div class="analytics-stats">
+      <div class="stat-box"><div class="s-num">${totalCompletions}</div><div class="s-lbl">Course Completions</div></div>
+      <div class="stat-box"><div class="s-num">${totalWatches}</div><div class="s-lbl">Videos Watched</div></div>
+      <div class="stat-box"><div class="s-num">${totalQuizAttempts}</div><div class="s-lbl">Quiz Attempts</div></div>
+      <div class="stat-box"><div class="s-num">${DB.videos.length}</div><div class="s-lbl">Total Videos</div></div>
+      <div class="stat-box"><div class="s-num">${DB.courses.length}</div><div class="s-lbl">Total Courses</div></div>
+      ${uniqueUsers ? `<div class="stat-box"><div class="s-num">${uniqueUsers}</div><div class="s-lbl">Signed-in Users</div></div>` : ''}
+    </div>
+
+    <div class="a-section">
+      <h4>Course Completions</h4>
+      ${DB.courses.length === 0 ? '<p style="color:var(--text-muted);font-size:13px;">No courses yet.</p>' :
+      `<table class="a-table">
+        <thead><tr><th>Course</th><th>Completions</th><th>Progress</th></tr></thead>
+        <tbody>${DB.courses.map(c => {
+          const count = (courseCompletionMap[c.id]||[]).length;
+          const pct = Math.min(100, count * 10); // relative bar
+          return `<tr>
+            <td>${escapeHtml(c.title)}</td>
+            <td>${count}</td>
+            <td><span class="pbar"><span class="pbar-fill" style="width:${pct}%"></span></span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`}
+    </div>
+
+    ${completions.length > 0 ? `
+    <div class="a-section">
+      <h4>Completion Records</h4>
+      <table class="a-table">
+        <thead><tr><th>User</th><th>Course</th><th>Completed</th></tr></thead>
+        <tbody>${[...completions].reverse().slice(0,20).map(rec => {
+          const c = DB.courses.find(x=>x.id===rec.courseId);
+          const date = rec.completedAt ? new Date(rec.completedAt).toLocaleDateString() : '—';
+          return `<tr>
+            <td>${escapeHtml(rec.userName || rec.userId || 'Anonymous')}</td>
+            <td>${c ? escapeHtml(c.title) : escapeHtml(rec.courseId)}</td>
+            <td>${date}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>` : ''}
+
+    ${topVideos.length > 0 ? `
+    <div class="a-section">
+      <h4>Most Watched Videos</h4>
+      <table class="a-table">
+        <thead><tr><th>Video</th><th>Category</th><th>Views</th></tr></thead>
+        <tbody>${topVideos.map(({v, count}) => {
+          const cat = CATEGORY_META[v.category] || {};
+          return `<tr>
+            <td style="cursor:pointer;color:var(--brand-blue);" onclick="window.closeLogin(); window.showView('video-detail',{id:'${v.id}'})">${escapeHtml(v.title)}</td>
+            <td>${escapeHtml(cat.label||v.category||'')}</td>
+            <td>${count}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>` : ''}
+
+    ${Object.keys(catMap).length > 0 ? `
+    <div class="a-section">
+      <h4>Views by Category</h4>
+      <table class="a-table">
+        <thead><tr><th>Category</th><th>Views</th><th></th></tr></thead>
+        <tbody>${Object.entries(catMap).sort((a,b)=>b[1]-a[1]).map(([cat,count]) => {
+          const meta = CATEGORY_META[cat] || {};
+          const maxCount = Math.max(...Object.values(catMap));
+          return `<tr>
+            <td>${escapeHtml(meta.label||cat)}</td>
+            <td>${count}</td>
+            <td><span class="pbar"><span class="pbar-fill" style="width:${Math.round(count/maxCount*100)}%"></span></span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>` : ''}
+
+    ${topTags.length > 0 ? `
+    <div class="a-section">
+      <h4>Most-Viewed Tags</h4>
+      <div class="tag-cloud">${topTags.map(([tag, count]) =>
+        `<span class="tag-chip">#${escapeHtml(tag)} <strong>${count}</strong></span>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${topMoves.length > 0 ? `
+    <div class="a-section">
+      <h4>Teaching Moves Engagement</h4>
+      <div class="tag-cloud">${topMoves.map(([move, count]) =>
+        `<span class="tag-chip">🎯 ${escapeHtml(move)} <strong>${count}</strong></span>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${totalWatches === 0 && totalCompletions === 0 ? `
+    <p style="color:var(--text-muted);font-size:13px;margin-top:8px;">No activity yet. Data will populate as teachers watch videos and complete courses.</p>` : ''}`;
+}
+
+function clearAnalyticsData() {
+  if (!confirm('Clear all completion and quiz result data? This cannot be undone.')) return;
+  localStorage.removeItem(COMPLETED_KEY);
+  localStorage.removeItem(QUIZ_RES_KEY);
+  renderAnalytics();
 }
 
 window.showView = showView;
@@ -4209,6 +5498,38 @@ window.resetCategoriesToDefaults = resetCategoriesToDefaults;
 window.addAttachmentRow = addAttachmentRow;
 
 window.openEditVideoModal = openEditVideoModal;
+// Badges
+window.promptCourseBadge = promptCourseBadge;
+// Quiz editor
+window.openQuizEditor = openQuizEditor;
+window.closeQuizEditor = closeQuizEditor;
+window.openAddQuizForm = openAddQuizForm;
+window.saveNewQuiz = saveNewQuiz;
+window.deleteQuizById = deleteQuizById;
+window.openQuizQuestions = openQuizQuestions;
+window.closeQuestionEditor = closeQuestionEditor;
+window.openQuestionForm = openQuestionForm;
+window.saveQuestion = saveQuestion;
+window.deleteQuestion = deleteQuestion;
+// Quiz player
+window.openQuizPlayer = openQuizPlayer;
+window.closeQuizPlayer = closeQuizPlayer;
+window.submitQuiz = submitQuiz;
+window.retakeQuiz = retakeQuiz;
+// Certificates
+window.openCertEditor = openCertEditor;
+window.closeCertEditor = closeCertEditor;
+window.onCertBgChange = onCertBgChange;
+window.updateCertPreview = updateCertPreview;
+window.saveCertSettings = saveCertSettings;
+window.previewDownloadCert = previewDownloadCert;
+window.closeCertDownload = closeCertDownload;
+// Analytics
+window.renderAnalytics = renderAnalytics;
+window.clearAnalyticsData = clearAnalyticsData;
+// Auth
+window.msSignIn = msSignIn;
+window.msSignOut = msSignOut;
 window.closeEditVideoModal = closeEditVideoModal;
 window.saveEditVideo = saveEditVideo;
 window.evAddAttachmentRow = evAddAttachmentRow;
@@ -4226,7 +5547,129 @@ initRichTextEditors();
 initStorage();
 updateSubcategoryOptions();
 bootRouter();
+initMsalAuth();
 </script>
+
+<!-- ===== QUIZ EDITOR MODAL (Admin) ===== -->
+<div class="modal-backdrop" id="quizEditorModal" onclick="if(event.target===this) window.closeQuizEditor()">
+  <div class="modal" style="max-width:720px;">
+    <button class="modal-close" onclick="window.closeQuizEditor()">×</button>
+    <h2 id="quizEditorTitle" style="margin-bottom:6px;">Quizzes</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:20px;">Add quizzes between lessons or at the end of the course. Required quizzes must be passed for course completion.</p>
+    <div id="quizEditorList"></div>
+    <div style="margin-top:16px; border-top:1px solid var(--border-subtle); padding-top:16px;">
+      <button class="btn btn-primary" onclick="window.openAddQuizForm()">+ Add Quiz</button>
+    </div>
+    <!-- inline add-quiz form -->
+    <div id="addQuizForm" style="display:none; margin-top:18px; border:1px solid var(--border-subtle); border-radius:10px; padding:18px;">
+      <h4 style="margin:0 0 14px; font-size:14px;">New Quiz Settings</h4>
+      <div class="form-group"><label>Quiz Title *</label><input type="text" id="aq_title" placeholder="e.g., Lesson 1 Check-In" /></div>
+      <div class="form-group">
+        <label>Position in Course</label>
+        <select id="aq_position"></select>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="form-group">
+          <label>Passing Score (%)</label>
+          <input type="number" id="aq_passing" value="70" min="0" max="100" />
+        </div>
+        <div class="form-group" style="display:flex; align-items:center; gap:8px; padding-top:24px;">
+          <input type="checkbox" id="aq_required" checked style="width:16px;height:16px;" />
+          <label for="aq_required" style="margin:0; cursor:pointer;">Required to complete course</label>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px; margin-top:4px;">
+        <button class="btn btn-primary" onclick="window.saveNewQuiz()">Save &amp; Add Questions</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('addQuizForm').style.display='none'">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUESTION EDITOR MODAL (Admin) ===== -->
+<div class="modal-backdrop" id="questionEditorModal" onclick="if(event.target===this) window.closeQuestionEditor()">
+  <div class="modal" style="max-width:660px;">
+    <button class="modal-close" onclick="window.closeQuestionEditor()">×</button>
+    <h2 id="qEditorTitle" style="margin-bottom:4px;">Edit Questions</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:18px;">Add, preview, and remove questions. All changes are saved automatically.</p>
+    <div id="qEditorList"></div>
+    <div class="qtype-btns">
+      <span style="font-size:12px; color:var(--text-muted); align-self:center; margin-right:4px;">Add question:</span>
+      <button class="qtype-btn" onclick="window.openQuestionForm('multiple_choice')">Multiple Choice</button>
+      <button class="qtype-btn" onclick="window.openQuestionForm('true_false')">True / False</button>
+      <button class="qtype-btn" onclick="window.openQuestionForm('free_response')">Free Response</button>
+      <button class="qtype-btn" onclick="window.openQuestionForm('matching')">Matching</button>
+    </div>
+    <!-- inline question form -->
+    <div id="questionForm" style="display:none; margin-top:16px; border:1px solid var(--border-subtle); border-radius:10px; padding:18px;"></div>
+  </div>
+</div>
+
+<!-- ===== QUIZ PLAYER MODAL (User) ===== -->
+<div class="modal-backdrop" id="quizPlayerModal" onclick="if(event.target===this) window.closeQuizPlayer()">
+  <div class="modal" style="max-width:660px;">
+    <button class="modal-close" onclick="window.closeQuizPlayer()">×</button>
+    <div id="quizPlayerContent"></div>
+  </div>
+</div>
+
+<!-- ===== CERTIFICATE EDITOR MODAL (Admin) ===== -->
+<div class="modal-backdrop" id="certEditorModal" onclick="if(event.target===this) window.closeCertEditor()">
+  <div class="modal" style="max-width:800px;">
+    <button class="modal-close" onclick="window.closeCertEditor()">×</button>
+    <h2 style="margin-bottom:4px;" id="certEditorTitle">Certificate of Completion</h2>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:18px;">Design the certificate teachers receive when they finish this course. Enable it, customize the text, and optionally upload a background image.</p>
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border-subtle);">
+      <input type="checkbox" id="cert_enabled" style="width:16px;height:16px;" onchange="window.updateCertPreview()" />
+      <label for="cert_enabled" style="font-size:14px; font-weight:600; cursor:pointer;">Enable certificate for this course</label>
+    </div>
+    <div id="certEditorFields" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+      <div>
+        <div class="form-group"><label>Certificate Title</label><input type="text" id="cert_title" value="Certificate of Completion" oninput="window.updateCertPreview()" /></div>
+        <div class="form-group"><label>Body Text (use {name} and {course} as placeholders)</label><textarea id="cert_body" rows="3" style="width:100%;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:8px;color:var(--text-primary);padding:10px;font-family:inherit;font-size:13px;resize:vertical;box-sizing:border-box;" oninput="window.updateCertPreview()">This certifies that {name} has successfully completed</textarea></div>
+        <div class="form-group"><label>Signature / Footer Text</label><input type="text" id="cert_sig" value="OptimaPD · Optima Education" oninput="window.updateCertPreview()" /></div>
+        <div class="form-group">
+          <label>Background Image <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+          <label class="upload-zone" for="cert_bgFile" style="padding:10px 16px; font-size:12px;">
+            <span id="cert_bgName">Click to upload background · white by default</span>
+            <input type="file" id="cert_bgFile" accept="image/*" onchange="window.onCertBgChange()" />
+          </label>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="window.saveCertSettings()">Save Certificate</button>
+          <button class="btn btn-secondary" onclick="window.previewDownloadCert()">⬇ Preview Download</button>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Live preview</p>
+        <div class="cert-live-preview" id="certPreview">
+          <h2>Certificate of Completion</h2>
+          <div class="cert-subtitle">This certifies that</div>
+          <div class="cert-name">Teacher Name</div>
+          <div class="cert-course">Course Name</div>
+          <div class="cert-date-line">Completed on · January 1, 2026</div>
+          <div class="cert-sig-line">OptimaPD · Optima Education</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CERTIFICATE DOWNLOAD MODAL (User) ===== -->
+<div class="modal-backdrop" id="certDownloadModal" onclick="if(event.target===this) window.closeCertDownload()">
+  <div class="modal" style="max-width:540px; text-align:center;">
+    <button class="modal-close" onclick="window.closeCertDownload()">×</button>
+    <div style="font-size:48px; margin-bottom:12px;">🎓</div>
+    <h2 id="certDlTitle" style="margin-bottom:6px;">Course Complete!</h2>
+    <p id="certDlBody" style="color:var(--text-secondary); font-size:14px; line-height:1.6; margin-bottom:24px;"></p>
+    <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+      <button class="btn btn-primary" id="certDlDownloadBtn">⬇ Download Certificate</button>
+      <button class="btn btn-secondary" id="certDlEmailBtn">✉ Email Certificate</button>
+      <button class="btn btn-secondary" onclick="window.closeCertDownload()">Close</button>
+    </div>
+    <p id="certEmailStatus" style="font-size:12px; color:var(--brand-teal); margin-top:12px; display:none;"></p>
+  </div>
+</div>
 
 </body>
 </html>
