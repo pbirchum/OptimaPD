@@ -3667,7 +3667,23 @@ function importData(e) {
 // NAVIGATION
 // ============================================================
 
+function stopActiveVideo() {
+  // Stop any iframe (YouTube, Stream, etc.) by blanking its src
+  const wrap = document.getElementById('playerWrap');
+  if (!wrap) return;
+  const iframe = wrap.querySelector('iframe');
+  if (iframe) { iframe.src = ''; }
+  // Stop any native <video> element
+  const vid = wrap.querySelector('video');
+  if (vid) { try { vid.pause(); vid.currentTime = 0; } catch(e) {} }
+}
+
 function showView(name, params, __fromPopState) {
+  // Always stop video playback when navigating away from the player
+  if (currentView === 'video-detail' && name !== 'video-detail') {
+    stopActiveVideo();
+  }
+
   const viewMap = {
     'home': 'home',
     'browse': 'browse',
