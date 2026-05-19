@@ -1146,6 +1146,459 @@
   .vl-row-actions button:hover { border-color: var(--brand-blue); color: var(--text-primary); }
   .vl-row-actions button.danger { color: var(--danger); }
 
+  /* =========================================================
+     OPTIMAPD v2 — LOGIN, PROFILE, BADGES, REPORTS, BANNER
+     ========================================================= */
+
+  /* ---------- LOGIN LANDING (split-screen) ---------- */
+  .login-page {
+    position: fixed; inset: 0; z-index: 200;
+    display: flex; background: var(--bg-darkest);
+  }
+  .login-page.hidden { display: none; }
+  .login-brand {
+    flex: 1.1; position: relative; overflow: hidden;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(63,185,221,0.30) 0%, transparent 55%),
+      radial-gradient(circle at 80% 75%, rgba(245,184,46,0.20) 0%, transparent 55%),
+      linear-gradient(155deg, #0F2438 0%, #0A1420 100%);
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 64px 72px; color: var(--text-primary);
+  }
+  .login-brand::after {
+    content: ''; position: absolute; inset: -50% -30% -30% -30%;
+    background: radial-gradient(circle at 60% 40%, rgba(63,185,221,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .login-brand-inner { position: relative; z-index: 2; max-width: 480px; }
+  .login-brand .login-logo {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 40px;
+  }
+  .login-brand .login-logo .logo-mark {
+    width: 56px; height: 56px;
+    background-image: var(--owl-logo);
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+  }
+  .login-brand .login-logo .logo-text { font-size: 26px; font-weight: 700; }
+  .login-brand .login-logo .pd { color: var(--brand-gold); font-weight: 800; }
+  .login-brand h1 {
+    font-size: 42px; line-height: 1.1; letter-spacing: -1px;
+    margin-bottom: 18px; font-weight: 700;
+  }
+  .login-brand h1 .accent { color: var(--brand-gold); }
+  .login-brand p.tagline {
+    color: var(--text-secondary); font-size: 16px; line-height: 1.65;
+    margin-bottom: 32px; max-width: 440px;
+  }
+  .login-brand .quote-block {
+    border-left: 3px solid var(--brand-blue);
+    padding: 8px 0 8px 18px;
+    color: var(--text-secondary);
+    font-size: 14px; line-height: 1.65; font-style: italic;
+    max-width: 420px;
+  }
+  .login-form-wrap {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 40px 32px;
+  }
+  .login-form {
+    width: 100%; max-width: 380px;
+  }
+  .login-form h2 {
+    font-size: 26px; margin-bottom: 8px; font-weight: 700;
+  }
+  .login-form p.subhead {
+    color: var(--text-secondary); font-size: 13px; line-height: 1.6;
+    margin-bottom: 28px;
+  }
+  .login-form label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--text-secondary); margin: 14px 0 6px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .login-form input[type="email"],
+  .login-form input[type="text"],
+  .login-form input[type="password"] {
+    width: 100%; padding: 12px 14px;
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    color: var(--text-primary); border-radius: 8px;
+    font-family: inherit; font-size: 14px;
+    transition: border-color 0.15s;
+  }
+  .login-form input:focus { outline: none; border-color: var(--brand-blue); }
+  .login-form .submit-row {
+    margin-top: 22px;
+  }
+  .login-form .submit-row .btn {
+    width: 100%; justify-content: center; padding: 13px;
+  }
+  .login-form .or-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 20px 0; color: var(--text-muted); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .login-form .or-divider::before,
+  .login-form .or-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border-subtle);
+  }
+  .login-form .ms-btn {
+    width: 100%; justify-content: center;
+    background: #fff; color: #1b1b1b;
+    border: 1px solid #d1d5db; padding: 11px;
+    display: inline-flex; align-items: center; gap: 10px;
+    border-radius: 8px; font-weight: 600; font-size: 14px;
+    cursor: pointer; opacity: 0.55;
+  }
+  .login-form .ms-btn .ms-logo {
+    width: 18px; height: 18px;
+    background: linear-gradient(to right,
+      #F25022 0 50%, #7FBA00 50% 100%),
+      linear-gradient(to right, #00A4EF 0 50%, #FFB900 50% 100%);
+  }
+  .login-form .ms-btn:hover { opacity: 0.7; }
+  .login-form .ms-note {
+    font-size: 11px; color: var(--text-muted);
+    margin-top: 10px; text-align: center; line-height: 1.5;
+  }
+  .login-form .login-error {
+    background: rgba(224, 75, 110, 0.12);
+    border: 1px solid rgba(224, 75, 110, 0.35);
+    color: var(--danger);
+    padding: 10px 12px; border-radius: 8px;
+    font-size: 13px; margin-top: 14px; display: none;
+  }
+  .login-form .login-error.show { display: block; }
+  .login-form .help-row {
+    margin-top: 18px; font-size: 12px; color: var(--text-muted);
+    text-align: center; line-height: 1.6;
+  }
+  @media (max-width: 880px) {
+    .login-brand { display: none; }
+  }
+
+  /* ---------- TOP NAV: user menu + recent badges ---------- */
+  .nav-recent-badges {
+    display: flex; gap: 8px; align-items: center;
+    margin-right: 6px;
+  }
+  .nav-recent-badge {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .nav-recent-badge:hover { transform: scale(1.12); }
+  .nav-recent-badge svg { width: 22px; height: 22px; }
+  .nav-recent-badge .tier-dot {
+    position: absolute; bottom: -2px; right: -2px;
+    width: 11px; height: 11px; border-radius: 50%;
+    border: 2px solid var(--bg-darkest);
+  }
+  .nav-recent-badge .badge-tooltip {
+    position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+    background: #0b1522; color: #fff; font-size: 11px; padding: 6px 10px;
+    border-radius: 6px; pointer-events: none; opacity: 0;
+    transition: opacity 0.15s; z-index: 200;
+    white-space: nowrap;
+  }
+  .nav-recent-badge:hover .badge-tooltip { opacity: 1; }
+  .user-menu-wrap { position: relative; }
+  .user-menu-btn {
+    background: none; border: none; cursor: pointer; padding: 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .user-avatar-init {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-gold), #E07F2E);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; color: var(--brand-navy);
+  }
+  .user-menu-dropdown {
+    position: absolute; top: calc(100% + 8px); right: 0;
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    border-radius: 10px; min-width: 220px;
+    box-shadow: var(--shadow-card);
+    padding: 8px 0; z-index: 150; display: none;
+  }
+  .user-menu-dropdown.open { display: block; }
+  .user-menu-header {
+    padding: 10px 14px 12px; border-bottom: 1px solid var(--border-subtle);
+  }
+  .user-menu-header .name { font-weight: 600; font-size: 13px; }
+  .user-menu-header .role {
+    font-size: 11px; color: var(--brand-blue);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;
+  }
+  .user-menu-dropdown a {
+    display: block; padding: 9px 14px; font-size: 13px;
+    color: var(--text-secondary); cursor: pointer;
+    text-decoration: none;
+  }
+  .user-menu-dropdown a:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+  .user-menu-dropdown a.signout {
+    border-top: 1px solid var(--border-subtle);
+    color: var(--danger); margin-top: 4px; padding-top: 11px;
+  }
+  .admin-link-hidden { display: none !important; }
+
+  /* ---------- PROFILE PAGE ---------- */
+  .profile-container {
+    max-width: 880px; margin: 0 auto; padding: 40px 32px;
+  }
+  .profile-header {
+    display: flex; align-items: center; gap: 20px; margin-bottom: 32px;
+  }
+  .profile-avatar-lg {
+    width: 92px; height: 92px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-gold), #E07F2E);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 36px; color: var(--brand-navy);
+    flex-shrink: 0;
+  }
+  .profile-header h1 { font-size: 30px; margin-bottom: 4px; }
+  .profile-header .sub {
+    color: var(--text-secondary); font-size: 14px;
+  }
+  .profile-card {
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    border-radius: 12px; padding: 24px 28px; margin-bottom: 18px;
+  }
+  .profile-card h3 {
+    font-size: 16px; margin-bottom: 16px; color: var(--brand-blue);
+  }
+  .profile-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+  }
+  @media (max-width: 700px) {
+    .profile-grid { grid-template-columns: 1fr; }
+  }
+  .profile-grid label {
+    display: block; font-size: 11px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.4px; margin-bottom: 6px;
+  }
+  .profile-grid input,
+  .profile-grid select {
+    width: 100%; padding: 10px 12px;
+    background: var(--bg-darkest); border: 1px solid var(--border-subtle);
+    color: var(--text-primary); border-radius: 8px;
+    font-family: inherit; font-size: 13px;
+  }
+  .profile-grid input:focus, .profile-grid select:focus {
+    outline: none; border-color: var(--brand-blue);
+  }
+  .profile-grid input:disabled, .profile-grid select:disabled {
+    opacity: 0.7; cursor: not-allowed;
+  }
+  .chip-row {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+  }
+  .chip {
+    background: var(--bg-darkest); border: 1px solid var(--border-subtle);
+    color: var(--text-secondary); padding: 6px 12px;
+    border-radius: 16px; font-size: 12px; cursor: pointer;
+    transition: all 0.15s; user-select: none;
+  }
+  .chip:hover { color: var(--text-primary); border-color: var(--brand-blue); }
+  .chip.selected {
+    background: var(--brand-blue); border-color: var(--brand-blue);
+    color: var(--bg-darkest); font-weight: 600;
+  }
+
+  /* ---------- BADGE GALLERY (Clash Royale style) ---------- */
+  .badges-container {
+    max-width: 1180px; margin: 0 auto; padding: 36px 32px;
+  }
+  .badges-container h1 { font-size: 32px; margin-bottom: 8px; }
+  .badges-container > .lead {
+    color: var(--text-secondary); margin-bottom: 28px;
+    font-size: 14px; line-height: 1.6; max-width: 760px;
+  }
+  .badge-cat-section {
+    margin-bottom: 36px;
+  }
+  .badge-cat-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .badge-cat-header h2 {
+    font-size: 20px; font-weight: 600;
+  }
+  .badge-cat-header h2 .count {
+    font-size: 13px; color: var(--text-muted); margin-left: 8px; font-weight: 400;
+  }
+  .badge-strip {
+    display: flex; gap: 14px; overflow-x: auto;
+    padding: 8px 4px 16px;
+    scrollbar-width: thin;
+  }
+  .badge-strip::-webkit-scrollbar { height: 8px; }
+  .badge-strip::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+  .badge-tile {
+    flex: 0 0 110px;
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    border-radius: 12px; padding: 12px 8px;
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer; position: relative;
+    transition: transform 0.18s, border-color 0.18s;
+  }
+  .badge-tile:hover {
+    transform: translateY(-3px);
+    border-color: var(--brand-blue);
+  }
+  .badge-tile.locked {
+    opacity: 0.7;
+  }
+  .badge-tile.locked .badge-art {
+    filter: grayscale(1) brightness(0.45);
+  }
+  .badge-art {
+    width: 76px; height: 76px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
+  }
+  .badge-art svg { width: 100%; height: 100%; }
+  .badge-name {
+    font-size: 12px; font-weight: 600;
+    text-align: center; line-height: 1.3;
+    color: var(--text-primary);
+  }
+  .badge-tier-label {
+    font-size: 10px; margin-top: 4px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    font-weight: 700;
+  }
+  .badge-tier-label.bronze { color: #CD7F32; }
+  .badge-tier-label.silver { color: #C0C0C0; }
+  .badge-tier-label.gold { color: var(--brand-gold); }
+  .badge-tier-label.platinum { color: #B9E5FF; }
+  .badge-tier-label.diamond {
+    background: linear-gradient(90deg, #69E1FF, #C29BFF, #FFD27D);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .badge-tooltip-rich {
+    position: absolute; bottom: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%);
+    background: #0b1522; color: #fff;
+    padding: 10px 12px; border-radius: 8px;
+    width: 200px; opacity: 0; pointer-events: none;
+    transition: opacity 0.15s; z-index: 30;
+    font-size: 11px; line-height: 1.45;
+    text-align: left; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .badge-tooltip-rich strong { display: block; margin-bottom: 4px; font-size: 12px; }
+  .badge-tooltip-rich .progress-bar {
+    width: 100%; height: 6px; background: rgba(255,255,255,0.1);
+    border-radius: 3px; overflow: hidden; margin-top: 6px;
+  }
+  .badge-tooltip-rich .progress-bar > div {
+    height: 100%; background: var(--brand-blue);
+    transition: width 0.3s;
+  }
+  .badge-tile:hover .badge-tooltip-rich { opacity: 1; }
+
+  /* Certificates inside badges page */
+  .cert-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px; margin-top: 14px;
+  }
+  .cert-card {
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    border-radius: 10px; padding: 16px;
+  }
+  .cert-card .cert-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .cert-card .cert-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .cert-card button { width: 100%; }
+  .cert-empty {
+    color: var(--text-muted); font-size: 13px; padding: 18px;
+    border: 1px dashed var(--border-subtle); border-radius: 10px;
+    text-align: center;
+  }
+
+  /* ---------- PEOPLE & ORGS PANEL ---------- */
+  .po-section { margin-bottom: 28px; }
+  .po-section h3 {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 16px; margin-bottom: 14px;
+  }
+  .po-section h3 .count-pill {
+    background: var(--bg-darkest); color: var(--text-muted);
+    font-size: 11px; padding: 2px 9px; border-radius: 12px;
+    font-weight: 500;
+  }
+  .po-users-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+  .po-users-table th {
+    text-align: left; padding: 9px 12px; font-size: 11px;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.4px; border-bottom: 1px solid var(--border-subtle);
+  }
+  .po-users-table td {
+    padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .po-users-table tr:hover td { background: var(--bg-elevated); }
+  .role-pill {
+    display: inline-block; padding: 2px 9px; border-radius: 10px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .role-pill.admin   { background: rgba(245, 184, 46, 0.18); color: var(--brand-gold); }
+  .role-pill.orgadmin{ background: rgba(141, 75, 232, 0.18); color: var(--brand-purple); }
+  .role-pill.user    { background: rgba(63, 185, 221, 0.15); color: var(--brand-blue); }
+  .po-entities-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .po-entity-chip {
+    background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+    padding: 8px 14px; border-radius: 20px;
+    font-size: 13px; display: flex; align-items: center; gap: 8px;
+  }
+  .po-entity-chip button {
+    background: none; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 14px; padding: 0;
+  }
+  .po-entity-chip button:hover { color: var(--danger); }
+
+  /* ---------- REPORTS ---------- */
+  .reports-filters {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px; margin-bottom: 18px;
+  }
+  .reports-filters label {
+    font-size: 11px; color: var(--text-muted); display: block;
+    text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px;
+  }
+  .reports-filters select, .reports-filters input {
+    width: 100%; padding: 9px 11px;
+    background: var(--bg-darkest); border: 1px solid var(--border-subtle);
+    color: var(--text-primary); border-radius: 8px; font-family: inherit; font-size: 13px;
+  }
+  .reports-actions { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .reports-summary {
+    display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .reports-summary .stat {
+    background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+    border-radius: 10px; padding: 12px 18px; flex: 1; min-width: 140px;
+  }
+  .reports-summary .stat .num { font-size: 22px; font-weight: 700; color: var(--brand-blue); }
+  .reports-summary .stat .lbl { font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.4px; }
+
+  /* ---------- BADGE DESIGNER ---------- */
+  .bd-form {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  @media (max-width: 720px) { .bd-form { grid-template-columns: 1fr; } }
+  .bd-form label { font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.4px; }
+  .bd-form input, .bd-form select, .bd-form textarea {
+    width: 100%; padding: 9px 11px; margin-top: 4px;
+    background: var(--bg-darkest); border: 1px solid var(--border-subtle);
+    color: var(--text-primary); border-radius: 8px; font-family: inherit; font-size: 13px;
+  }
+  .bd-thresholds { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .bd-thresholds input { padding: 7px 9px; font-size: 12px; }
+
   /* ── BADGES ── */
   .badge-shelf { display: flex; flex-wrap: wrap; gap: 16px; padding: 4px 0; min-height: 40px; }
   .badge-item {
@@ -1285,7 +1738,7 @@
 <div id="modeBanner" class="mode-banner local" style="display:none;"></div>
 
 <!-- ============== TOP NAV ============== -->
-<nav class="topnav">
+<nav class="topnav" id="mainTopnav">
   <div class="logo" onclick="window.showView('home')">
     <div class="logo-mark"></div>
     <div class="logo-text">Optima<span class="pd">PD</span></div>
@@ -1304,16 +1757,77 @@
       </div>
     </span>
     <a data-nav="mylearning" onclick="window.showView('mylearning')">My Learning</a>
-    <a data-nav="admin" onclick="window.requireAdmin(function(){ window.showView('admin'); })">Admin</a>
+    <a data-nav="badges" onclick="window.showView('badges')">Badges</a>
+    <a data-nav="admin" id="navAdminLink" class="admin-link-hidden" onclick="window.showView('admin')">Admin</a>
   </div>
   <div class="nav-right">
+    <div class="nav-recent-badges" id="navRecentBadges" title="Most recent badges earned"></div>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
       <input class="search-input" id="searchInput" placeholder="Search..." onkeydown="if(event.key===&apos;Enter&apos;) window.runSearch(this.value)" />
     </div>
-    <div class="user-avatar" title="Porter Birchum">PB</div>
+    <div class="user-menu-wrap">
+      <button class="user-menu-btn" id="userMenuBtn" onclick="window.toggleUserMenu()">
+        <div class="user-avatar-init" id="userAvatarInit">??</div>
+      </button>
+      <div class="user-menu-dropdown" id="userMenuDropdown">
+        <div class="user-menu-header">
+          <div class="name" id="userMenuName">—</div>
+          <div class="role" id="userMenuRole">—</div>
+        </div>
+        <a onclick="window.toggleUserMenu(false); window.showView('profile')">👤 My Profile</a>
+        <a onclick="window.toggleUserMenu(false); window.showView('badges')">🏆 Badges &amp; Certificates</a>
+        <a id="userMenuAdminLink" style="display:none;" onclick="window.toggleUserMenu(false); window.showView('admin')">⚙️ Admin</a>
+        <a class="signout" onclick="window.optimaSignOut()">↩ Sign out</a>
+      </div>
+    </div>
   </div>
 </nav>
+
+<!-- ============== LOGIN LANDING PAGE ============== -->
+<div class="login-page" id="loginPage">
+  <div class="login-brand">
+    <div class="login-brand-inner">
+      <div class="login-logo">
+        <div class="logo-mark"></div>
+        <div class="logo-text">Optima<span class="pd">PD</span></div>
+      </div>
+      <h1>Upskill your teaching. <span class="accent">On your schedule.</span></h1>
+      <p class="tagline">The in-house professional development library for Optima educators — tech how-tos, deep-dive courses, teacher-built lesson examples, and Opti, your on-demand resource guide.</p>
+      <div class="quote-block">
+        "Great teaching is never accidental. It's built — one practiced skill at a time."
+      </div>
+    </div>
+  </div>
+  <div class="login-form-wrap">
+    <div class="login-form">
+      <h2>Sign in to OptimaPD</h2>
+      <p class="subhead">Use the credentials your OptimaPD administrator provided.</p>
+      <form onsubmit="window.optimaDoLogin(event)" id="optimaLoginForm">
+        <label for="optEmail">Email</label>
+        <input type="email" id="optEmail" autocomplete="username" required autofocus />
+        <label for="optPassword">Password</label>
+        <input type="password" id="optPassword" autocomplete="current-password" required />
+        <div class="submit-row">
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </div>
+        <div class="login-error" id="optLoginError"></div>
+        <div class="or-divider">or</div>
+        <button type="button" class="ms-btn" onclick="window.optimaMsSignInStub()" title="Microsoft sign-in will be enabled once Azure is configured.">
+          <span class="ms-logo"></span>
+          Sign in with Microsoft
+        </button>
+        <div class="ms-note">
+          Microsoft sign-in becomes available once your Azure AD app is registered &amp; linked.
+          Today this site uses local accounts managed by your administrator.
+        </div>
+        <div class="help-row">
+          Forgot your password? Contact your OptimaPD administrator to reset it.
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- ============== HOME VIEW ============== -->
 <div id="view-home" class="view active">
@@ -1496,20 +2010,109 @@
   </div>
 </div>
 
+<!-- ============== PROFILE VIEW ============== -->
+<div id="view-profile" class="view">
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar-lg" id="profileAvatar">??</div>
+      <div>
+        <h1 id="profileNameHeading">My Profile</h1>
+        <div class="sub" id="profileSubline">Update your teaching context so we can recommend better PD.</div>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <h3>Account</h3>
+      <div class="profile-grid">
+        <div>
+          <label>Display name</label>
+          <input type="text" id="prof_name" />
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="email" id="prof_email" disabled />
+        </div>
+        <div>
+          <label>Organization / entity</label>
+          <input type="text" id="prof_entity" disabled />
+        </div>
+        <div>
+          <label>Role</label>
+          <input type="text" id="prof_role" disabled />
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <h3>Teaching context</h3>
+      <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px;">Grades taught</label>
+      <div class="chip-row" id="prof_grades"></div>
+      <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; margin-top:18px; display:block;">Subjects</label>
+      <div class="chip-row" id="prof_subjects"></div>
+      <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px; margin-top:18px; display:block;">Other subject (optional)</label>
+      <input type="text" id="prof_subject_other" placeholder="e.g., Drama, Robotics Club" style="margin-top:4px; width:100%; max-width:360px; padding:10px 12px; background:var(--bg-darkest); border:1px solid var(--border-subtle); color:var(--text-primary); border-radius:8px; font-family:inherit; font-size:13px;" />
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-primary" onclick="window.saveProfile()">Save profile</button>
+      <button class="btn btn-secondary" onclick="window.showView('home')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============== BADGES VIEW ============== -->
+<div id="view-badges" class="view">
+  <div class="badges-container">
+    <h1>🏆 Badges &amp; Certificates</h1>
+    <p class="lead">Earn badges for milestones on the site, individual videos you watch, and courses you complete. Each badge upgrades through five tiers — Bronze, Silver, Gold, Platinum, Diamond — gaining color and detail as you progress. Hover any badge for details.</p>
+
+    <div class="badge-cat-section">
+      <div class="badge-cat-header">
+        <h2>Milestones <span class="count" id="badgeMilestonesCount"></span></h2>
+      </div>
+      <div class="badge-strip" id="badgeStripMilestones"></div>
+    </div>
+
+    <div class="badge-cat-section">
+      <div class="badge-cat-header">
+        <h2>Video Badges <span class="count" id="badgeVideosCount"></span></h2>
+      </div>
+      <div class="badge-strip" id="badgeStripVideos"></div>
+    </div>
+
+    <div class="badge-cat-section">
+      <div class="badge-cat-header">
+        <h2>Course Badges <span class="count" id="badgeCoursesCount"></span></h2>
+      </div>
+      <div class="badge-strip" id="badgeStripCourses"></div>
+    </div>
+
+    <div class="badge-cat-section">
+      <div class="badge-cat-header">
+        <h2>📜 My Certificates</h2>
+      </div>
+      <div id="certListWrap"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ============== ADMIN VIEW ============== -->
 <div id="view-admin" class="view">
   <div class="admin-container">
-    <h1>Admin · Content Library</h1>
-    <p class="lead">Add videos and courses to OptimaPD. Everything you add shows up immediately in the browse pages, category rows, and search. Your data is saved in this browser — when you deploy to Netlify or another real host, the same admin panel will work there too.</p>
+    <h1 id="adminPageTitle">Admin · Content Library</h1>
+    <p class="lead" id="adminPageLead">Manage videos, courses, users, organizations, and reports for OptimaPD.</p>
 
-    <div class="admin-tabs">
-      <div class="admin-tab active" onclick="window.switchAdminTab(event,'add')">+ Add Video</div>
-      <div class="admin-tab" onclick="window.switchAdminTab(event,'library')">Video Library</div>
-      <div class="admin-tab" onclick="window.switchAdminTab(event,'courses')">Manage Courses</div>
-      <div class="admin-tab" onclick="window.switchAdminTab(event,'categories')">Categories</div>
-      <div class="admin-tab" onclick="window.switchAdminTab(event,'analytics')">📊 Analytics</div>
-      <div class="admin-tab" onclick="window.switchAdminTab(event,'help')">Help</div>
-      <div class="admin-tab" style="margin-left:auto; color: var(--danger);" onclick="window.adminLogout()">Log out</div>
+    <div class="admin-tabs" id="adminTabsBar">
+      <div class="admin-tab active" data-tab="add" onclick="window.switchAdminTab(event,'add')">+ Add Video</div>
+      <div class="admin-tab" data-tab="library" onclick="window.switchAdminTab(event,'library')">Video Library</div>
+      <div class="admin-tab" data-tab="courses" onclick="window.switchAdminTab(event,'courses')">Manage Courses</div>
+      <div class="admin-tab" data-tab="categories" onclick="window.switchAdminTab(event,'categories')">Categories</div>
+      <div class="admin-tab" data-tab="people" onclick="window.switchAdminTab(event,'people')">👥 People &amp; Orgs</div>
+      <div class="admin-tab" data-tab="reports" onclick="window.switchAdminTab(event,'reports')">📈 Reports</div>
+      <div class="admin-tab" data-tab="badge-designer" onclick="window.switchAdminTab(event,'badge-designer')">🏅 Badge Designer</div>
+      <div class="admin-tab" data-tab="analytics" onclick="window.switchAdminTab(event,'analytics')">📊 Analytics</div>
+      <div class="admin-tab" data-tab="help" onclick="window.switchAdminTab(event,'help')">Help</div>
+      <div class="admin-tab" style="margin-left:auto; color: var(--danger);" onclick="window.optimaSignOut()">Log out</div>
     </div>
 
     <!-- ADD VIDEO PANEL -->
@@ -1796,9 +2399,218 @@
           <strong>Microsoft Stream:</strong> use the "share" link from Stream.<br>
           <strong>Direct MP4 files</strong> (hosted anywhere): paste the direct URL ending in .mp4 or .webm.
         </p>
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">📋 Video upload prompt (copy &amp; paste into a new chat)</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 10px;">
+          When you want to upload a new video, open a fresh chat in this project and paste the prompt below.
+          It will produce a description, smart tags, a badge concept, and everything you need to fill out the Add Video form.
+        </p>
+        <button class="btn btn-secondary" id="copyPromptBtn" onclick="window.copyVideoPrompt()">📋 Copy prompt to clipboard</button>
+        <pre id="videoPromptText" style="margin-top:14px; padding:14px; background:var(--bg-darkest); border:1px solid var(--border-subtle); border-radius:8px; font-size:11.5px; line-height:1.5; color:var(--text-secondary); white-space:pre-wrap; max-height:340px; overflow:auto; font-family:'Courier New',monospace;"></pre>
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">🔐 Microsoft / Azure migration notes</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">
+          <strong>Today:</strong> accounts are local — created from <em>People &amp; Orgs</em> and stored in this browser (or Firebase when configured).<br>
+          <strong>To enable Microsoft sign-in:</strong> register an app in Azure AD, copy the client ID and tenant ID into the MSAL_CONFIG block of this file, and enable Microsoft as an Identity Provider in Firebase Authentication (Console → Authentication → Sign-in method → Microsoft). Firebase will mint a session for any Microsoft account that signs in.<br>
+          <strong>To simulate Azure hosting locally:</strong> use the <a href="https://github.com/Azure/static-web-apps-cli" style="color:var(--brand-blue);">Azure Static Web Apps CLI</a> (<code>swa start ./</code>) or just open this file in your browser — auth state and badges all live in localStorage so everything works offline.
+        </p>
       </div>
     </div>
 
+    <!-- PEOPLE & ORGS PANEL -->
+    <div class="admin-panel" id="panel-people">
+      <div class="admin-card">
+        <div class="po-section">
+          <h3>👤 Users <span class="count-pill" id="userCountPill">0</span>
+            <button class="btn btn-primary" style="margin-left:auto;" onclick="window.openCreateUserModal()">+ Add user</button>
+          </h3>
+          <div style="overflow-x:auto;">
+            <table class="po-users-table" id="usersTable">
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Entity</th><th>Grades</th><th>Subjects</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="po-section">
+          <h3>🏢 Entities <span class="count-pill" id="entityCountPill">0</span></h3>
+          <p style="color:var(--text-secondary); font-size:13px;">Manage the organizations users can belong to. Org Admins are scoped to their entity's reports only.</p>
+          <div class="po-entities-list" id="entitiesList"></div>
+          <div style="display:flex; gap:8px; margin-top:14px;">
+            <input type="text" id="newEntityName" placeholder="New entity name (e.g., Apex Academy)" style="flex:1; max-width:320px; padding:10px 12px; background:var(--bg-darkest); border:1px solid var(--border-subtle); color:var(--text-primary); border-radius:8px; font-family:inherit; font-size:13px;" />
+            <button class="btn btn-secondary" onclick="window.addEntity()">+ Add entity</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS PANEL -->
+    <div class="admin-panel" id="panel-reports">
+      <div class="admin-card">
+        <h3>📈 Activity Reports</h3>
+        <p style="color:var(--text-secondary); font-size:13px;">Filter by a single user, a custom group, or a sub-category. Export the result as CSV.</p>
+
+        <div class="reports-filters">
+          <div>
+            <label>Scope</label>
+            <select id="rpt_scope" onchange="window.runReport()">
+              <option value="all">All users</option>
+              <option value="user">Single user</option>
+              <option value="group">Custom group</option>
+              <option value="entity">By entity</option>
+              <option value="grade">By grade</option>
+              <option value="subject">By subject</option>
+              <option value="role">By role</option>
+            </select>
+          </div>
+          <div id="rpt_userPicker" style="display:none;">
+            <label>User</label>
+            <select id="rpt_user"></select>
+          </div>
+          <div id="rpt_entityPicker" style="display:none;">
+            <label>Entity</label>
+            <select id="rpt_entity"></select>
+          </div>
+          <div id="rpt_gradePicker" style="display:none;">
+            <label>Grade</label>
+            <select id="rpt_grade"></select>
+          </div>
+          <div id="rpt_subjectPicker" style="display:none;">
+            <label>Subject</label>
+            <select id="rpt_subject"></select>
+          </div>
+          <div id="rpt_rolePicker" style="display:none;">
+            <label>Role</label>
+            <select id="rpt_role">
+              <option value="user">Standard User</option>
+              <option value="orgadmin">Org Admin</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="rpt_groupPicker" style="display:none; margin-bottom:14px;">
+          <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px;">Pick users (click to toggle)</label>
+          <div class="chip-row" id="rpt_groupChips" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="reports-actions">
+          <button class="btn btn-primary" onclick="window.runReport()">Run report</button>
+          <button class="btn btn-secondary" onclick="window.exportReportCSV()">⬇ Export CSV</button>
+        </div>
+
+        <div class="reports-summary" id="rpt_summary"></div>
+        <div style="overflow-x:auto;">
+          <table class="po-users-table" id="rpt_table">
+            <thead><tr><th>User</th><th>Email</th><th>Entity</th><th>Videos watched</th><th>Courses completed</th><th>Badges earned</th><th>Last active</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGE DESIGNER PANEL -->
+    <div class="admin-panel" id="panel-badge-designer">
+      <div class="admin-card">
+        <h3>🏅 Badge Designer</h3>
+        <p style="color:var(--text-secondary); font-size:13px;">Create custom Milestone badges. Each badge progresses through 5 tiers. Video and Course badges are auto-created for each piece of content.</p>
+
+        <div class="bd-form">
+          <div>
+            <label>Badge name</label>
+            <input type="text" id="bd_name" placeholder="e.g., Summer Institute Attendee" />
+          </div>
+          <div>
+            <label>Hover description</label>
+            <input type="text" id="bd_desc" placeholder="What earns this badge?" />
+          </div>
+          <div>
+            <label>Trigger metric</label>
+            <select id="bd_metric">
+              <option value="videosWatched">Videos watched</option>
+              <option value="coursesCompleted">Courses completed</option>
+              <option value="minutesOnSite">Minutes spent on site</option>
+              <option value="loginStreak">Consecutive-day login streak</option>
+              <option value="commentsPosted">Comments posted</option>
+              <option value="uploadsOwned">Videos owned (uploaded on behalf of user)</option>
+              <option value="manual">Manual award only</option>
+            </select>
+          </div>
+          <div>
+            <label>Art preset</label>
+            <select id="bd_art">
+              <option value="shield">Shield</option>
+              <option value="star">Star</option>
+              <option value="trophy">Trophy</option>
+              <option value="laurel">Laurel</option>
+              <option value="bookmark">Bookmark</option>
+              <option value="medal">Medal</option>
+            </select>
+          </div>
+          <div style="grid-column:1 / -1;">
+            <label>Tier thresholds (Bronze · Silver · Gold · Platinum · Diamond)</label>
+            <div class="bd-thresholds">
+              <input type="number" id="bd_t1" placeholder="Bronze" value="1" min="1" />
+              <input type="number" id="bd_t2" placeholder="Silver" value="5" min="1" />
+              <input type="number" id="bd_t3" placeholder="Gold" value="15" min="1" />
+              <input type="number" id="bd_t4" placeholder="Platinum" value="40" min="1" />
+              <input type="number" id="bd_t5" placeholder="Diamond" value="100" min="1" />
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <button class="btn btn-primary" onclick="window.createCustomMilestone()">+ Create badge</button>
+        </div>
+
+        <h4 style="font-size: 13px; color: var(--brand-blue); margin: 24px 0 8px; text-transform:uppercase; letter-spacing:.4px;">Existing milestone badges</h4>
+        <div id="customMilestoneList"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============== CREATE USER MODAL ============== -->
+<div class="modal-backdrop" id="createUserModal" onclick="if(event.target===this) window.closeCreateUserModal()">
+  <div class="modal" style="max-width: 560px;">
+    <button class="modal-close" onclick="window.closeCreateUserModal()">×</button>
+    <h2 id="createUserTitle" style="margin-bottom: 14px;">Create user</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div>
+        <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px;">Display name</label>
+        <input type="text" id="cu_name" />
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px;">Email</label>
+        <input type="email" id="cu_email" />
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px;">Temporary password</label>
+        <input type="text" id="cu_password" placeholder="They can change it after signing in" />
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px;">Role</label>
+        <select id="cu_role">
+          <option value="user">Standard User</option>
+          <option value="orgadmin">Org Admin</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px;">Entity</label>
+        <select id="cu_entity"></select>
+      </div>
+      <div>
+        <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.4px;">Initial subjects</label>
+        <input type="text" id="cu_subjects" placeholder="e.g., Math, Science (comma-separated)" />
+      </div>
+    </div>
+    <div style="margin-top:18px; display:flex; gap:10px;">
+      <button class="btn btn-primary" onclick="window.saveCreatedUser()">Save user</button>
+      <button class="btn btn-secondary" onclick="window.closeCreateUserModal()">Cancel</button>
+    </div>
+    <div id="cu_error" class="login-error" style="margin-top:12px;"></div>
   </div>
 </div>
 
@@ -5474,6 +6286,1091 @@ function clearAnalyticsData() {
   renderAnalytics();
 }
 
+// =====================================================================
+// OPTIMAPD v2 — AUTH, USERS, BADGES, REPORTS, CERTIFICATES
+// =====================================================================
+// All v2 functionality (login landing, role-based UI, badges, reports,
+// People & Orgs management, badge designer, banner widget) is in this
+// block. It runs alongside (and gracefully overrides) the legacy admin
+// session/login functions further up in this script.
+
+const OPTIMA_USERS_KEY        = 'optimapd_users_v2';
+const OPTIMA_CURRENT_USER_KEY = 'optimapd_current_user_v2';
+const OPTIMA_ENTITIES_KEY     = 'optimapd_entities_v2';
+const OPTIMA_PROGRESS_KEY     = 'optimapd_user_progress_v2';
+const OPTIMA_CUSTOM_BADGE_KEY = 'optimapd_custom_milestones_v2';
+const OPTIMA_RECENT_KEY       = 'optimapd_recent_badges_v2';
+const OPTIMA_LOGIN_LOG_KEY    = 'optimapd_login_log_v2';
+
+const OPTIMA_SUBJECT_OPTIONS = [
+  'Math','ELA / Reading','Science','Social Studies','World Languages',
+  'Arts','Music','PE / Health','SPED','Tech / CS','Library / Media','Counseling'
+];
+const OPTIMA_GRADE_OPTIONS = ['K','1','2','3','4','5','6','7','8','9','10','11','12'];
+
+const TIER_NAMES = ['Locked','Bronze','Silver','Gold','Platinum','Diamond'];
+const TIER_CLASS = ['','bronze','silver','gold','platinum','diamond'];
+const TIER_COLOR = ['#2a3a4e','#CD7F32','#C0C0C0','#F5B82E','#B9E5FF','#9FE7FF'];
+const TIER_HEX   = {1:'#CD7F32',2:'#C0C0C0',3:'#F5B82E',4:'#E6F4FF',5:'url(#diamondGrad)'};
+
+// Built-in milestone badges. Tiers map to thresholds for the chosen metric.
+const STARTER_MILESTONES = [
+  { id:'m_welcome',     name:'Welcome Aboard',     desc:'Signed in to OptimaPD for the first time.',  metric:'signinCount',     thresholds:[1,5,25,100,365],  art:'star'     },
+  { id:'m_curious',     name:'Curious Mind',       desc:'Videos you have watched on OptimaPD.',        metric:'videosWatched',   thresholds:[1,5,15,40,100],   art:'bookmark' },
+  { id:'m_conqueror',   name:'Course Conqueror',   desc:'Courses you have completed end-to-end.',      metric:'coursesCompleted',thresholds:[1,3,8,15,30],     art:'trophy'   },
+  { id:'m_streak',      name:'Daily Devotee',      desc:'Consecutive-day login streak.',                metric:'loginStreak',     thresholds:[3,7,14,30,100],   art:'laurel'   },
+  { id:'m_invested',    name:'Time Invested',      desc:'Minutes spent learning on OptimaPD.',          metric:'minutesOnSite',   thresholds:[30,120,300,600,1500], art:'shield' },
+  { id:'m_voice',       name:'Community Voice',    desc:'Comments and discussion contributions.',       metric:'commentsPosted',  thresholds:[1,5,15,30,100],   art:'medal'    },
+  { id:'m_creator',     name:'Featured Creator',   desc:'Videos uploaded on your behalf as the owner.', metric:'uploadsOwned',    thresholds:[1,3,8,15,30],     art:'star'     },
+  { id:'m_profile',     name:'Profile Perfectionist', desc:'Filled out grades, subjects, and entity.',  metric:'profileScore',    thresholds:[1,2,3,4,5],       art:'shield'   }
+];
+
+// SVG art presets. Each renders differently at each tier — Bronze starts simple, Diamond is fully detailed with gradient + sparkles.
+function badgeSvg(art, tier) {
+  const t = Math.max(0, Math.min(5, tier||0));
+  const main = t===0 ? '#3a4658' : (t===5 ? 'url(#diamondGrad)' : ['#CD7F32','#C0C0C0','#F5B82E','#D8F0FF'][t-1]);
+  const stroke = t===0 ? '#2a3340' : '#0b1522';
+  const detail = t>=3;
+  const sparkle = t>=4;
+  const halo = t>=5;
+  const defs = `<defs>
+    <linearGradient id="diamondGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#69E1FF"/>
+      <stop offset="50%" stop-color="#C29BFF"/>
+      <stop offset="100%" stop-color="#FFD27D"/>
+    </linearGradient>
+    <radialGradient id="halo${t}"><stop offset="0%" stop-color="${TIER_COLOR[t]||'#fff'}" stop-opacity=".55"/><stop offset="100%" stop-color="${TIER_COLOR[t]||'#fff'}" stop-opacity="0"/></radialGradient>
+  </defs>`;
+  const haloEl = halo ? `<circle cx="40" cy="40" r="38" fill="url(#halo${t})"/>` : '';
+  const sparkles = sparkle ? `
+    <circle cx="14" cy="20" r="1.6" fill="#fff" opacity=".85"/>
+    <circle cx="65" cy="14" r="1.2" fill="#fff" opacity=".7"/>
+    <circle cx="68" cy="58" r="1.6" fill="#fff" opacity=".85"/>` : '';
+
+  let shape = '';
+  if (art === 'star') {
+    shape = `<polygon points="40,10 49,30 71,32 54,47 59,69 40,58 21,69 26,47 9,32 31,30" fill="${main}" stroke="${stroke}" stroke-width="2" stroke-linejoin="round"/>` +
+            (detail ? `<polygon points="40,22 44,33 55,34 47,42 49,53 40,47 31,53 33,42 25,34 36,33" fill="rgba(255,255,255,.35)"/>` : '');
+  } else if (art === 'bookmark') {
+    shape = `<path d="M22 10 H58 V70 L40 58 L22 70 Z" fill="${main}" stroke="${stroke}" stroke-width="2" stroke-linejoin="round"/>` +
+            (detail ? `<rect x="28" y="22" width="24" height="3" fill="rgba(255,255,255,.4)"/><rect x="28" y="30" width="20" height="3" fill="rgba(255,255,255,.4)"/><rect x="28" y="38" width="22" height="3" fill="rgba(255,255,255,.4)"/>` : '');
+  } else if (art === 'trophy') {
+    shape = `<path d="M22 14 H58 V32 C58 44 50 50 40 50 C30 50 22 44 22 32 Z" fill="${main}" stroke="${stroke}" stroke-width="2"/>
+             <rect x="34" y="50" width="12" height="8" fill="${main}" stroke="${stroke}" stroke-width="2"/>
+             <rect x="26" y="58" width="28" height="6" rx="2" fill="${main}" stroke="${stroke}" stroke-width="2"/>` +
+            (detail ? `<path d="M18 18 C12 22 12 32 22 34" fill="none" stroke="${stroke}" stroke-width="2"/><path d="M62 18 C68 22 68 32 58 34" fill="none" stroke="${stroke}" stroke-width="2"/>` : '');
+  } else if (art === 'laurel') {
+    shape = `<circle cx="40" cy="40" r="20" fill="${main}" stroke="${stroke}" stroke-width="2"/>` +
+            (detail ? `<path d="M14 40 Q22 22 38 22 M66 40 Q58 22 42 22 M14 40 Q22 58 38 58 M66 40 Q58 58 42 58" fill="none" stroke="${stroke}" stroke-width="2.5"/>` : '') +
+            `<text x="40" y="46" text-anchor="middle" font-size="14" font-weight="800" fill="${stroke}">${t||'?'}</text>`;
+  } else if (art === 'medal') {
+    shape = `<path d="M30 8 L40 28 L50 8 L46 30 L34 30 Z" fill="${stroke}" opacity=".7"/>
+             <circle cx="40" cy="48" r="20" fill="${main}" stroke="${stroke}" stroke-width="2"/>` +
+            (detail ? `<circle cx="40" cy="48" r="13" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"/>` : '');
+  } else { // shield
+    shape = `<path d="M40 8 L66 16 V38 C66 54 54 66 40 72 C26 66 14 54 14 38 V16 Z" fill="${main}" stroke="${stroke}" stroke-width="2" stroke-linejoin="round"/>` +
+            (detail ? `<path d="M40 22 L52 26 V40 C52 50 46 56 40 60 C34 56 28 50 28 40 V26 Z" fill="rgba(255,255,255,.25)"/>` : '');
+  }
+  return `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">${defs}${haloEl}${shape}${sparkles}</svg>`;
+}
+
+// -------- localStorage helpers ----------------------------------------
+function getOptimaUsers()   { try { return JSON.parse(localStorage.getItem(OPTIMA_USERS_KEY) || '[]'); } catch(e){ return []; } }
+function saveOptimaUsers(a) { localStorage.setItem(OPTIMA_USERS_KEY, JSON.stringify(a)); }
+function getEntities()      { try { return JSON.parse(localStorage.getItem(OPTIMA_ENTITIES_KEY) || '[]'); } catch(e){ return []; } }
+function saveEntities(a)    { localStorage.setItem(OPTIMA_ENTITIES_KEY, JSON.stringify(a)); }
+function getCurrentOptimaUser() {
+  try { return JSON.parse(sessionStorage.getItem(OPTIMA_CURRENT_USER_KEY) || 'null'); }
+  catch(e) { return null; }
+}
+function setCurrentOptimaUser(u) {
+  if (u) sessionStorage.setItem(OPTIMA_CURRENT_USER_KEY, JSON.stringify(u));
+  else sessionStorage.removeItem(OPTIMA_CURRENT_USER_KEY);
+}
+function getEntityName(id) {
+  const e = getEntities().find(x => x.id === id);
+  return e ? e.name : '';
+}
+
+// -------- Password hashing (PBKDF2 via WebCrypto) ---------------------
+async function hashPassword(password, saltHex) {
+  const enc = new TextEncoder();
+  const salt = Uint8Array.from(saltHex.match(/.{1,2}/g).map(b => parseInt(b,16)));
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name:'PBKDF2', salt, iterations: 100000, hash:'SHA-256' }, keyMaterial, 256);
+  return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function randomSaltHex() {
+  const a = new Uint8Array(16);
+  crypto.getRandomValues(a);
+  return Array.from(a).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+async function makePasswordRecord(password) {
+  const salt = randomSaltHex();
+  const hash = await hashPassword(password, salt);
+  return { salt, hash };
+}
+
+// -------- Seed on first run -------------------------------------------
+async function ensureOptimaSeed() {
+  // 1) Default entity (OAO) if none
+  let entities = getEntities();
+  if (!entities.length) {
+    entities = [{ id:'ent_oao', name:'Optima Academy Online (OAO)', createdAt: Date.now() }];
+    saveEntities(entities);
+  }
+  // 2) Default super-admin (Porter) if no users exist
+  let users = getOptimaUsers();
+  if (!users.length) {
+    const seedEmail = (ADMIN_CREDS.email || 'pbirchum@optimaed.com').toLowerCase();
+    const seedPass  = ADMIN_CREDS.password || 'domi2022';
+    const { salt, hash } = await makePasswordRecord(seedPass);
+    users = [{
+      id: 'u_seed_' + Date.now(),
+      name: 'Porter Birchum',
+      email: seedEmail,
+      role: 'admin',
+      entityId: entities[0].id,
+      grades: [],
+      subjects: [],
+      subjectOther: '',
+      passwordSalt: salt,
+      passwordHash: hash,
+      createdAt: Date.now()
+    }];
+    saveOptimaUsers(users);
+  }
+}
+
+// -------- Login flow ---------------------------------------------------
+function showLoginPage() {
+  const pg = document.getElementById('loginPage');
+  if (pg) pg.classList.remove('hidden');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('mainTopnav').style.display = 'none';
+  const modeBanner = document.getElementById('modeBanner');
+  if (modeBanner) modeBanner.style.display = 'none';
+}
+function hideLoginPage() {
+  const pg = document.getElementById('loginPage');
+  if (pg) pg.classList.add('hidden');
+  document.getElementById('mainTopnav').style.display = '';
+}
+function setLoginError(msg) {
+  const el = document.getElementById('optLoginError');
+  if (!el) return;
+  if (msg) { el.textContent = msg; el.classList.add('show'); }
+  else { el.textContent=''; el.classList.remove('show'); }
+}
+
+async function optimaDoLogin(ev) {
+  ev && ev.preventDefault();
+  setLoginError('');
+  const email = (document.getElementById('optEmail').value||'').trim().toLowerCase();
+  const pass  = document.getElementById('optPassword').value;
+  if (!email || !pass) { setLoginError('Enter your email and password.'); return; }
+  const u = getOptimaUsers().find(x => x.email.toLowerCase() === email);
+  if (!u) { setLoginError('No OptimaPD account matches that email. Ask your administrator to add you.'); return; }
+  const hash = await hashPassword(pass, u.passwordSalt);
+  if (hash !== u.passwordHash) { setLoginError('Incorrect password. Contact your administrator for a reset.'); return; }
+  setCurrentOptimaUser(u);
+  // Bridge to legacy session so existing modules (certificates, comments) keep working
+  setUserSession({
+    name: u.name, email: u.email, userId: u.id,
+    initials: makeInitials(u.name || u.email)
+  });
+  // Track login + streak
+  trackLoginAndStreak();
+  bumpMetric('signinCount', 1);
+  hideLoginPage();
+  applyUserUi();
+  refreshAdminTabVisibility();
+  showView('home');
+  // Welcome / award initial badge
+  checkBadgeUpgrades();
+  document.getElementById('optPassword').value = '';
+}
+
+function optimaSignOut() {
+  setCurrentOptimaUser(null);
+  try { sessionStorage.removeItem('optimapd_user'); } catch(e) {}
+  try { sessionStorage.removeItem(ADMIN_SESSION_KEY); } catch(e) {}
+  _userSession = null;
+  showLoginPage();
+}
+
+function optimaMsSignInStub() {
+  alert(
+    "Microsoft sign-in isn't enabled yet.\n\n" +
+    "To turn it on:\n" +
+    "1. Register an app in Azure AD (Entra) and copy the client ID + tenant ID.\n" +
+    "2. In Firebase console → Authentication → Sign-in method, enable 'Microsoft' and paste those IDs.\n" +
+    "3. In this file, set MSAL_AUTH_ENABLED = true and paste your client/tenant IDs into MSAL_CLIENT_ID and MSAL_TENANT_ID.\n\n" +
+    "For now, sign in with the credentials your OptimaPD administrator gave you."
+  );
+}
+
+function makeInitials(s) {
+  const parts = (s||'').replace(/@.*/,'').split(/[\s._-]+/).filter(Boolean);
+  return ((parts[0]||'?')[0] + (parts[1]||'')[0]||'').toUpperCase().slice(0,2);
+}
+
+// -------- Login activity + streak -------------------------------------
+function trackLoginAndStreak() {
+  const u = getCurrentOptimaUser();
+  if (!u) return;
+  const log = JSON.parse(localStorage.getItem(OPTIMA_LOGIN_LOG_KEY) || '{}');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayKey = today.toISOString().slice(0,10);
+  const userLog = log[u.id] || { last:null, streak:0, totalDays:0, minutes:0 };
+  if (userLog.last !== todayKey) {
+    const last = userLog.last ? new Date(userLog.last) : null;
+    if (last) {
+      const diff = Math.round((today - last) / 86400000);
+      userLog.streak = (diff === 1) ? userLog.streak + 1 : 1;
+    } else {
+      userLog.streak = 1;
+    }
+    userLog.totalDays = (userLog.totalDays||0) + 1;
+    userLog.last = todayKey;
+  }
+  log[u.id] = userLog;
+  localStorage.setItem(OPTIMA_LOGIN_LOG_KEY, JSON.stringify(log));
+  // Reflect into progress metrics
+  setMetric('loginStreak', userLog.streak);
+}
+
+// -------- Progress + metrics ------------------------------------------
+function getUserProgress() {
+  const u = getCurrentOptimaUser();
+  if (!u) return {};
+  const all = JSON.parse(localStorage.getItem(OPTIMA_PROGRESS_KEY) || '{}');
+  return all[u.id] || {};
+}
+function saveUserProgress(p) {
+  const u = getCurrentOptimaUser();
+  if (!u) return;
+  const all = JSON.parse(localStorage.getItem(OPTIMA_PROGRESS_KEY) || '{}');
+  all[u.id] = p;
+  localStorage.setItem(OPTIMA_PROGRESS_KEY, JSON.stringify(all));
+}
+function bumpMetric(name, delta=1) {
+  const p = getUserProgress();
+  p[name] = (p[name]||0) + delta;
+  saveUserProgress(p);
+  checkBadgeUpgrades();
+}
+function setMetric(name, value) {
+  const p = getUserProgress();
+  if ((p[name]||0) === value) return;
+  p[name] = value;
+  saveUserProgress(p);
+  checkBadgeUpgrades();
+}
+
+// Compute live-derived metrics (count history, completions, etc.) so badges
+// stay accurate even if the user did things before signing in.
+function syncDerivedMetrics() {
+  const u = getCurrentOptimaUser();
+  if (!u) return;
+  const p = getUserProgress();
+  // Aggregate counters
+  let history = [];
+  try { history = getHistory() || []; } catch(e) {}
+  p.videosWatched = history.length;
+  // Per-video badges: count appearances in history
+  const counts = {};
+  history.forEach(h => {
+    const id = h.id || h.videoId || h;
+    if (!id) return;
+    counts[id] = (counts[id]||0) + 1;
+  });
+  Object.keys(counts).forEach(id => { p['video_' + id] = counts[id]; });
+  // Courses completed (filter by current user id)
+  let completions = [];
+  try { completions = (getCompletedCourses() || []).filter(c => c.userId === u.id); } catch(e) {}
+  p.coursesCompleted = completions.length;
+  completions.forEach(c => { p['course_' + c.courseId] = (p['course_' + c.courseId]||0) + 1; });
+  // profile completeness 0-5
+  let pc = 0;
+  if (u.name) pc++;
+  if (u.entityId) pc++;
+  if ((u.grades||[]).length) pc++;
+  if ((u.subjects||[]).length) pc++;
+  if (u.subjectOther || (u.subjects||[]).length > 1) pc++;
+  p.profileScore = pc;
+  // owned uploads
+  try {
+    p.uploadsOwned = ((DB && DB.videos) || []).filter(v => v.ownerEmail && v.ownerEmail.toLowerCase() === (u.email||'').toLowerCase()).length;
+  } catch(e) {}
+  saveUserProgress(p);
+}
+
+// -------- Badge engine ------------------------------------------------
+function getCustomMilestones() {
+  try { return JSON.parse(localStorage.getItem(OPTIMA_CUSTOM_BADGE_KEY) || '[]'); } catch(e){ return []; }
+}
+function saveCustomMilestones(a) { localStorage.setItem(OPTIMA_CUSTOM_BADGE_KEY, JSON.stringify(a)); }
+
+function getAllBadgeDefs() {
+  const milestones = [...STARTER_MILESTONES, ...getCustomMilestones()];
+  const videoBadges = ((window.DB && DB.videos) || []).map(v => ({
+    id: 'v_' + v.id, name: v.title, desc: 'Earned by watching "' + v.title + '".',
+    metric: 'video_' + v.id, thresholds:[1,3,5,10,20], art:'bookmark', category:'video'
+  }));
+  const courseBadges = ((window.DB && DB.courses) || []).map(c => ({
+    id: 'c_' + c.id, name: c.title, desc: 'Earned by completing "' + c.title + '".',
+    metric: 'course_' + c.id, thresholds:[1,2,3,4,5], art:'trophy', category:'course'
+  }));
+  return { milestones, videoBadges, courseBadges };
+}
+
+function computeTier(progress, thresholds) {
+  let t = 0;
+  for (let i=0; i<thresholds.length; i++) if (progress >= thresholds[i]) t = i+1;
+  return t;
+}
+
+function checkBadgeUpgrades() {
+  const u = getCurrentOptimaUser();
+  if (!u) return;
+  syncDerivedMetrics();
+  const p = getUserProgress();
+  const defs = getAllBadgeDefs();
+  const recentAll = JSON.parse(localStorage.getItem(OPTIMA_RECENT_KEY) || '{}');
+  const recent = recentAll[u.id] || [];
+  [...defs.milestones, ...defs.videoBadges, ...defs.courseBadges].forEach(b => {
+    const cur = p[b.metric] || 0;
+    const newTier = computeTier(cur, b.thresholds);
+    const prev = p['_tier_' + b.id] || 0;
+    if (newTier > prev) {
+      p['_tier_' + b.id] = newTier;
+      // Push to head of recent, dedupe
+      const filtered = recent.filter(r => r.id !== b.id);
+      filtered.unshift({ id: b.id, tier: newTier, ts: Date.now() });
+      while (filtered.length > 12) filtered.pop();
+      recent.length = 0; recent.push(...filtered);
+    }
+  });
+  saveUserProgress(p);
+  recentAll[u.id] = recent;
+  localStorage.setItem(OPTIMA_RECENT_KEY, JSON.stringify(recentAll));
+  renderRecentBadgesBanner();
+}
+
+function getRecentBadges(limit=3) {
+  const u = getCurrentOptimaUser();
+  if (!u) return [];
+  const all = JSON.parse(localStorage.getItem(OPTIMA_RECENT_KEY) || '{}');
+  return (all[u.id] || []).slice(0, limit);
+}
+
+function findBadgeDef(id) {
+  const defs = getAllBadgeDefs();
+  return [...defs.milestones, ...defs.videoBadges, ...defs.courseBadges].find(b => b.id === id);
+}
+
+function renderRecentBadgesBanner() {
+  const el = document.getElementById('navRecentBadges');
+  if (!el) return;
+  if (!getCurrentOptimaUser()) { el.innerHTML=''; return; }
+  const recent = getRecentBadges(3);
+  if (!recent.length) {
+    el.innerHTML = `<div style="font-size:11px; color:var(--text-muted); padding:0 4px;">No badges yet</div>`;
+    return;
+  }
+  el.innerHTML = recent.map(r => {
+    const b = findBadgeDef(r.id);
+    if (!b) return '';
+    return `<div class="nav-recent-badge" onclick="window.showView('badges')" title="${escapeHtml(b.name)} · ${TIER_NAMES[r.tier]||''}">
+      ${badgeSvg(b.art, r.tier)}
+      <div class="tier-dot" style="background:${TIER_COLOR[r.tier]||'#666'}"></div>
+      <div class="badge-tooltip">${escapeHtml(b.name)} · ${TIER_NAMES[r.tier]||''}</div>
+    </div>`;
+  }).join('');
+}
+
+// -------- Badge gallery view ------------------------------------------
+function renderBadgesView() {
+  if (!getCurrentOptimaUser()) return;
+  checkBadgeUpgrades();
+  const defs = getAllBadgeDefs();
+  const p = getUserProgress();
+  const tile = b => {
+    const tier = p['_tier_'+b.id]||0;
+    const cur  = p[b.metric]||0;
+    const nextTh = b.thresholds.find(t => cur < t);
+    const lock = tier === 0 ? 'locked' : '';
+    return `<div class="badge-tile ${lock}">
+      <div class="badge-art">${badgeSvg(b.art, tier)}</div>
+      <div class="badge-name">${escapeHtml(b.name)}</div>
+      <div class="badge-tier-label ${TIER_CLASS[tier]||''}">${tier ? TIER_NAMES[tier] : 'Locked'}</div>
+      <div class="badge-tooltip-rich">
+        <strong>${escapeHtml(b.name)}</strong>
+        ${escapeHtml(b.desc||'')}
+        <div style="margin-top:6px; opacity:0.85;">Progress: ${cur}${nextTh ? ' / ' + nextTh : ' (maxed)'}</div>
+        ${nextTh ? `<div class="progress-bar"><div style="width:${Math.min(100,(cur/nextTh)*100)}%"></div></div>` : ''}
+      </div>
+    </div>`;
+  };
+  document.getElementById('badgeStripMilestones').innerHTML = defs.milestones.map(tile).join('') || emptyBadges();
+  document.getElementById('badgeStripVideos').innerHTML     = defs.videoBadges.length ? defs.videoBadges.map(tile).join('') : emptyBadges('Video badges appear once videos are added to the library.');
+  document.getElementById('badgeStripCourses').innerHTML    = defs.courseBadges.length ? defs.courseBadges.map(tile).join('') : emptyBadges('Course badges appear once courses exist.');
+  const earnedCount = (arr) => arr.filter(b => (p['_tier_'+b.id]||0) > 0).length;
+  document.getElementById('badgeMilestonesCount').textContent = `(${earnedCount(defs.milestones)} of ${defs.milestones.length} earned)`;
+  document.getElementById('badgeVideosCount').textContent     = defs.videoBadges.length  ? `(${earnedCount(defs.videoBadges)} of ${defs.videoBadges.length})` : '';
+  document.getElementById('badgeCoursesCount').textContent    = defs.courseBadges.length ? `(${earnedCount(defs.courseBadges)} of ${defs.courseBadges.length})` : '';
+  renderCertificateList();
+}
+function emptyBadges(msg) {
+  return `<div style="color:var(--text-muted); padding:18px; font-size:13px;">${msg||'No badges in this category yet.'}</div>`;
+}
+
+// -------- Certificates list (driven by getCompletedCourses) -----------
+function renderCertificateList() {
+  const u = getCurrentOptimaUser();
+  const wrap = document.getElementById('certListWrap');
+  if (!u || !wrap) return;
+  const completions = (typeof getCompletedCourses === 'function' ? getCompletedCourses() : [])
+                       .filter(c => c.userId === u.id);
+  if (!completions.length) {
+    wrap.innerHTML = `<div class="cert-empty">Certificates appear here once you complete a course.</div>`;
+    return;
+  }
+  wrap.innerHTML = `<div class="cert-list">` + completions.map(c => {
+    const course = (DB.courses||[]).find(x => x.id === c.courseId);
+    const title = course ? course.title : c.courseId;
+    const date = c.completedAt ? new Date(c.completedAt).toLocaleDateString() : '';
+    return `<div class="cert-card">
+      <div class="cert-title">${escapeHtml(title)}</div>
+      <div class="cert-meta">Completed ${escapeHtml(date)}</div>
+      <button class="btn btn-secondary" onclick="window.downloadCertificateFor('${c.courseId}')">⬇ Download PDF</button>
+    </div>`;
+  }).join('') + `</div>`;
+}
+
+function downloadCertificateFor(courseId) {
+  const u = getCurrentOptimaUser();
+  if (!u) return;
+  const course = (DB.courses||[]).find(c => c.id === courseId);
+  if (!course) { alert('Course not found.'); return; }
+  // Prefer existing custom-template generator if available
+  if (typeof generateCertificatePDF === 'function') {
+    try { generateCertificatePDF(course, u.name, true); return; } catch(e) {}
+  }
+  generateDefaultCertificatePdf(course.title, u.name);
+}
+
+function generateDefaultCertificatePdf(courseTitle, userName) {
+  if (!window.jspdf) { alert('PDF library not loaded.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'landscape', unit:'pt', format:'letter' });
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+  // background
+  doc.setFillColor(15, 36, 56); doc.rect(0,0,W,H,'F');
+  // border
+  doc.setDrawColor(245, 184, 46); doc.setLineWidth(3);
+  doc.rect(24,24,W-48,H-48);
+  doc.setLineWidth(1);
+  doc.rect(34,34,W-68,H-68);
+  // title
+  doc.setFont('helvetica','bold'); doc.setTextColor(245,184,46); doc.setFontSize(36);
+  doc.text('Certificate of Completion', W/2, 140, { align:'center' });
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','normal'); doc.setFontSize(14);
+  doc.text('This certifies that', W/2, 200, { align:'center' });
+  doc.setFont('helvetica','bold'); doc.setFontSize(30); doc.setTextColor(63,185,221);
+  doc.text(userName || 'Educator', W/2, 250, { align:'center' });
+  doc.setFont('helvetica','normal'); doc.setFontSize(14); doc.setTextColor(255,255,255);
+  doc.text('has successfully completed the OptimaPD course', W/2, 290, { align:'center' });
+  doc.setFont('helvetica','bold'); doc.setFontSize(22);
+  doc.text(courseTitle || 'Course', W/2, 332, { align:'center' });
+  doc.setFont('helvetica','normal'); doc.setFontSize(12); doc.setTextColor(168,184,204);
+  doc.text(new Date().toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' }), W/2, 380, { align:'center' });
+  doc.setFontSize(11); doc.text('OptimaPD — Professional Development for Optima Educators', W/2, H-60, { align:'center' });
+  const fname = `OptimaPD-Certificate-${(userName||'User').replace(/\s+/g,'_')}-${(courseTitle||'Course').replace(/\s+/g,'_')}.pdf`;
+  doc.save(fname);
+}
+
+// -------- Profile view -------------------------------------------------
+function renderProfileView() {
+  const u = getCurrentOptimaUser();
+  if (!u) return;
+  document.getElementById('profileAvatar').textContent = makeInitials(u.name || u.email);
+  document.getElementById('profileNameHeading').textContent = u.name || 'My Profile';
+  document.getElementById('profileSubline').textContent = u.email + ' · ' + (getEntityName(u.entityId) || 'No entity');
+  document.getElementById('prof_name').value = u.name || '';
+  document.getElementById('prof_email').value = u.email || '';
+  document.getElementById('prof_entity').value = getEntityName(u.entityId) || '';
+  document.getElementById('prof_role').value = u.role === 'admin' ? 'Admin' : u.role === 'orgadmin' ? 'Org Admin' : 'Educator';
+  // grades
+  const gWrap = document.getElementById('prof_grades');
+  gWrap.innerHTML = OPTIMA_GRADE_OPTIONS.map(g => {
+    const sel = (u.grades||[]).includes(g) ? 'selected' : '';
+    return `<div class="chip ${sel}" data-grade="${g}" onclick="window.toggleProfileChip(this,'grade')">${g}</div>`;
+  }).join('');
+  // subjects
+  const sWrap = document.getElementById('prof_subjects');
+  sWrap.innerHTML = OPTIMA_SUBJECT_OPTIONS.map(s => {
+    const sel = (u.subjects||[]).includes(s) ? 'selected' : '';
+    return `<div class="chip ${sel}" data-subject="${escapeHtml(s)}" onclick="window.toggleProfileChip(this,'subject')">${escapeHtml(s)}</div>`;
+  }).join('');
+  document.getElementById('prof_subject_other').value = u.subjectOther || '';
+}
+
+function toggleProfileChip(el, kind) {
+  el.classList.toggle('selected');
+}
+
+function saveProfile() {
+  const u = getCurrentOptimaUser();
+  if (!u) return;
+  const users = getOptimaUsers();
+  const i = users.findIndex(x => x.id === u.id);
+  if (i < 0) return;
+  users[i].name = document.getElementById('prof_name').value.trim() || u.name;
+  users[i].grades   = Array.from(document.querySelectorAll('#prof_grades .chip.selected')).map(x => x.dataset.grade);
+  users[i].subjects = Array.from(document.querySelectorAll('#prof_subjects .chip.selected')).map(x => x.dataset.subject);
+  users[i].subjectOther = document.getElementById('prof_subject_other').value.trim();
+  saveOptimaUsers(users);
+  setCurrentOptimaUser(users[i]);
+  setUserSession({
+    name: users[i].name, email: users[i].email, userId: users[i].id,
+    initials: makeInitials(users[i].name)
+  });
+  applyUserUi();
+  checkBadgeUpgrades();
+  alert('Profile saved.');
+}
+
+// -------- Apply UI for current user -----------------------------------
+function applyUserUi() {
+  const u = getCurrentOptimaUser();
+  if (!u) return;
+  document.getElementById('userAvatarInit').textContent = makeInitials(u.name || u.email);
+  document.getElementById('userMenuName').textContent = u.name || u.email;
+  document.getElementById('userMenuRole').textContent = u.role === 'admin' ? 'Administrator' : u.role === 'orgadmin' ? 'Org Admin · ' + (getEntityName(u.entityId)||'') : 'Educator';
+  refreshAdminTabVisibility();
+  renderRecentBadgesBanner();
+}
+
+function refreshAdminTabVisibility() {
+  const u = getCurrentOptimaUser();
+  const adminLink = document.getElementById('navAdminLink');
+  const menuAdminLink = document.getElementById('userMenuAdminLink');
+  if (!u) {
+    if (adminLink) adminLink.classList.add('admin-link-hidden');
+    if (menuAdminLink) menuAdminLink.style.display = 'none';
+    return;
+  }
+  const showAdmin = (u.role === 'admin' || u.role === 'orgadmin');
+  if (showAdmin) {
+    adminLink.classList.remove('admin-link-hidden');
+    menuAdminLink.style.display = 'block';
+  } else {
+    adminLink.classList.add('admin-link-hidden');
+    menuAdminLink.style.display = 'none';
+  }
+  // Scope tabs for Org Admin
+  document.querySelectorAll('#adminTabsBar .admin-tab').forEach(tab => {
+    const t = tab.getAttribute('data-tab');
+    if (!t) return;
+    const orgAdminAllowed = ['people','reports','help'];
+    if (u.role === 'orgadmin' && !orgAdminAllowed.includes(t)) {
+      tab.style.display = 'none';
+    } else {
+      tab.style.display = '';
+    }
+  });
+  // Update admin titles for Org Admin
+  const title = document.getElementById('adminPageTitle');
+  const lead  = document.getElementById('adminPageLead');
+  if (u.role === 'orgadmin') {
+    title.textContent = 'Admin · ' + (getEntityName(u.entityId) || 'Your Organization');
+    lead.textContent  = 'You can manage users and pull reports for ' + (getEntityName(u.entityId) || 'your organization') + '. Content management is reserved for full administrators.';
+  } else if (u.role === 'admin') {
+    title.textContent = 'Admin · Content Library';
+    lead.textContent  = 'Manage videos, courses, users, organizations, and reports for OptimaPD.';
+  }
+}
+
+function toggleUserMenu(force) {
+  const dd = document.getElementById('userMenuDropdown');
+  if (!dd) return;
+  const open = (typeof force === 'boolean') ? force : !dd.classList.contains('open');
+  if (open) dd.classList.add('open'); else dd.classList.remove('open');
+}
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.user-menu-wrap');
+  if (wrap && !wrap.contains(e.target)) toggleUserMenu(false);
+});
+
+// -------- People & Orgs panel -----------------------------------------
+function renderPeopleOrgsPanel() {
+  const me = getCurrentOptimaUser();
+  let users = getOptimaUsers();
+  if (me && me.role === 'orgadmin') {
+    users = users.filter(u => u.entityId === me.entityId);
+  }
+  document.getElementById('userCountPill').textContent = users.length;
+  const tbody = document.querySelector('#usersTable tbody');
+  tbody.innerHTML = users.map(u => {
+    const rolePill = u.role === 'admin' ? '<span class="role-pill admin">Admin</span>' :
+                     u.role === 'orgadmin' ? '<span class="role-pill orgadmin">Org Admin</span>' :
+                     '<span class="role-pill user">User</span>';
+    const canDelete = me && me.role === 'admin' && u.id !== me.id;
+    return `<tr>
+      <td>${escapeHtml(u.name||'')}</td>
+      <td>${escapeHtml(u.email||'')}</td>
+      <td>${rolePill}</td>
+      <td>${escapeHtml(getEntityName(u.entityId)||'')}</td>
+      <td>${escapeHtml((u.grades||[]).join(', '))}</td>
+      <td>${escapeHtml((u.subjects||[]).join(', '))}</td>
+      <td>
+        <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="window.editOptimaUser('${u.id}')">Edit</button>
+        <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="window.resetOptimaPassword('${u.id}')">Reset PW</button>
+        ${canDelete ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:11px;" onclick="window.deleteOptimaUser('${u.id}')">Delete</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px;">No users yet — click "+ Add user" above.</td></tr>';
+
+  // Entities (only show to full admin)
+  const entRow = document.getElementById('entitiesList');
+  const entities = getEntities();
+  document.getElementById('entityCountPill').textContent = entities.length;
+  if (me && me.role === 'admin') {
+    entRow.innerHTML = entities.map(e => `<div class="po-entity-chip">${escapeHtml(e.name)} <button title="Remove" onclick="window.removeEntity('${e.id}')">×</button></div>`).join('');
+  } else {
+    entRow.innerHTML = `<div style="color:var(--text-muted); font-size:13px;">Only full administrators can manage the entity list.</div>`;
+  }
+}
+
+function openCreateUserModal(existingId) {
+  const m = document.getElementById('createUserModal');
+  const me = getCurrentOptimaUser();
+  document.getElementById('cu_error').classList.remove('show');
+  document.getElementById('cu_name').value='';
+  document.getElementById('cu_email').value='';
+  document.getElementById('cu_password').value=randomTempPassword();
+  document.getElementById('cu_role').value='user';
+  document.getElementById('cu_subjects').value='';
+  // entity options
+  const entSel = document.getElementById('cu_entity');
+  entSel.innerHTML = getEntities().map(e => `<option value="${e.id}">${escapeHtml(e.name)}</option>`).join('');
+  document.getElementById('createUserTitle').textContent = existingId ? 'Edit user' : 'Create user';
+  if (existingId) {
+    const u = getOptimaUsers().find(x => x.id === existingId);
+    if (u) {
+      document.getElementById('cu_name').value = u.name||'';
+      document.getElementById('cu_email').value = u.email||'';
+      document.getElementById('cu_password').value = '';
+      document.getElementById('cu_password').placeholder = '(leave blank to keep current)';
+      document.getElementById('cu_role').value = u.role || 'user';
+      document.getElementById('cu_entity').value = u.entityId || (getEntities()[0]||{}).id;
+      document.getElementById('cu_subjects').value = (u.subjects||[]).join(', ');
+      m.dataset.editingId = existingId;
+    }
+  } else {
+    delete m.dataset.editingId;
+    if (me && me.role === 'orgadmin') {
+      entSel.value = me.entityId;
+      entSel.disabled = true;
+      document.getElementById('cu_role').innerHTML = '<option value="user">Standard User</option>';
+    } else {
+      entSel.disabled = false;
+      document.getElementById('cu_role').innerHTML = '<option value="user">Standard User</option><option value="orgadmin">Org Admin</option><option value="admin">Admin</option>';
+    }
+  }
+  m.classList.add('open');
+}
+function closeCreateUserModal() { document.getElementById('createUserModal').classList.remove('open'); }
+async function saveCreatedUser() {
+  const m = document.getElementById('createUserModal');
+  const editingId = m.dataset.editingId;
+  const err = document.getElementById('cu_error');
+  err.classList.remove('show');
+  const name  = document.getElementById('cu_name').value.trim();
+  const email = document.getElementById('cu_email').value.trim().toLowerCase();
+  const pass  = document.getElementById('cu_password').value;
+  const role  = document.getElementById('cu_role').value;
+  const ent   = document.getElementById('cu_entity').value;
+  const subj  = document.getElementById('cu_subjects').value.split(',').map(s=>s.trim()).filter(Boolean);
+  if (!name || !email) { err.textContent='Name and email are required.'; err.classList.add('show'); return; }
+  const users = getOptimaUsers();
+  if (editingId) {
+    const i = users.findIndex(u => u.id === editingId);
+    if (i < 0) return;
+    users[i].name=name; users[i].email=email; users[i].role=role; users[i].entityId=ent; users[i].subjects=subj;
+    if (pass) {
+      const { salt, hash } = await makePasswordRecord(pass);
+      users[i].passwordSalt=salt; users[i].passwordHash=hash;
+    }
+  } else {
+    if (users.some(u => u.email.toLowerCase() === email)) {
+      err.textContent='A user with that email already exists.'; err.classList.add('show'); return;
+    }
+    if (!pass || pass.length < 4) { err.textContent='Password must be at least 4 characters.'; err.classList.add('show'); return; }
+    const { salt, hash } = await makePasswordRecord(pass);
+    users.push({
+      id:'u_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+      name, email, role, entityId: ent,
+      grades:[], subjects: subj, subjectOther:'',
+      passwordSalt: salt, passwordHash: hash, createdAt: Date.now()
+    });
+  }
+  saveOptimaUsers(users);
+  closeCreateUserModal();
+  renderPeopleOrgsPanel();
+  alert(editingId ? 'User updated.' : 'User created. Share their email + temporary password.');
+}
+function editOptimaUser(id)  { openCreateUserModal(id); }
+async function resetOptimaPassword(id) {
+  const users = getOptimaUsers();
+  const i = users.findIndex(u => u.id === id);
+  if (i < 0) return;
+  const newp = prompt(`Set a new temporary password for ${users[i].name || users[i].email}:`, randomTempPassword());
+  if (!newp) return;
+  const { salt, hash } = await makePasswordRecord(newp);
+  users[i].passwordSalt = salt; users[i].passwordHash = hash;
+  saveOptimaUsers(users);
+  alert(`Password reset. New temporary password: ${newp}`);
+}
+function deleteOptimaUser(id) {
+  if (!confirm('Delete this user? Their badge progress will be removed.')) return;
+  saveOptimaUsers(getOptimaUsers().filter(u => u.id !== id));
+  renderPeopleOrgsPanel();
+}
+function addEntity() {
+  const input = document.getElementById('newEntityName');
+  const name = input.value.trim();
+  if (!name) return;
+  const ents = getEntities();
+  ents.push({ id:'ent_'+Date.now(), name, createdAt: Date.now() });
+  saveEntities(ents);
+  input.value='';
+  renderPeopleOrgsPanel();
+}
+function removeEntity(id) {
+  const used = getOptimaUsers().some(u => u.entityId === id);
+  if (used) { alert('Cannot remove — users still belong to this entity. Reassign them first.'); return; }
+  if (!confirm('Remove this entity?')) return;
+  saveEntities(getEntities().filter(e => e.id !== id));
+  renderPeopleOrgsPanel();
+}
+function randomTempPassword() {
+  const a='ABCDEFGHJKMNPQRSTUVWXYZ', b='abcdefghijkmnopqrstuvwxyz', n='23456789';
+  const pick = s => s[Math.floor(Math.random()*s.length)];
+  return pick(a)+pick(b)+pick(b)+pick(b)+pick(n)+pick(n)+pick(n);
+}
+
+// -------- Badge Designer ----------------------------------------------
+function renderCustomMilestones() {
+  const wrap = document.getElementById('customMilestoneList');
+  if (!wrap) return;
+  const items = getCustomMilestones();
+  if (!items.length) { wrap.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">No custom milestone badges yet.</div>'; return; }
+  wrap.innerHTML = items.map(b => `<div style="display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid var(--border-subtle);">
+    <div style="width:44px; height:44px;">${badgeSvg(b.art, 3)}</div>
+    <div style="flex:1;">
+      <div style="font-weight:600; font-size:13px;">${escapeHtml(b.name)}</div>
+      <div style="color:var(--text-muted); font-size:12px;">${escapeHtml(b.desc||'')} · metric: ${escapeHtml(b.metric)} · thresholds: ${b.thresholds.join('/')}</div>
+    </div>
+    <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="window.deleteCustomMilestone('${b.id}')">Delete</button>
+  </div>`).join('');
+}
+function createCustomMilestone() {
+  const name = document.getElementById('bd_name').value.trim();
+  const desc = document.getElementById('bd_desc').value.trim();
+  const metric = document.getElementById('bd_metric').value;
+  const art = document.getElementById('bd_art').value;
+  const t = [1,2,3,4,5].map(i => parseInt(document.getElementById('bd_t'+i).value)||1);
+  if (!name) { alert('Give the badge a name.'); return; }
+  const arr = getCustomMilestones();
+  arr.push({ id:'cm_'+Date.now(), name, desc, metric, art, thresholds: t });
+  saveCustomMilestones(arr);
+  document.getElementById('bd_name').value=''; document.getElementById('bd_desc').value='';
+  renderCustomMilestones();
+  alert('Badge created. It now appears in everyone\'s Milestones gallery.');
+}
+function deleteCustomMilestone(id) {
+  if (!confirm('Delete this custom milestone?')) return;
+  saveCustomMilestones(getCustomMilestones().filter(x => x.id !== id));
+  renderCustomMilestones();
+}
+
+// -------- Reports panel ------------------------------------------------
+let _currentReportRows = [];
+function showHide(id, visible) { const e=document.getElementById(id); if (e) e.style.display = visible ? '' : 'none'; }
+function renderReportsPanel() {
+  const me = getCurrentOptimaUser();
+  if (!me) return;
+  // Populate filter dropdowns
+  let users = getOptimaUsers();
+  if (me.role === 'orgadmin') users = users.filter(u => u.entityId === me.entityId);
+  const uSel = document.getElementById('rpt_user');
+  uSel.innerHTML = users.map(u => `<option value="${u.id}">${escapeHtml(u.name||u.email)}</option>`).join('');
+  const eSel = document.getElementById('rpt_entity');
+  eSel.innerHTML = getEntities().filter(e => me.role==='admin' || e.id===me.entityId).map(e => `<option value="${e.id}">${escapeHtml(e.name)}</option>`).join('');
+  const gSel = document.getElementById('rpt_grade');
+  gSel.innerHTML = OPTIMA_GRADE_OPTIONS.map(g => `<option value="${g}">Grade ${g}</option>`).join('');
+  const sSel = document.getElementById('rpt_subject');
+  sSel.innerHTML = OPTIMA_SUBJECT_OPTIONS.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+  // Group chips
+  const grpWrap = document.getElementById('rpt_groupChips');
+  grpWrap.innerHTML = users.map(u => `<div class="chip" data-uid="${u.id}" onclick="this.classList.toggle('selected'); window.runReport()">${escapeHtml(u.name||u.email)}</div>`).join('');
+
+  // Wire scope onchange
+  document.getElementById('rpt_scope').onchange = () => {
+    const v = document.getElementById('rpt_scope').value;
+    showHide('rpt_userPicker',    v==='user');
+    showHide('rpt_groupPicker',   v==='group');
+    showHide('rpt_entityPicker',  v==='entity');
+    showHide('rpt_gradePicker',   v==='grade');
+    showHide('rpt_subjectPicker', v==='subject');
+    showHide('rpt_rolePicker',    v==='role');
+    runReport();
+  };
+  document.getElementById('rpt_scope').onchange();
+  runReport();
+}
+
+function gatherReportUsers() {
+  const me = getCurrentOptimaUser();
+  let all = getOptimaUsers();
+  if (me.role === 'orgadmin') all = all.filter(u => u.entityId === me.entityId);
+  const scope = document.getElementById('rpt_scope').value;
+  if (scope === 'all') return all;
+  if (scope === 'user') return all.filter(u => u.id === document.getElementById('rpt_user').value);
+  if (scope === 'group') {
+    const ids = Array.from(document.querySelectorAll('#rpt_groupChips .chip.selected')).map(c => c.dataset.uid);
+    return all.filter(u => ids.includes(u.id));
+  }
+  if (scope === 'entity')  return all.filter(u => u.entityId === document.getElementById('rpt_entity').value);
+  if (scope === 'grade')   return all.filter(u => (u.grades||[]).includes(document.getElementById('rpt_grade').value));
+  if (scope === 'subject') return all.filter(u => (u.subjects||[]).includes(document.getElementById('rpt_subject').value));
+  if (scope === 'role')    return all.filter(u => u.role === document.getElementById('rpt_role').value);
+  return all;
+}
+
+function runReport() {
+  const me = getCurrentOptimaUser();
+  if (!me) return;
+  const users = gatherReportUsers();
+  const progAll = JSON.parse(localStorage.getItem(OPTIMA_PROGRESS_KEY) || '{}');
+  const loginAll = JSON.parse(localStorage.getItem(OPTIMA_LOGIN_LOG_KEY) || '{}');
+  const completions = (typeof getCompletedCourses === 'function' ? getCompletedCourses() : []);
+  _currentReportRows = users.map(u => {
+    const p = progAll[u.id] || {};
+    const l = loginAll[u.id] || {};
+    const badgeCount = Object.keys(p).filter(k => k.startsWith('_tier_') && p[k] > 0).length;
+    return {
+      id: u.id, name: u.name||'', email: u.email||'',
+      entity: getEntityName(u.entityId)||'', role: u.role,
+      videosWatched: p.videosWatched || 0,
+      coursesCompleted: completions.filter(c => c.userId === u.id).length,
+      badges: badgeCount,
+      lastActive: l.last || ''
+    };
+  });
+  // Summary
+  document.getElementById('rpt_summary').innerHTML = `
+    <div class="stat"><div class="num">${_currentReportRows.length}</div><div class="lbl">Users</div></div>
+    <div class="stat"><div class="num">${_currentReportRows.reduce((s,r)=>s+r.videosWatched,0)}</div><div class="lbl">Total videos watched</div></div>
+    <div class="stat"><div class="num">${_currentReportRows.reduce((s,r)=>s+r.coursesCompleted,0)}</div><div class="lbl">Total courses completed</div></div>
+    <div class="stat"><div class="num">${_currentReportRows.reduce((s,r)=>s+r.badges,0)}</div><div class="lbl">Badges earned (sum)</div></div>
+  `;
+  const tbody = document.querySelector('#rpt_table tbody');
+  tbody.innerHTML = _currentReportRows.map(r => `<tr>
+    <td>${escapeHtml(r.name)}</td>
+    <td>${escapeHtml(r.email)}</td>
+    <td>${escapeHtml(r.entity)}</td>
+    <td>${r.videosWatched}</td>
+    <td>${r.coursesCompleted}</td>
+    <td>${r.badges}</td>
+    <td>${escapeHtml(r.lastActive)}</td>
+  </tr>`).join('') || '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px;">No users in this scope.</td></tr>';
+}
+
+function exportReportCSV() {
+  if (!_currentReportRows.length) { alert('Run the report first.'); return; }
+  const headers = ['Name','Email','Entity','Role','Videos Watched','Courses Completed','Badges Earned','Last Active'];
+  const lines = [headers.join(',')];
+  _currentReportRows.forEach(r => {
+    const row = [r.name, r.email, r.entity, r.role, r.videosWatched, r.coursesCompleted, r.badges, r.lastActive]
+      .map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',');
+    lines.push(row);
+  });
+  const csv = lines.join('\n');
+  const blob = new Blob([csv], { type:'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `OptimaPD-Report-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// -------- Video upload prompt -----------------------------------------
+const OPTIMA_VIDEO_UPLOAD_PROMPT = `OPTIMAPD VIDEO UPLOAD PROMPT  (paste into a fresh chat)
+
+You are helping me upload a new video to OptimaPD. From the transcript and any context I share, produce ALL of the following so I can fill out the Add Video form in one pass.
+
+Return the answer using these labeled sections, in this order:
+
+1) TITLE
+   A clear, search-friendly title (≤ 65 chars). No clickbait.
+
+2) DESCRIPTION  (3 short paragraphs, ≤ 180 words total)
+   Paragraph 1 — the concrete thing this video teaches.
+   Paragraph 2 — who it's for (grade band, subject, role) and when to watch it.
+   Paragraph 3 — what the viewer will be able to DO after watching.
+
+3) CATEGORY + SUBCATEGORY
+   Pick one category: tech | pedagogy | examples
+   Then pick a subcategory from the existing OptimaPD list. If none fit, propose a NEW subcategory and flag it as "NEW —".
+
+4) SMART TAGS  (8–14 tags, comma-separated)
+   Mix of: tools mentioned, frameworks (PICRAT, UDL, SAMR, TPACK, etc.), pedagogical moves, grade bands, subjects.
+   These power Opti's RAG search — be specific over clever.
+
+5) BADGE CONCEPT
+   - Badge name (≤ 28 chars)
+   - 1-sentence hover description
+   - Suggested art preset: shield | star | trophy | laurel | bookmark | medal
+   - 5-tier progression idea: how should the badge change visually from Bronze → Diamond as the user re-watches / applies the skill?
+   - Optional flavor text for the Diamond tier — what does mastery look like for this skill?
+
+6) DURATION + TRANSCRIPT-DERIVED CHAPTERS
+   - Total runtime (mm:ss)
+   - 3–8 chapter markers as "mm:ss — Chapter title"
+
+7) RECOMMENDED PREREQUISITES
+   Any OptimaPD videos/courses the viewer should watch FIRST. If none, say "None."
+
+8) RELATED CONTENT
+   Up to 5 existing OptimaPD videos that pair well with this one. (I'll fill these in if you don't have access to the library.)
+
+9) ONE-LINER FOR HOMEPAGE TILE  (≤ 90 chars)
+   The subtitle that shows under the video card.
+
+10) OPTIONAL ENHANCEMENTS
+    - Suggested quiz questions (3–5) if the video lends itself to a check-for-understanding quiz.
+    - Suggested "Featured Creator" attribution if the video was recorded by an Optima educator.
+    - Any accessibility notes (captions, alt text for slides, etc.).
+
+CONTEXT INPUTS I WILL PROVIDE BELOW THIS PROMPT:
+- The transcript (full or partial)
+- The presenter's name + role (if relevant)
+- Any specific framework or tool they reference
+- The intended audience if I already know it
+
+After your draft, ask me ONE clarifying question if anything is ambiguous — otherwise, return the final structured output ready to copy into OptimaPD.`;
+
+function copyVideoPrompt() {
+  navigator.clipboard.writeText(OPTIMA_VIDEO_UPLOAD_PROMPT).then(() => {
+    const btn = document.getElementById('copyPromptBtn');
+    if (!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1800);
+  }, () => alert('Could not copy. Select and copy the text manually below.'));
+}
+function paintVideoPromptText() {
+  const el = document.getElementById('videoPromptText');
+  if (el) el.textContent = OPTIMA_VIDEO_UPLOAD_PROMPT;
+}
+
+// -------- Bridge / overrides ------------------------------------------
+// Wrap original switchAdminTab to render our new panels when activated.
+const _origSwitchAdminTab = switchAdminTab;
+switchAdminTab = function(ev, name) {
+  _origSwitchAdminTab(ev, name);
+  if (name === 'people')          renderPeopleOrgsPanel();
+  if (name === 'reports')         renderReportsPanel();
+  if (name === 'badge-designer')  renderCustomMilestones();
+  if (name === 'help')            paintVideoPromptText();
+};
+window.switchAdminTab = switchAdminTab;
+
+const _origSwitchAdminTabByName = switchAdminTabByName;
+switchAdminTabByName = function(name) {
+  _origSwitchAdminTabByName(name);
+  if (name === 'people')          renderPeopleOrgsPanel();
+  if (name === 'reports')         renderReportsPanel();
+  if (name === 'badge-designer')  renderCustomMilestones();
+  if (name === 'help')            paintVideoPromptText();
+};
+window.switchAdminTabByName = switchAdminTabByName;
+
+// Override legacy admin-session checks to use the role-aware model.
+isAdminLoggedIn = function() {
+  const u = getCurrentOptimaUser();
+  return !!(u && u.role === 'admin');
+};
+requireAdmin = function(cb) {
+  const u = getCurrentOptimaUser();
+  if (u && (u.role === 'admin' || u.role === 'orgadmin')) { cb && cb(); }
+  else alert('You need administrator access to do that. Ask a full Admin to grant you a role.');
+};
+adminLogout = function() { optimaSignOut(); };
+
+// Wrap showView so badges/profile views render correctly when navigated to.
+const _origShowView = showView;
+showView = function(name, params, __fromPopState) {
+  // Block content views if not signed in
+  if (!getCurrentOptimaUser()) { showLoginPage(); return; }
+  _origShowView(name, params, __fromPopState);
+  if (name === 'profile') renderProfileView();
+  if (name === 'badges')  renderBadgesView();
+  if (name === 'admin')   { applyUserUi(); }
+};
+window.showView = showView;
+
+// -------- Boot ---------------------------------------------------------
+async function bootOptimaAuth() {
+  await ensureOptimaSeed();
+  paintVideoPromptText();
+  const u = getCurrentOptimaUser();
+  if (!u) {
+    showLoginPage();
+  } else {
+    hideLoginPage();
+    setUserSession({ name:u.name, email:u.email, userId:u.id, initials: makeInitials(u.name||u.email) });
+    applyUserUi();
+    trackLoginAndStreak();
+    checkBadgeUpgrades();
+  }
+}
+
+// Periodically check for badge upgrades (e.g., when user navigates after watching)
+setInterval(() => { if (getCurrentOptimaUser()) checkBadgeUpgrades(); }, 30000);
+
+// Export the new functions for inline onclick handlers
+window.optimaDoLogin            = optimaDoLogin;
+window.optimaSignOut            = optimaSignOut;
+window.optimaMsSignInStub       = optimaMsSignInStub;
+window.toggleUserMenu           = toggleUserMenu;
+window.saveProfile              = saveProfile;
+window.toggleProfileChip        = toggleProfileChip;
+window.openCreateUserModal      = openCreateUserModal;
+window.closeCreateUserModal     = closeCreateUserModal;
+window.saveCreatedUser          = saveCreatedUser;
+window.editOptimaUser           = editOptimaUser;
+window.resetOptimaPassword      = resetOptimaPassword;
+window.deleteOptimaUser         = deleteOptimaUser;
+window.addEntity                = addEntity;
+window.removeEntity             = removeEntity;
+window.runReport                = runReport;
+window.exportReportCSV          = exportReportCSV;
+window.createCustomMilestone    = createCustomMilestone;
+window.deleteCustomMilestone    = deleteCustomMilestone;
+window.copyVideoPrompt          = copyVideoPrompt;
+window.downloadCertificateFor   = downloadCertificateFor;
+window.checkBadgeUpgrades       = checkBadgeUpgrades;
+
+// =====================================================================
+// END v2 BLOCK
+// =====================================================================
+
 window.showView = showView;
 window.setBrowseTypeFilter = setBrowseTypeFilter;
 window.openBrowseType = openBrowseType;
@@ -5569,6 +7466,8 @@ initStorage();
 updateSubcategoryOptions();
 bootRouter();
 initMsalAuth();
+// OptimaPD v2: gate the site behind login + seed default admin/entity
+bootOptimaAuth();
 </script>
 
 <!-- ===== QUIZ EDITOR MODAL (Admin) ===== -->
