@@ -1147,6 +1147,53 @@
   .vl-row-actions button.danger { color: var(--danger); }
 
   /* =========================================================
+     CHAPTERS (video detail page)
+     ========================================================= */
+  .chapters-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 14px 16px 12px;
+    margin: 14px 0 18px;
+  }
+  .chapters-card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .chapters-card-header h4 {
+    font-size: 13px; font-weight: 600; color: var(--brand-blue);
+    text-transform: uppercase; letter-spacing: 0.4px; margin: 0;
+  }
+  .chapters-card-header .ch-count {
+    font-size: 12px; color: var(--text-muted);
+  }
+  .chapter-row {
+    display: flex; align-items: baseline; gap: 12px;
+    padding: 8px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.12s;
+    color: var(--text-secondary);
+  }
+  .chapter-row:hover { background: var(--bg-elevated); color: var(--text-primary); }
+  .chapter-row .ch-time {
+    font-family: 'Courier New', monospace;
+    font-size: 12px; font-weight: 700;
+    color: var(--brand-blue);
+    background: rgba(63, 185, 221, 0.10);
+    border: 1px solid rgba(63, 185, 221, 0.25);
+    padding: 2px 8px; border-radius: 4px;
+    min-width: 56px; text-align: center;
+    flex-shrink: 0;
+  }
+  .chapter-row .ch-title {
+    font-size: 13px; line-height: 1.45;
+  }
+  .chapter-row:hover .ch-time {
+    background: rgba(63, 185, 221, 0.18);
+  }
+
+  /* =========================================================
      OPTIMAPD v2 — LOGIN, PROFILE, BADGES, REPORTS, BANNER
      ========================================================= */
 
@@ -1983,6 +2030,7 @@
       <h1 class="player-title" id="playerTitle"></h1>
       <div class="player-meta-row" id="playerMeta"></div>
       <div id="playerTags" style="margin-bottom: 14px;"></div>
+      <div id="playerChapters"></div>
       <div class="player-actions" id="playerActions"></div>
       <div class="player-desc" id="playerDesc"></div>
       <div id="playerAttachments"></div>
@@ -2218,6 +2266,15 @@
               <label>Tags</label>
               <input type="text" id="f_tags" placeholder="engage, avatar, keyframes (comma-separated)" />
               <p class="help">Tags help Opti and search find this video. Be generous — more tags = easier to discover.</p>
+            </div>
+
+            <div class="form-group">
+              <label>Chapters <span style="color:var(--text-muted); font-weight:400;">(optional)</span></label>
+              <textarea id="f_chapters" rows="6" placeholder="0:00 — Intro
+2:14 — Setting up the scene
+6:48 — Adding the first object
+12:30 — Final tweaks &amp; export" style="font-family:'Courier New',monospace; font-size:13px; line-height:1.6;"></textarea>
+              <p class="help">One chapter per line in the format <code>mm:ss — Chapter title</code> (or <code>h:mm:ss — …</code> for long videos). Paste the chapters block straight from the video upload prompt. Clicking a chapter on the video page jumps the player to that timestamp.</p>
             </div>
 
             <div class="form-group">
@@ -2673,6 +2730,12 @@
     <div class="form-group">
       <label>Tags (comma-separated)</label>
       <input type="text" id="ev_tags" />
+    </div>
+    <div class="form-group">
+      <label>Chapters <span style="color:var(--text-muted); font-weight:400;">(optional, one per line as <code>mm:ss — title</code>)</span></label>
+      <textarea id="ev_chapters" rows="6" placeholder="0:00 — Intro
+2:14 — Setting up the scene
+6:48 — Adding the first object" style="font-family:'Courier New',monospace; font-size:13px; line-height:1.6;"></textarea>
     </div>
     <div class="form-group">
       <label>Supplemental files</label>
@@ -3158,7 +3221,7 @@ function toYouTubeWatchUrl(url) {
 
 function buildEmbedOrVideo(video) {
   if (video.blobUrl) {
-    return `<video controls autoplay><source src="${video.blobUrl}"></video>`;
+    return `<video id="opPlayer" data-embed-type="html5" controls autoplay><source src="${video.blobUrl}"></video>`;
   }
   if (!video.videoUrl) {
     return `<div class="placeholder-msg"><div class="icon">🎬</div>This video has no URL yet. Edit it in Admin → Video Library to add one.</div>`;
@@ -3169,19 +3232,19 @@ function buildEmbedOrVideo(video) {
     // used. Avoids youtube-nocookie.com (which rejects many embeds with Error
     // 153) and skips the `origin` param (which can mismatch on GitHub Pages).
     const src = `https://www.youtube.com/embed/${ytId}?rel=0`;
-    return `<iframe src="${src}"
+    return `<iframe id="opPlayer" data-embed-type="youtube" data-yt-id="${escapeHtml(ytId)}" src="${src}"
               title="${escapeHtml(video.title || 'Video player')}"
               frameborder="0"
               allowfullscreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`;
   }
   if (/\.(mp4|webm|ogg|mov)(\?|$)/i.test(video.videoUrl)) {
-    return `<video controls autoplay><source src="${escapeHtml(video.videoUrl)}"></video>`;
+    return `<video id="opPlayer" data-embed-type="html5" controls autoplay><source src="${escapeHtml(video.videoUrl)}"></video>`;
   }
   if (/(?:sharepoint|onedrive|microsoftstream|stream\.office)/i.test(video.videoUrl)) {
-    return `<iframe src="${escapeHtml(video.videoUrl)}" allowfullscreen allow="autoplay; encrypted-media; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    return `<iframe id="opPlayer" data-embed-type="stream" data-base-url="${escapeHtml(video.videoUrl)}" src="${escapeHtml(video.videoUrl)}" allowfullscreen allow="autoplay; encrypted-media; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
   }
-  return `<iframe src="${escapeHtml(video.videoUrl)}" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>`;
+  return `<iframe id="opPlayer" data-embed-type="generic" data-base-url="${escapeHtml(video.videoUrl)}" src="${escapeHtml(video.videoUrl)}" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>`;
 }
 
 function renderPlayerFallback(video) {
@@ -3646,6 +3709,7 @@ function renderVideoDetail(id, fromCourse) {
     console.error('[OptimaPD] meta/tags render failed:', err);
   }
 
+  try { renderChaptersForVideo(v); } catch (err) { console.error('[OptimaPD] chapters render failed:', err); }
   try { renderPlayerActions(v); } catch (err) { console.error('[OptimaPD] actions render failed:', err); }
   try { renderPlayerDesc(v); } catch (err) { console.error('[OptimaPD] desc render failed:', err); }
   try { renderPlayerAttachments(v); } catch (err) { console.error('[OptimaPD] attachments render failed:', err); }
@@ -4149,6 +4213,7 @@ async function handleAddVideo(e) {
   const courseId = document.getElementById('f_course').value;
   const duration = document.getElementById('f_duration').value.trim();
   const tags = document.getElementById('f_tags').value.split(',').map(t => t.trim()).filter(Boolean);
+  const chapters = parseChaptersInput(document.getElementById('f_chapters')?.value || '');
   const thumbUrl = (document.getElementById('f_thumbUrl').value || '').trim();
   const isFeatured = document.getElementById('f_featured').checked;
   const attachments = collectAttachments();
@@ -4170,6 +4235,7 @@ async function handleAddVideo(e) {
     courseId: courseId || null,
     duration,
     tags,
+    chapters,
     videoUrl: videoUrl || null,
     thumbnailData: thumbUrl,
     attachments,
@@ -5049,6 +5115,8 @@ function openEditVideoModal(videoId) {
   document.getElementById('ev_course').value = v.courseId || '';
   document.getElementById('ev_duration').value = v.duration || '';
   document.getElementById('ev_tags').value = (v.tags || []).join(', ');
+  const evChaptersEl = document.getElementById('ev_chapters');
+  if (evChaptersEl) evChaptersEl.value = chaptersToInputText(v.chapters || []);
   document.getElementById('ev_featured').checked = !!v.isFeatured;
   renderEvAttachments(v.attachments || []);
 
@@ -5074,6 +5142,7 @@ async function saveEditVideo() {
     courseId: document.getElementById('ev_course').value || null,
     duration: document.getElementById('ev_duration').value.trim(),
     tags: document.getElementById('ev_tags').value.split(',').map(t => t.trim()).filter(Boolean),
+    chapters: parseChaptersInput(document.getElementById('ev_chapters')?.value || ''),
     isFeatured: document.getElementById('ev_featured').checked,
     attachments: collectEvAttachments(),
   };
@@ -6282,6 +6351,128 @@ function clearAnalyticsData() {
   localStorage.removeItem(QUIZ_RES_KEY);
   renderAnalytics();
 }
+
+// =====================================================================
+// CHAPTERS — parser, renderer, and universal seek
+// =====================================================================
+// Stored on each video as: chapters: [{ time: 134, title: "Scene setup" }]
+// where `time` is integer seconds.
+
+// Parse a textarea full of chapter lines like:
+//   "0:00 — Intro"
+//   "2:14 — Setting up the scene"
+//   "1:23:45 - Long chapter"
+//   "12:30 Final tweaks"   (no dash also OK)
+// Returns [{ time, title }, ...]. Bad lines are skipped silently.
+function parseChaptersInput(text) {
+  if (!text || typeof text !== 'string') return [];
+  const out = [];
+  text.split(/\r?\n/).forEach(rawLine => {
+    const line = rawLine.trim();
+    if (!line) return;
+    // Match leading timestamp like h:mm:ss, m:ss, or mm:ss
+    const m = line.match(/^(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?\s*[—\-:|]?\s*(.+)$/);
+    if (!m) return;
+    const a = parseInt(m[1], 10);
+    const b = parseInt(m[2], 10);
+    const c = m[3] != null ? parseInt(m[3], 10) : null;
+    let seconds;
+    if (c != null) {
+      // h:mm:ss
+      seconds = a * 3600 + b * 60 + c;
+    } else {
+      // mm:ss
+      seconds = a * 60 + b;
+    }
+    const title = (m[4] || '').trim().replace(/^[—\-:|]\s*/, '');
+    if (!title) return;
+    out.push({ time: seconds, title });
+  });
+  // Sort by time ascending so admins can paste out-of-order lines and have them auto-fix
+  out.sort((x, y) => x.time - y.time);
+  return out;
+}
+
+function chaptersToInputText(chapters) {
+  if (!Array.isArray(chapters)) return '';
+  return chapters.map(c => `${formatChapterTime(c.time)} — ${c.title}`).join('\n');
+}
+
+function formatChapterTime(seconds) {
+  const s = Math.max(0, Math.floor(seconds || 0));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const r = s % 60;
+  const mm = h > 0 ? String(m).padStart(2, '0') : String(m);
+  const ss = String(r).padStart(2, '0');
+  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
+function renderChaptersForVideo(v) {
+  const el = document.getElementById('playerChapters');
+  if (!el) return;
+  const chapters = Array.isArray(v && v.chapters) ? v.chapters : [];
+  if (!chapters.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="chapters-card">
+    <div class="chapters-card-header">
+      <h4>📑 Chapters</h4>
+      <span class="ch-count">${chapters.length} chapter${chapters.length === 1 ? '' : 's'}</span>
+    </div>
+    ${chapters.map(c => `<div class="chapter-row" onclick="window.seekToChapter(${c.time})">
+      <span class="ch-time">${formatChapterTime(c.time)}</span>
+      <span class="ch-title">${escapeHtml(c.title)}</span>
+    </div>`).join('')}
+  </div>`;
+}
+
+// Universal seek — works for YouTube, Stream, generic iframes, and HTML5 video.
+// YouTube & Stream: reload iframe with the start-time query param.
+// HTML5 video: set currentTime + play (instant, no flicker).
+function seekToChapter(seconds) {
+  const player = document.getElementById('opPlayer');
+  if (!player) return;
+  const t = Math.max(0, Math.floor(seconds || 0));
+  const type = player.getAttribute('data-embed-type');
+
+  if (type === 'html5' || player.tagName === 'VIDEO') {
+    try {
+      player.currentTime = t;
+      const playPromise = player.play();
+      if (playPromise && playPromise.catch) playPromise.catch(() => {});
+    } catch (e) { console.warn('[OptimaPD] HTML5 seek failed', e); }
+    return;
+  }
+
+  if (type === 'youtube') {
+    const ytId = player.getAttribute('data-yt-id');
+    if (!ytId) return;
+    // Reload the embed with start=t. autoplay=1 so the seek doesn't leave them on a paused frame.
+    const newSrc = `https://www.youtube.com/embed/${ytId}?rel=0&autoplay=1&start=${t}`;
+    player.src = newSrc;
+    return;
+  }
+
+  if (type === 'stream') {
+    const base = player.getAttribute('data-base-url') || '';
+    if (!base) return;
+    // Strip any existing st= or starttime= param, then append a fresh one.
+    let cleaned = base.replace(/([?&])(st|starttime|t)=[^&]*/g, '$1').replace(/[?&]$/, '');
+    const sep = cleaned.includes('?') ? '&' : '?';
+    player.src = `${cleaned}${sep}st=${t}`;
+    return;
+  }
+
+  if (type === 'generic') {
+    const base = player.getAttribute('data-base-url') || '';
+    if (!base) return;
+    // Best-effort: append #t=NNs which many players honor.
+    const cleaned = base.split('#')[0];
+    player.src = `${cleaned}#t=${t}s`;
+    return;
+  }
+}
+
+window.seekToChapter = seekToChapter;
 
 // =====================================================================
 // THUMBNAIL URL HELPERS (no more base64 in the database)
