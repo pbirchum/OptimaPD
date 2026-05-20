@@ -1146,6 +1146,76 @@
   .vl-row-actions button:hover { border-color: var(--brand-blue); color: var(--text-primary); }
   .vl-row-actions button.danger { color: var(--danger); }
 
+  /* Form-flavored chip row (used for multi-select Subcategories in admin) */
+  .chip-row-form {
+    padding: 6px 8px;
+    background: var(--bg-darkest);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    min-height: 44px;
+  }
+  .chip-row-form .chip {
+    font-size: 12px;
+  }
+  .chip-row-form .chip-empty {
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  /* =========================================================
+     ACTION BUTTONS (video detail page — Favorite / Playlist / Admin)
+     ========================================================= */
+  .player-actions {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin: 14px 0 22px;
+  }
+  .action-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 24px;        /* pill */
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+    line-height: 1;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .action-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(63, 185, 221, 0.55);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  }
+  .action-btn:active { transform: translateY(0); box-shadow: none; }
+  .action-btn .star,
+  .action-btn .ico {
+    font-size: 15px; line-height: 1;
+    display: inline-block;
+  }
+  .action-btn.active {
+    background: linear-gradient(135deg, rgba(245, 184, 46, 0.20), rgba(245, 184, 46, 0.08));
+    border-color: rgba(245, 184, 46, 0.55);
+    color: var(--brand-gold);
+  }
+  .action-btn.active:hover {
+    background: linear-gradient(135deg, rgba(245, 184, 46, 0.28), rgba(245, 184, 46, 0.12));
+    border-color: var(--brand-gold);
+  }
+  .action-btn.admin-action {
+    border-color: rgba(141, 75, 232, 0.35);
+    color: var(--brand-purple);
+  }
+  .action-btn.admin-action:hover {
+    border-color: var(--brand-purple);
+    background: rgba(141, 75, 232, 0.10);
+    color: #C8A8FF;
+  }
+
   /* =========================================================
      CHAPTERS (video detail page)
      ========================================================= */
@@ -2178,9 +2248,9 @@
           <form onsubmit="window.handleAddVideo(event)">
 
             <div class="form-group">
-              <label>Video URL <span style="color:var(--text-muted); font-weight:400;">(recommended)</span></label>
-              <input type="url" id="f_videoUrl" placeholder="https://youtube.com/watch?v=... or Microsoft Stream URL" />
-              <p class="help">Paste the share link from YouTube, Microsoft Stream, Vimeo, or any video host. For YouTube, use the standard watch link.</p>
+              <label>Video URL or embed code <span style="color:var(--text-muted); font-weight:400;">(recommended)</span></label>
+              <input type="text" id="f_videoUrl" placeholder="Paste a URL or the entire &lt;iframe&gt; embed code" />
+              <p class="help">You can paste <strong>either</strong> a share link (YouTube watch URL, Microsoft Stream link, direct MP4, etc.) <strong>or</strong> the entire <code>&lt;iframe&gt;</code> embed code copied from YouTube or Stream. The site will auto-extract the video URL from the embed code on save.</p>
             </div>
 
             <div class="form-group">
@@ -2219,8 +2289,9 @@
                 </select>
               </div>
               <div class="form-group">
-                <label>Subcategory</label>
-                <select id="f_subcategory"></select>
+                <label>Subcategories <span style="color:var(--text-muted); font-weight:400;">(pick one or more)</span></label>
+                <div id="f_subcategoryChips" class="chip-row chip-row-form"></div>
+                <p class="help">A video can live in multiple subcategories so it appears in every relevant browse row — e.g., a "use Outlook with Genius SIS" video can be tagged with both. Manage the list of available subcategories under <strong>Admin → Categories</strong>.</p>
               </div>
             </div>
 
@@ -2741,8 +2812,8 @@ service cloud.firestore {
         <select id="ev_category" onchange="window.evUpdateSubcategory()"></select>
       </div>
       <div class="form-group">
-        <label>Subcategory</label>
-        <select id="ev_subcategory"></select>
+        <label>Subcategories</label>
+        <div id="ev_subcategoryChips" class="chip-row chip-row-form"></div>
       </div>
     </div>
     <div class="form-row">
@@ -3333,7 +3404,8 @@ function renderVideoCard(v) {
     const c = DB.courses.find(c => c.id === v.courseId);
     return c ? `<span>${escapeHtml(c.title)}</span><span class="dot">•</span><span>Lesson ${v.lessonNumber || '?'}</span>` : `<span>One-off</span>`;
   })() : `<span>One-off</span>`;
-  const subLabel = v.subcategory || (cat ? cat.label : '');
+  const subList = getSubcategories(v);
+  const subLabel = subList.length ? subList.join(' · ') : (cat ? cat.label : '');
 
   const catKey = v.category === 'pedagogy' ? 'pedagogy' : (v.category === 'examples' ? 'examples' : 'tech');
   const cornerLabel = (CATEGORY_META[v.category] && CATEGORY_META[v.category].label) || 'Tech Skills';
@@ -3658,7 +3730,7 @@ function renderBrowseResults() {
 
   const matchesSub = (v) => {
     if (!currentBrowse) return true;
-    if (currentBrowse.sub && v.subcategory !== currentBrowse.sub) return false;
+    if (currentBrowse.sub && !getSubcategories(v).includes(currentBrowse.sub)) return false;
     if (currentBrowse.subject && (v.subject || '').toLowerCase() !== currentBrowse.subject) return false;
     if (currentBrowse.grade && (v.grade || '').toLowerCase() !== currentBrowse.grade) return false;
     return true;
@@ -3711,7 +3783,9 @@ function renderVideoDetail(id, fromCourse) {
   try {
     document.getElementById('playerTitle').textContent = v.title || '(untitled)';
     document.getElementById('playerWrap').innerHTML = buildEmbedOrVideo(v);
-    renderPlayerFallback(v);
+    // Fallback box removed — broken videos are an admin problem to fix, not a learner-facing UX element.
+    const fb = document.getElementById('playerFallback');
+    if (fb) fb.innerHTML = '';
   } catch (err) {
     console.error('[OptimaPD] player frame render failed:', err);
   }
@@ -3722,7 +3796,8 @@ function renderVideoDetail(id, fromCourse) {
 
   try {
     let metaBits = [`📚 ${cat.label}`];
-    if (v.subcategory) metaBits.push(`🏷 ${v.subcategory}`);
+    const subList = getSubcategories(v);
+    if (subList.length) metaBits.push(`🏷 ${subList.join(' · ')}`);
     if (v.duration) metaBits.push(`⏱ ${v.duration}`);
     if (v.courseId) {
       const c = DB.courses.find(c => c.id === v.courseId);
@@ -3788,10 +3863,15 @@ function renderRelatedVideos(v, fromCourse) {
       <h3 style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin: 0 0 16px;">Related Videos</h3>
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px;">
         ${scored.map(rel => {
-          const thumb = rel.thumbnailUrl
-            ? `<img src="${escapeHtml(rel.thumbnailUrl)}" alt="" loading="lazy" />`
-            : (rel.youtubeId
-                ? `<img src="https://img.youtube.com/vi/${escapeHtml(rel.youtubeId)}/mqdefault.jpg" alt="" loading="lazy" />`
+          // The field is stored as `thumbnailData` on every video — historically misnamed
+          // (it used to hold base64 data; now it holds URLs). We also fall back to deriving
+          // the thumbnail from the YouTube ID when no custom thumbnail was provided.
+          const relThumb = rel.thumbnailData || rel.thumbnailUrl || '';
+          const ytId = rel.videoUrl ? toYouTubeId(rel.videoUrl) : null;
+          const thumb = relThumb
+            ? `<img src="${escapeHtml(relThumb)}" alt="" loading="lazy" />`
+            : (ytId
+                ? `<img src="https://img.youtube.com/vi/${escapeHtml(ytId)}/mqdefault.jpg" alt="" loading="lazy" />`
                 : '');
           const catMeta = CATEGORY_META[rel.category] || CATEGORY_META.tech || {};
           const sharedMoves = (rel.teaching_moves || [])
@@ -3821,17 +3901,19 @@ function renderRelatedVideos(v, fromCourse) {
 function renderPlayerActions(v) {
   const fav = isFavorite(v.id);
   const starClass = fav ? 'active' : '';
-  const starText = fav ? '★ Saved' : '☆ Save';
   document.getElementById('playerActions').innerHTML = `
-    <button class="action-btn ${starClass}" onclick="window.toggleFav('${v.id}')">
-      <span class="star">${fav ? '★' : '☆'}</span> ${fav ? 'Favorited' : 'Add to Favorites'}
+    <button class="action-btn ${starClass}" onclick="window.toggleFav('${v.id}')" title="${fav ? 'Remove from favorites' : 'Save to favorites'}">
+      <span class="star">${fav ? '★' : '☆'}</span>
+      <span>${fav ? 'Favorited' : 'Add to Favorites'}</span>
     </button>
-    <button class="action-btn" onclick="window.openPlaylistModal('${v.id}')">
-      ＋ Add to Playlist
+    <button class="action-btn" onclick="window.openPlaylistModal('${v.id}')" title="Add to a playlist">
+      <span class="ico">＋</span>
+      <span>Add to Playlist</span>
     </button>
     ${isAdminLoggedIn() ? `
-      <button class="action-btn" onclick="window.requireAdmin(function(){ window.showView(&quot;admin&quot;); setTimeout(function(){ window.switchAdminTabByName(&quot;library&quot;); }, 50); })">
-        ✎ Manage in Admin
+      <button class="action-btn admin-action" onclick="window.requireAdmin(function(){ window.showView(&quot;admin&quot;); setTimeout(function(){ window.switchAdminTabByName(&quot;library&quot;); }, 50); })" title="Edit this video in Admin">
+        <span class="ico">✎</span>
+        <span>Manage in Admin</span>
       </button>
     ` : ''}
   `;
@@ -4182,8 +4264,11 @@ function switchAdminTabByName(name) {
 
 function updateSubcategoryOptions() {
   const cat = document.getElementById('f_category').value;
-  const subSel = document.getElementById('f_subcategory');
-  subSel.innerHTML = SUBCATEGORIES[cat].map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+  // Preserve any already-selected chips when the user switches category mid-form.
+  const prevSelected = readSelectedChips('f_subcategoryChips');
+  // Only carry over selections that still exist in the new category.
+  const carryOver = prevSelected.filter(s => (SUBCATEGORIES[cat] || []).includes(s));
+  renderSubcategoryChips('f_subcategoryChips', cat, carryOver);
   document.getElementById('exampleExtraFields').style.display = (cat === 'examples') ? 'grid' : 'none';
   updateCourseDropdown(cat);
 }
@@ -4230,13 +4315,19 @@ function collectAttachments() {
 
 async function handleAddVideo(e) {
   e.preventDefault();
-  const videoUrl = document.getElementById('f_videoUrl').value.trim();
+  // Allow admins to paste an entire <iframe> embed code (YouTube or Stream) — extract the src.
+  const rawVideoInput = document.getElementById('f_videoUrl').value.trim();
+  const videoUrl = normalizeVideoUrl(rawVideoInput);
+  if (videoUrl !== rawVideoInput) document.getElementById('f_videoUrl').value = videoUrl;
   const videoFile = document.getElementById('f_videoFile').files[0];
   const title = document.getElementById('f_title').value.trim();
   const desc = getRichTextContent('f_desc') || '';
   const bodyHeading = document.getElementById('f_bodyHeading').value.trim();
   const category = document.getElementById('f_category').value;
-  const subcategory = document.getElementById('f_subcategory').value;
+  // Multi-subcategory: read selected chips. Also keep `subcategory` as the primary
+  // (first selected) for backward compatibility with any code that still reads it.
+  const subcategories = readSelectedChips('f_subcategoryChips');
+  const subcategory = subcategories[0] || '';
   const subject = document.getElementById('f_subject').value;
   const grade = document.getElementById('f_grade').value;
   const courseId = document.getElementById('f_course').value;
@@ -4266,7 +4357,7 @@ async function handleAddVideo(e) {
     title,
     description: desc,
     bodyHeading: bodyHeading || 'About this video',
-    category, subcategory,
+    category, subcategory, subcategories,
     subject: subject || null,
     grade: grade || null,
     courseId: courseId || null,
@@ -4364,7 +4455,7 @@ function renderVideoLibrary() {
         <div class="video-list-thumb">${thumb}</div>
         <div class="video-list-info">
           <h5>${escapeHtml(v.title)}</h5>
-          <p>${escapeHtml(cat.label)}${v.subcategory ? ' · ' + escapeHtml(v.subcategory) : ''}${course ? ' · 📚 ' + escapeHtml(course) : ''}${v.duration ? ' · ' + escapeHtml(v.duration) : ''}${v.isFeatured ? ' · ⭐ Featured' : ''}</p>
+          <p>${escapeHtml(cat.label)}${getSubcategories(v).length ? ' · ' + escapeHtml(getSubcategories(v).join(' · ')) : ''}${course ? ' · 📚 ' + escapeHtml(course) : ''}${v.duration ? ' · ' + escapeHtml(v.duration) : ''}${v.isFeatured ? ' · ⭐ Featured' : ''}</p>
         </div>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.showView('video-detail', {id:'${v.id}'})">View</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openEditVideoModal('${v.id}')">Edit</button>
@@ -4490,30 +4581,68 @@ function renameSubcategory(cat, index, newName) {
   const old = SUBCATEGORIES[cat][index];
   SUBCATEGORIES[cat][index] = newName;
   saveSubcategories();
-  // Update any existing videos using the old subcategory name
+  // Update any existing videos using the old subcategory name — both legacy single-string
+  // field and new subcategories[] array.
   DB.videos.forEach(v => {
-    if (v.category === cat && v.subcategory === old) {
-      updateVideo(v.id, { subcategory: newName });
-      v.subcategory = newName;
+    if (v.category !== cat) return;
+    let mutated = false;
+    if (v.subcategory === old) { v.subcategory = newName; mutated = true; }
+    if (Array.isArray(v.subcategories) && v.subcategories.includes(old)) {
+      v.subcategories = v.subcategories.map(s => s === old ? newName : s);
+      mutated = true;
     }
+    if (mutated) updateVideo(v.id, { subcategory: v.subcategory, subcategories: v.subcategories || [] });
   });
 }
 
 function deleteSubcategory(cat, index) {
   const sub = SUBCATEGORIES[cat][index];
-  const usingCount = DB.videos.filter(v => v.category === cat && v.subcategory === sub).length;
-  const msg = usingCount > 0
-    ? `"${sub}" is used by ${usingCount} video(s). Delete it? Their subcategory will become "Other".`
-    : `Delete subcategory "${sub}"?`;
+  // Count how many videos still reference this subcategory — checking both the legacy
+  // single-value field AND the new subcategories[] array introduced for multi-tag support.
+  const usingCount = DB.videos.filter(v => {
+    if (v.category !== cat) return false;
+    if (Array.isArray(v.subcategories) && v.subcategories.includes(sub)) return true;
+    if (v.subcategory === sub) return true;
+    return false;
+  }).length;
+  let msg;
+  if (usingCount > 0) {
+    msg = sub === 'Other'
+      ? `"Other" is currently assigned to ${usingCount} video(s). Delete it anyway? Those videos will lose this subcategory entirely.`
+      : `"${sub}" is used by ${usingCount} video(s). Delete it? Those videos will fall back to "Other".`;
+  } else {
+    msg = `Delete subcategory "${sub}"?`;
+  }
   if (!confirm(msg)) return;
+
+  // 1) Remove the subcategory from the list.
   SUBCATEGORIES[cat].splice(index, 1);
-  if (!SUBCATEGORIES[cat].includes('Other')) SUBCATEGORIES[cat].push('Other');
+
+  // 2) Only re-add "Other" if we actually need it as a fallback (i.e., we're about to
+  //    reassign videos to it). This is the bug fix: previously "Other" was re-added
+  //    unconditionally, which made it impossible to delete.
+  const needsOtherFallback = usingCount > 0 && sub !== 'Other';
+  if (needsOtherFallback && !SUBCATEGORIES[cat].includes('Other')) {
+    SUBCATEGORIES[cat].push('Other');
+  }
   saveSubcategories();
+
+  // 3) Reassign affected videos. If the user is deleting "Other" itself, the videos
+  //    lose their subcategory entirely (set to null) rather than getting reassigned in a loop.
   DB.videos.forEach(v => {
-    if (v.category === cat && v.subcategory === sub) {
-      updateVideo(v.id, { subcategory: 'Other' });
-      v.subcategory = 'Other';
+    if (v.category !== cat) return;
+    const replacement = (sub === 'Other') ? null : 'Other';
+    let mutated = false;
+    if (Array.isArray(v.subcategories) && v.subcategories.includes(sub)) {
+      v.subcategories = v.subcategories.filter(s => s !== sub);
+      if (replacement && !v.subcategories.includes(replacement)) v.subcategories.push(replacement);
+      mutated = true;
     }
+    if (v.subcategory === sub) {
+      v.subcategory = replacement;
+      mutated = true;
+    }
+    if (mutated) updateVideo(v.id, { subcategory: v.subcategory, subcategories: v.subcategories || [] });
   });
   renderCategoryEditor();
   updateSubcategoryOptions();
@@ -4705,7 +4834,7 @@ function runSearch(q) {
   q = (q || '').trim().toLowerCase();
   if (!q) return;
   const results = DB.videos.filter(v => {
-    const hay = [v.title, v.description, v.subcategory, ...(v.tags||[])].filter(Boolean).join(' ').toLowerCase();
+    const hay = [v.title, v.description, ...getSubcategories(v), ...(v.tags||[])].filter(Boolean).join(' ').toLowerCase();
     return hay.includes(q);
   });
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -4802,7 +4931,8 @@ function searchLibrary(q) {
     const chunkText = (v.transcript_chunks || []).map(c => [c.topic, c.key_quote].filter(Boolean).join(' ')).join(' ');
     const hintText  = (v.bot_search_hints || []).join(' ');
     const hay = normalize([
-      v.title, v.description, v.bodyHeading, v.subcategory,
+      v.title, v.description, v.bodyHeading,
+      ...getSubcategories(v),
       v.summary, v.cross_subject_applications,
       moveText, chunkText, hintText,
       ...(v.tags || [])
@@ -5108,11 +5238,10 @@ function populateEvCourseDropdown() {
 
 function evUpdateSubcategory() {
   const cat = document.getElementById('ev_category').value;
-  const subs = SUBCATEGORIES[cat] || [];
-  const sel = document.getElementById('ev_subcategory');
-  const current = sel.value;
-  sel.innerHTML = `<option value="">— none —</option>` + subs.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
-  if (current) sel.value = current;
+  // Preserve any selections that still exist in the new category list.
+  const prev = readSelectedChips('ev_subcategoryChips');
+  const carryOver = prev.filter(s => (SUBCATEGORIES[cat] || []).includes(s));
+  renderSubcategoryChips('ev_subcategoryChips', cat, carryOver);
 }
 
 function renderEvAttachments(atts) {
@@ -5157,8 +5286,9 @@ function openEditVideoModal(videoId) {
   document.getElementById('ev_bodyHeading').value = v.bodyHeading || '';
   setRichTextContent('ev_desc', v.description || '');
   document.getElementById('ev_category').value = v.category || 'tech';
-  evUpdateSubcategory();
-  document.getElementById('ev_subcategory').value = v.subcategory || '';
+  // Populate chips for the video's category, pre-selecting its existing subcategories.
+  // getSubcategories() handles both new array form and legacy single-string form.
+  renderSubcategoryChips('ev_subcategoryChips', v.category || 'tech', getSubcategories(v));
   document.getElementById('ev_course').value = v.courseId || '';
   document.getElementById('ev_duration').value = v.duration || '';
   document.getElementById('ev_tags').value = (v.tags || []).join(', ');
@@ -5180,12 +5310,15 @@ async function saveEditVideo() {
   const v = DB.videos.find(x => x.id === editingVideoId);
   if (!v) return;
 
+  const evSubcats = readSelectedChips('ev_subcategoryChips');
   const patch = {
     title: document.getElementById('ev_title').value.trim() || v.title,
     bodyHeading: document.getElementById('ev_bodyHeading').value.trim() || 'About this video',
     description: getRichTextContent('ev_desc') || '',
     category: document.getElementById('ev_category').value,
-    subcategory: document.getElementById('ev_subcategory').value,
+    // Save both forms: `subcategories` (array, canonical) + `subcategory` (string, legacy).
+    subcategory: evSubcats[0] || '',
+    subcategories: evSubcats,
     courseId: document.getElementById('ev_course').value || null,
     duration: document.getElementById('ev_duration').value.trim(),
     tags: document.getElementById('ev_tags').value.split(',').map(t => t.trim()).filter(Boolean),
@@ -6403,6 +6536,69 @@ function clearAnalyticsData() {
   localStorage.removeItem(COMPLETED_KEY);
   localStorage.removeItem(QUIZ_RES_KEY);
   renderAnalytics();
+}
+
+// =====================================================================
+// SUBCATEGORIES — multi-tag support with backward compatibility
+// =====================================================================
+// Older videos saved a single `subcategory` string. New videos store an array
+// of strings in `subcategories`. Read sites use this helper so both shapes work.
+function getSubcategories(v) {
+  if (!v) return [];
+  if (Array.isArray(v.subcategories) && v.subcategories.length) return v.subcategories;
+  if (v.subcategory) return [v.subcategory];
+  return [];
+}
+
+// Render a chip-style multi-select into `containerId` from the current
+// SUBCATEGORIES list for `category`, pre-selecting any in `selected`.
+function renderSubcategoryChips(containerId, category, selected) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  const options = (SUBCATEGORIES[category] || []).slice();
+  const sel = new Set(selected || []);
+  if (!options.length) {
+    wrap.innerHTML = `<div class="chip-empty">No subcategories defined for this category yet. Add some under Admin → Categories.</div>`;
+    return;
+  }
+  wrap.innerHTML = options.map(opt => {
+    const isSel = sel.has(opt);
+    return `<div class="chip ${isSel ? 'selected' : ''}" data-sub="${escapeHtml(opt)}" onclick="this.classList.toggle('selected')">${escapeHtml(opt)}</div>`;
+  }).join('');
+}
+
+// Read the currently selected chips out of a chip container as a string[].
+function readSelectedChips(containerId) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return [];
+  return Array.from(wrap.querySelectorAll('.chip.selected')).map(el => el.dataset.sub || el.textContent.trim()).filter(Boolean);
+}
+
+// =====================================================================
+// VIDEO URL NORMALIZER — extract src from a pasted <iframe> embed code
+// =====================================================================
+// YouTube and Stream both give you an embed snippet that looks like:
+//   <iframe width="560" height="315" src="https://www.youtube.com/embed/abc123" …></iframe>
+// Pasting that into the URL field breaks the player (the field would store the
+// whole snippet as the URL). This helper detects an iframe in the input and
+// returns the `src` attribute instead. If the input is already a plain URL,
+// it's returned unchanged.
+function normalizeVideoUrl(input) {
+  if (!input) return input;
+  const s = String(input).trim();
+  // Looks like an iframe embed code → extract src=""
+  if (/<iframe\b/i.test(s)) {
+    const m = s.match(/\bsrc\s*=\s*["']([^"']+)["']/i);
+    if (m && m[1]) return m[1].trim();
+  }
+  // Some folks paste a YouTube "share" or "embed" URL with `feature=share`
+  // or other noise. Strip the most obvious noise — but only if it's a YouTube URL.
+  // (We don't want to over-normalize Stream URLs whose params actually matter.)
+  if (/youtube\.com\/embed\//i.test(s) || /youtu\.be\//i.test(s) || /youtube\.com\/watch/i.test(s)) {
+    // No structural change needed — toYouTubeId() handles all these variants downstream.
+    return s;
+  }
+  return s;
 }
 
 // =====================================================================
