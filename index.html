@@ -2458,21 +2458,50 @@
           <strong>Direct MP4 files</strong> (hosted anywhere): paste the direct URL ending in .mp4 or .webm.
         </p>
 
-        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">🖼️ Hosting your thumbnails</h4>
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">🖼️ Hosting your thumbnails — the recommended recipe</h4>
         <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">
-          Thumbnails are stored as URLs, not files — the image lives wherever you host it, and OptimaPD just references it. This keeps the database tiny and the site fast no matter how many videos you add. Any of these work; pick whichever fits your workflow:
+          Thumbnails are stored as URLs, not files. The image lives in your OptimaPD GitHub repo (same place as <code>index.html</code>), and the site just references it. Database stays tiny, site stays fast, images stay version-controlled.
         </p>
-        <ul style="color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin: 8px 0 12px 22px;">
-          <li><strong>GitHub repo (recommended for OptimaPD):</strong> drop the image into a <code>thumbnails/</code> folder in the same GitHub Pages repo, commit, and reference it as <code>thumbnails/lesson-vr.jpg</code>. Free, versioned, same domain as the site.</li>
-          <li><strong>Firebase Storage:</strong> enable Storage in your Firebase console, upload the image, and copy the download URL. Free tier is 5GB.</li>
-          <li><strong>Imgur / Cloudinary:</strong> upload, copy the direct image URL. Fast for one-offs.</li>
-          <li><strong>OneDrive / SharePoint:</strong> use a public "anyone with the link" share URL. Works but the URL is ugly.</li>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-top: 10px; padding: 10px 14px; background: rgba(63,221,163,0.10); border-left: 3px solid var(--success); border-radius: 4px;">
+          <strong>Step-by-step:</strong><br>
+          1. Open your <code>pbirchum/OptimaPD</code> repo on GitHub.<br>
+          2. Open (or create) the <code>thumbnails/</code> folder.<br>
+          3. Click <strong>Add file → Upload files</strong>, drop the image in, commit.<br>
+          4. In the Add Video form here, paste a URL using either pattern below.
+        </p>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-top: 10px;">
+          <strong>Two URL formats that work — pick whichever you prefer:</strong>
+        </p>
+        <ul style="color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin: 6px 0 12px 22px;">
+          <li><strong>Relative path (shortest):</strong><br><code>thumbnails/my-lesson.png</code><br><span style="color:var(--text-muted);">Works because the site is served from the same repo. URL-encode spaces as <code>%20</code>.</span></li>
+          <li><strong>Raw GitHub URL (full path):</strong><br><code>https://raw.githubusercontent.com/pbirchum/OptimaPD/main/thumbnails/my-lesson.png</code></li>
+        </ul>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-top: 12px; padding: 10px 14px; background: rgba(245, 184, 46, 0.10); border-left: 3px solid var(--brand-gold); border-radius: 4px;">
+          <strong>⚠️ Common gotchas the site now catches for you:</strong>
+        </p>
+        <ul style="color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin: 6px 0 12px 22px;">
+          <li><strong>GitHub "blob" URLs:</strong> If you paste <code>https://github.com/pbirchum/OptimaPD/blob/main/thumbnails/foo.png</code>, the site will <strong>auto-convert</strong> it to the correct <code>raw.githubusercontent.com</code> URL on save. The <code>blob</code> URL is GitHub's HTML viewer page (with the repo header, file sidebar, etc.) — not the raw image. You'll see the corrected URL appear in the field after you tab out.</li>
+          <li><strong>SharePoint / OneDrive share links</strong> <em>(e.g. <code>optimaedcom-my.sharepoint.com/:i:/g/personal/…</code>)</em>: these are HTML viewer pages that require SharePoint authentication, <strong>not direct image URLs</strong>. The site now rejects them on save with a clear message. There's no reliable way to embed a SharePoint share URL as an <code>&lt;img&gt;</code> source without Microsoft Graph API auth. Use GitHub for thumbnails.</li>
+          <li><strong>Base64 data URIs:</strong> blocked — they're what was busting Firestore's 1MB limit in the first place.</li>
         </ul>
         <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">
-          <strong>Image specs:</strong> 16:9 aspect ratio, ideally 800×450 pixels, under 200KB. JPG/PNG/WebP all fine. The site lazy-loads thumbnails as you scroll, so even a big library stays snappy.
+          <strong>Image specs:</strong> 16:9 aspect ratio, ideally 800×450 pixels, under 200KB. JPG/PNG/WebP all fine. The site lazy-loads thumbnails so even a big library stays snappy.
         </p>
-        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-top: 8px; padding: 10px 14px; background: rgba(63,185,221,0.08); border-left: 3px solid var(--brand-blue); border-radius: 4px;">
-          <strong>Why this matters:</strong> Firestore caps each document at 1MB. Embedding a base64-encoded thumbnail inside the video document burns most of that budget and blocks saves once the image gets large. Storing only the URL means the document stays a few hundred bytes — even a 5MB image won't break a save.
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">🔐 If saves fail with "Missing or insufficient permissions"</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">
+          That's Firestore's security rules blocking the write. Open the Firebase Console for the <code>optimapd-2026</code> project → <strong>Firestore Database</strong> → <strong>Rules</strong> tab, paste this temporary open ruleset, and click <strong>Publish</strong>:
+        </p>
+        <pre style="margin-top:8px; padding:14px; background:var(--bg-darkest); border:1px solid var(--border-subtle); border-radius:8px; font-size:11.5px; line-height:1.5; color:var(--text-secondary); white-space:pre-wrap; font-family:'Courier New',monospace;">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}</pre>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-top: 8px;">
+          <strong>Important:</strong> these rules let anyone with the database URL read or write — that's fine during development since the URL isn't published anywhere, but you'll want to tighten this once Microsoft Auth is wired up. At that point we'll swap in rules like <code>allow read, write: if request.auth != null;</code>.
         </p>
 
         <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">📋 Video upload prompt (copy &amp; paste into a new chat)</h4>
@@ -4214,13 +4243,21 @@ async function handleAddVideo(e) {
   const duration = document.getElementById('f_duration').value.trim();
   const tags = document.getElementById('f_tags').value.split(',').map(t => t.trim()).filter(Boolean);
   const chapters = parseChaptersInput(document.getElementById('f_chapters')?.value || '');
-  const thumbUrl = (document.getElementById('f_thumbUrl').value || '').trim();
+  // Normalize the URL on save (auto-fix github.com/.../blob/... → raw.githubusercontent.com)
+  const rawThumb = (document.getElementById('f_thumbUrl').value || '').trim();
+  const thumbUrl = normalizeThumbnailUrl(rawThumb);
+  // Reflect the normalized URL back into the field so the admin sees what was actually saved.
+  if (thumbUrl !== rawThumb) document.getElementById('f_thumbUrl').value = thumbUrl;
   const isFeatured = document.getElementById('f_featured').checked;
   const attachments = collectAttachments();
 
   if (!title) { alert('Title is required.'); return; }
-  if (!thumbUrl) { alert('Thumbnail URL is required. Paste a link to a hosted image (GitHub repo, Firebase Storage, Imgur, OneDrive public link, etc.).'); document.getElementById('f_thumbUrl').focus(); return; }
-  if (!isValidThumbnailUrl(thumbUrl)) { alert('Thumbnail URL must be a normal http(s) link. Paste a hosted image URL — do not paste base64 data.'); document.getElementById('f_thumbUrl').focus(); return; }
+  if (!thumbUrl) { alert('Thumbnail URL is required. Paste a link to a hosted image (your GitHub repo\'s thumbnails/ folder is the easiest spot).'); document.getElementById('f_thumbUrl').focus(); return; }
+  if (looksLikeSharePointShareLink(thumbUrl)) {
+    alert('That looks like a SharePoint / OneDrive share link, which is an HTML viewer page — not a direct image. It won\'t render as a thumbnail.\n\nHost the image in your OptimaPD GitHub repo\'s thumbnails/ folder instead. See Admin → Help → Hosting your thumbnails for the recipe.');
+    document.getElementById('f_thumbUrl').focus(); return;
+  }
+  if (!isValidThumbnailUrl(thumbUrl)) { alert('Thumbnail URL must be a normal http(s) link to an image file. Paste a hosted image URL — do not paste base64 data.'); document.getElementById('f_thumbUrl').focus(); return; }
   if (!videoUrl && !videoFile) {
     if (!confirm('No video URL or file provided. Add anyway (placeholder)?')) return;
   }
@@ -4277,7 +4314,9 @@ async function handleAddVideo(e) {
 
 async function handleAddCourse(e) {
   e.preventDefault();
-  const thumbUrl = (document.getElementById('c_thumbUrl')?.value || '').trim();
+  const rawThumb = (document.getElementById('c_thumbUrl')?.value || '').trim();
+  const thumbUrl = normalizeThumbnailUrl(rawThumb);
+  if (thumbUrl !== rawThumb) document.getElementById('c_thumbUrl').value = thumbUrl;
   const course = {
     title: document.getElementById('c_title').value.trim(),
     description: getRichTextContent('c_desc') || '',
@@ -4288,6 +4327,10 @@ async function handleAddCourse(e) {
   };
   if (!course.title) { alert('Course title is required.'); return; }
   if (!thumbUrl) { alert('Course thumbnail URL is required.'); document.getElementById('c_thumbUrl').focus(); return; }
+  if (looksLikeSharePointShareLink(thumbUrl)) {
+    alert('That looks like a SharePoint / OneDrive share link, which is an HTML viewer page — not a direct image. It won\'t render as a thumbnail.\n\nHost the image in your OptimaPD GitHub repo\'s thumbnails/ folder instead.');
+    document.getElementById('c_thumbUrl').focus(); return;
+  }
   if (!isValidThumbnailUrl(thumbUrl)) { alert('Course thumbnail URL must be a normal http(s) link to a hosted image — not base64 data.'); document.getElementById('c_thumbUrl').focus(); return; }
   try {
     await saveCourse(course);
@@ -4383,7 +4426,11 @@ async function promptCourseThumbnail(courseId) {
     current && !current.startsWith('data:') ? current : ''
   );
   if (url === null) return; // cancelled
-  const trimmed = url.trim();
+  const trimmed = normalizeThumbnailUrl(url.trim());
+  if (trimmed && looksLikeSharePointShareLink(trimmed)) {
+    alert('SharePoint / OneDrive share links are HTML viewer pages, not direct images, so they can\'t be used as thumbnails. Host the image in your OptimaPD GitHub repo\'s thumbnails/ folder instead.');
+    return;
+  }
   if (trimmed && !isValidThumbnailUrl(trimmed)) {
     alert('That URL doesn\'t look right. Use a normal http(s) link to a hosted image — not base64 data.');
     return;
@@ -5241,7 +5288,13 @@ async function savePlaylistEdit() {
   const name = document.getElementById('ple_name').value.trim();
   if (!name) { alert('Playlist name is required.'); return; }
   const description = document.getElementById('ple_desc').value.trim();
-  const thumbUrl = (document.getElementById('ple_thumbUrl').value || '').trim();
+  const rawThumb = (document.getElementById('ple_thumbUrl').value || '').trim();
+  const thumbUrl = normalizeThumbnailUrl(rawThumb);
+  if (thumbUrl !== rawThumb) document.getElementById('ple_thumbUrl').value = thumbUrl;
+  if (thumbUrl && looksLikeSharePointShareLink(thumbUrl)) {
+    alert('SharePoint / OneDrive share links are HTML viewer pages, not direct images, so they can\'t be used as thumbnails. Host the image in your OptimaPD GitHub repo\'s thumbnails/ folder instead.');
+    return;
+  }
   if (thumbUrl && !isValidThumbnailUrl(thumbUrl)) {
     alert('Thumbnail URL must be a normal http(s) link — not base64 data.');
     return;
@@ -6487,9 +6540,48 @@ function isValidThumbnailUrl(v) {
   if (!s) return false;
   if (s.startsWith('data:')) return false;
   if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('//')) return true;
-  // Relative path like "thumbnails/foo.jpg" or "/thumbnails/foo.jpg"
-  if (/^[a-zA-Z0-9_\-./]+\.(jpg|jpeg|png|gif|webp|svg|avif)(\?.*)?$/i.test(s)) return true;
+  // Relative path like "thumbnails/foo.jpg" or "thumbnails/Steps%20to%20…%20Florida.png"
+  // Allow URL-encoded chars (%) and + for plus-encoded spaces.
+  if (/^[a-zA-Z0-9_\-./%+]+\.(jpg|jpeg|png|gif|webp|svg|avif)(\?.*)?$/i.test(s)) return true;
   return false;
+}
+
+// Detect SharePoint / OneDrive share links — these are HTML viewer pages,
+// NOT direct image URLs, so they cannot be used as an <img src>. We reject
+// them on save with a clear message so admins don't end up with broken thumbs.
+function looksLikeSharePointShareLink(url) {
+  if (!url) return false;
+  // sharepoint.com share links: /:i:/, /:b:/, /:f:/, /:s:/, /:w:/, /:p:/, /:x:/ etc.
+  if (/\.sharepoint\.com\/:[a-z]:\//i.test(url)) return true;
+  // Legacy OneDrive share redirect URLs
+  if (/onedrive\.live\.com\/redir/i.test(url)) return true;
+  // The :i:/g/ guest-share variant is what shows up in OptimaEd's tenant
+  if (/sharepoint\.com.*\/:i:/i.test(url)) return true;
+  return false;
+}
+
+// Auto-normalize common admin mistakes:
+//  - github.com/USER/REPO/blob/BRANCH/PATH  →  raw.githubusercontent.com/USER/REPO/BRANCH/PATH
+//  - github.com/USER/REPO/raw/BRANCH/PATH  →  raw.githubusercontent.com/USER/REPO/BRANCH/PATH
+//  - Trim surrounding whitespace
+// Returns the corrected URL (or the original if no conversion applies).
+function normalizeThumbnailUrl(url) {
+  if (!url) return url;
+  let s = String(url).trim();
+  // GitHub blob viewer → raw
+  let m = s.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/i);
+  if (m) {
+    s = `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}`;
+    // Strip any ?raw=… or #… that came along
+    s = s.replace(/\?raw=[^&]*&?/i, '?').replace(/[?&]$/, '');
+    return s;
+  }
+  // github.com/.../raw/BRANCH/PATH → raw.githubusercontent.com
+  m = s.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/raw\/(.+)$/i);
+  if (m) {
+    return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}`;
+  }
+  return s;
 }
 
 // Wire up live previews for the Add Video and Add Course thumbnail fields.
@@ -6503,11 +6595,17 @@ function initThumbnailUrlPreviews() {
     const inp = document.getElementById(inputId);
     if (!inp) return;
     const refresh = () => {
-      const url = (inp.value || '').trim();
+      let url = (inp.value || '').trim();
+      // Auto-normalize on blur so the admin sees the corrected URL right away.
+      const normalized = normalizeThumbnailUrl(url);
+      if (normalized !== url) {
+        inp.value = normalized;
+        url = normalized;
+      }
       const wrap = document.getElementById(wrapId);
       const img  = document.getElementById(imgId);
       if (!wrap || !img) return;
-      if (url && isValidThumbnailUrl(url)) {
+      if (url && isValidThumbnailUrl(url) && !looksLikeSharePointShareLink(url)) {
         img.src = url;
         wrap.style.display = '';
       } else {
@@ -6515,7 +6613,20 @@ function initThumbnailUrlPreviews() {
         img.removeAttribute('src');
       }
     };
-    inp.addEventListener('input', refresh);
+    // Live preview as they type, plus a normalization pass on blur.
+    inp.addEventListener('input', () => {
+      const url = (inp.value || '').trim();
+      const wrap = document.getElementById(wrapId);
+      const img  = document.getElementById(imgId);
+      if (!wrap || !img) return;
+      if (url && isValidThumbnailUrl(url) && !looksLikeSharePointShareLink(url)) {
+        img.src = url;
+        wrap.style.display = '';
+      } else {
+        wrap.style.display = 'none';
+        img.removeAttribute('src');
+      }
+    });
     inp.addEventListener('blur', refresh);
   });
 }
