@@ -2221,11 +2221,12 @@
             </div>
 
             <div class="form-group">
-              <label>Thumbnail Image (optional)</label>
-              <label class="upload-zone" for="f_thumbFile" style="padding: 14px 20px;">
-                <span id="f_thumbName">Click to choose an image · falls back to a colored card</span>
-                <input type="file" id="f_thumbFile" accept="image/*" onchange="document.getElementById('f_thumbName').textContent = this.files[0] ? this.files[0].name : 'Click to choose an image · falls back to a colored card'" />
-              </label>
+              <label>Thumbnail URL <span style="color:var(--danger); font-weight:600;">*</span></label>
+              <input type="url" id="f_thumbUrl" required placeholder="https://… link to a hosted image (jpg/png/webp)" />
+              <p class="help">Paste a link to an image hosted anywhere — a <code>thumbnails/</code> folder in your GitHub repo, Firebase Storage, Imgur, OneDrive (public share), Cloudinary, etc. The image file itself never lives in the database, so the site stays fast. <strong>Recommended: 16:9, 800×450 or smaller, &lt;200KB.</strong></p>
+              <div id="f_thumbPreview" style="margin-top:8px; display:none;">
+                <img id="f_thumbPreviewImg" alt="thumbnail preview" style="max-width:240px; max-height:135px; border-radius:8px; border:1px solid var(--border-subtle); object-fit:cover;" />
+              </div>
             </div>
 
             <div class="form-group">
@@ -2316,12 +2317,12 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Course Thumbnail <span style="color:var(--text-muted); font-weight:400;">(optional)</span></label>
-              <label class="upload-zone" for="c_thumbFile" style="padding: 14px 20px;">
-                <span id="c_thumbName">Click to choose an image · falls back to a colored card</span>
-                <input type="file" id="c_thumbFile" accept="image/*" onchange="document.getElementById('c_thumbName').textContent = this.files[0] ? this.files[0].name : 'Click to choose an image · falls back to a colored card'" />
-              </label>
-              <p class="help">Appears on the Courses tab as the course tile image.</p>
+              <label>Course Thumbnail URL <span style="color:var(--danger); font-weight:600;">*</span></label>
+              <input type="url" id="c_thumbUrl" required placeholder="https://… link to a hosted image" />
+              <p class="help">Appears on the Courses tab as the course tile image. Paste any image URL (GitHub repo, Firebase Storage, Imgur, OneDrive public link, etc.). <strong>Recommended: 16:9, 800×450, &lt;200KB.</strong></p>
+              <div id="c_thumbPreview" style="margin-top:8px; display:none;">
+                <img id="c_thumbPreviewImg" alt="thumbnail preview" style="max-width:240px; max-height:135px; border-radius:8px; border:1px solid var(--border-subtle); object-fit:cover;" />
+              </div>
             </div>
             <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Create Course</button>
           </form>
@@ -2398,6 +2399,23 @@
           <strong>YouTube:</strong> paste the standard watch URL (like <code>https://youtube.com/watch?v=abc123</code>). It'll automatically embed.<br>
           <strong>Microsoft Stream:</strong> use the "share" link from Stream.<br>
           <strong>Direct MP4 files</strong> (hosted anywhere): paste the direct URL ending in .mp4 or .webm.
+        </p>
+
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">🖼️ Hosting your thumbnails</h4>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">
+          Thumbnails are stored as URLs, not files — the image lives wherever you host it, and OptimaPD just references it. This keeps the database tiny and the site fast no matter how many videos you add. Any of these work; pick whichever fits your workflow:
+        </p>
+        <ul style="color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin: 8px 0 12px 22px;">
+          <li><strong>GitHub repo (recommended for OptimaPD):</strong> drop the image into a <code>thumbnails/</code> folder in the same GitHub Pages repo, commit, and reference it as <code>thumbnails/lesson-vr.jpg</code>. Free, versioned, same domain as the site.</li>
+          <li><strong>Firebase Storage:</strong> enable Storage in your Firebase console, upload the image, and copy the download URL. Free tier is 5GB.</li>
+          <li><strong>Imgur / Cloudinary:</strong> upload, copy the direct image URL. Fast for one-offs.</li>
+          <li><strong>OneDrive / SharePoint:</strong> use a public "anyone with the link" share URL. Works but the URL is ugly.</li>
+        </ul>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">
+          <strong>Image specs:</strong> 16:9 aspect ratio, ideally 800×450 pixels, under 200KB. JPG/PNG/WebP all fine. The site lazy-loads thumbnails as you scroll, so even a big library stays snappy.
+        </p>
+        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-top: 8px; padding: 10px 14px; background: rgba(63,185,221,0.08); border-left: 3px solid var(--brand-blue); border-radius: 4px;">
+          <strong>Why this matters:</strong> Firestore caps each document at 1MB. Embedding a base64-encoded thumbnail inside the video document burns most of that budget and blocks saves once the image gets large. Storing only the URL means the document stays a few hundred bytes — even a 5MB image won't break a save.
         </p>
 
         <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">📋 Video upload prompt (copy &amp; paste into a new chat)</h4>
@@ -2688,11 +2706,9 @@
       <textarea id="ple_desc" placeholder="What is this playlist for?"></textarea>
     </div>
     <div class="form-group">
-      <label>Thumbnail</label>
-      <label class="upload-zone" for="ple_thumbFile" style="padding: 14px 20px;">
-        <span id="ple_thumbName">Click to choose an image · falls back to a colored card</span>
-        <input type="file" id="ple_thumbFile" accept="image/*" onchange="document.getElementById('ple_thumbName').textContent = this.files[0] ? this.files[0].name : 'Click to choose an image · falls back to a colored card'" />
-      </label>
+      <label>Thumbnail URL <span style="color:var(--text-muted); font-weight:400;">(optional)</span></label>
+      <input type="url" id="ple_thumbUrl" placeholder="https://… link to a hosted image (optional)" />
+      <p class="help">Optional. Paste an image URL — leave blank for the default colored card.</p>
     </div>
     <div style="display:flex; gap:10px; justify-content:flex-end;">
       <button class="btn btn-secondary" onclick="window.closePlaylistEditModal()">Cancel</button>
@@ -4133,11 +4149,13 @@ async function handleAddVideo(e) {
   const courseId = document.getElementById('f_course').value;
   const duration = document.getElementById('f_duration').value.trim();
   const tags = document.getElementById('f_tags').value.split(',').map(t => t.trim()).filter(Boolean);
-  const thumbFile = document.getElementById('f_thumbFile').files[0];
+  const thumbUrl = (document.getElementById('f_thumbUrl').value || '').trim();
   const isFeatured = document.getElementById('f_featured').checked;
   const attachments = collectAttachments();
 
   if (!title) { alert('Title is required.'); return; }
+  if (!thumbUrl) { alert('Thumbnail URL is required. Paste a link to a hosted image (GitHub repo, Firebase Storage, Imgur, OneDrive public link, etc.).'); document.getElementById('f_thumbUrl').focus(); return; }
+  if (!isValidThumbnailUrl(thumbUrl)) { alert('Thumbnail URL must be a normal http(s) link. Paste a hosted image URL — do not paste base64 data.'); document.getElementById('f_thumbUrl').focus(); return; }
   if (!videoUrl && !videoFile) {
     if (!confirm('No video URL or file provided. Add anyway (placeholder)?')) return;
   }
@@ -4153,7 +4171,7 @@ async function handleAddVideo(e) {
     duration,
     tags,
     videoUrl: videoUrl || null,
-    thumbnailData: null,
+    thumbnailData: thumbUrl,
     attachments,
     isFeatured,
     viewCount: 0,
@@ -4166,15 +4184,6 @@ async function handleAddVideo(e) {
   } else if (videoFile && USE_FIREBASE) {
     alert('In cloud mode, direct file upload is disabled to avoid using up your database quota. Upload your video to Microsoft Stream or YouTube first, then paste the URL here.');
     return;
-  }
-
-  if (thumbFile) {
-    try {
-      if (thumbFile.size > 500 * 1024) {
-        if (!confirm(`Thumbnail is ${Math.round(thumbFile.size/1024)}KB — large images can slow the database. Continue anyway? Recommended: under 500KB.`)) return;
-      }
-      video.thumbnailData = await readFileAsDataURL(thumbFile);
-    } catch(e) { console.warn('Thumb read failed', e); }
   }
 
   if (courseId) {
@@ -4191,7 +4200,7 @@ async function handleAddVideo(e) {
 
     e.target.reset();
     document.getElementById('f_videoFileName').textContent = 'MP4, MOV, WebM';
-    document.getElementById('f_thumbName').textContent = 'Click to choose an image · falls back to a colored card';
+    document.getElementById('f_thumbPreview').style.display = 'none';
     document.getElementById('attachmentsContainer').innerHTML = '';
     setRichTextContent('f_desc', '');
     updateSubcategoryOptions();
@@ -4202,29 +4211,23 @@ async function handleAddVideo(e) {
 
 async function handleAddCourse(e) {
   e.preventDefault();
-  const thumbFile = document.getElementById('c_thumbFile')?.files?.[0];
+  const thumbUrl = (document.getElementById('c_thumbUrl')?.value || '').trim();
   const course = {
     title: document.getElementById('c_title').value.trim(),
     description: getRichTextContent('c_desc') || '',
     category: document.getElementById('c_category').value,
     difficulty: document.getElementById('c_difficulty').value,
-    thumbnailData: null,
+    thumbnailData: thumbUrl || null,
     createdAt: new Date().toISOString()
   };
   if (!course.title) { alert('Course title is required.'); return; }
-  if (thumbFile) {
-    try {
-      if (thumbFile.size > 500 * 1024) {
-        if (!confirm(`Course thumbnail is ${Math.round(thumbFile.size/1024)}KB — large images can slow the database. Continue? Recommended: under 500KB.`)) return;
-      }
-      course.thumbnailData = await readFileAsDataURL(thumbFile);
-    } catch(err) { console.warn('Thumb read failed', err); }
-  }
+  if (!thumbUrl) { alert('Course thumbnail URL is required.'); document.getElementById('c_thumbUrl').focus(); return; }
+  if (!isValidThumbnailUrl(thumbUrl)) { alert('Course thumbnail URL must be a normal http(s) link to a hosted image — not base64 data.'); document.getElementById('c_thumbUrl').focus(); return; }
   try {
     await saveCourse(course);
     e.target.reset();
-    const cThumbName = document.getElementById('c_thumbName');
-    if (cThumbName) cThumbName.textContent = 'Click to choose an image · optional';
+    const preview = document.getElementById('c_thumbPreview');
+    if (preview) preview.style.display = 'none';
     renderCoursesList();
     updateCourseDropdown(document.getElementById('f_category').value);
     alert(`✓ Course "${course.title}" created. Now add videos and assign them to it.`);
@@ -4307,26 +4310,26 @@ function renderCoursesList() {
 }
 
 async function promptCourseThumbnail(courseId) {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = async () => {
-    const file = input.files[0];
-    if (!file) return;
-    if (file.size > 500 * 1024) {
-      if (!confirm(`Thumbnail is ${Math.round(file.size/1024)}KB. Continue?`)) return;
+  const current = (DB.courses.find(c => c.id === courseId) || {}).thumbnailData || '';
+  const url = prompt(
+    'Paste the new thumbnail URL (hosted image — GitHub repo, Firebase Storage, Imgur, OneDrive public link, etc.):\n\n' +
+    'Leave blank to remove the current thumbnail.',
+    current && !current.startsWith('data:') ? current : ''
+  );
+  if (url === null) return; // cancelled
+  const trimmed = url.trim();
+  if (trimmed && !isValidThumbnailUrl(trimmed)) {
+    alert('That URL doesn\'t look right. Use a normal http(s) link to a hosted image — not base64 data.');
+    return;
+  }
+  try {
+    await updateCourse(courseId, { thumbnailData: trimmed || null });
+    if (!USE_FIREBASE) {
+      const c = DB.courses.find(c => c.id === courseId);
+      if (c) c.thumbnailData = trimmed || null;
     }
-    try {
-      const data = await readFileAsDataURL(file);
-      await updateCourse(courseId, { thumbnailData: data });
-      if (!USE_FIREBASE) {
-        const c = DB.courses.find(c => c.id === courseId);
-        if (c) c.thumbnailData = data;
-      }
-      renderCoursesList();
-    } catch (err) { alert('Upload failed: ' + err.message); }
-  };
-  input.click();
+    renderCoursesList();
+  } catch (err) { alert('Update failed: ' + err.message); }
 }
 
 async function deleteCourse(id) {
@@ -5138,8 +5141,7 @@ function openPlaylistEditModal(playlistId) {
   const saveBtn = document.getElementById('ple_saveBtn');
   const nameInp = document.getElementById('ple_name');
   const descInp = document.getElementById('ple_desc');
-  const thumbName = document.getElementById('ple_thumbName');
-  const thumbFile = document.getElementById('ple_thumbFile');
+  const thumbUrlInp = document.getElementById('ple_thumbUrl');
 
   if (playlistId) {
     const pl = getPlaylists().find(p => p.id === playlistId);
@@ -5148,15 +5150,15 @@ function openPlaylistEditModal(playlistId) {
     saveBtn.textContent = 'Save changes';
     nameInp.value = pl.name || '';
     descInp.value = pl.description || '';
-    thumbName.textContent = pl.thumbnailData ? 'Current thumbnail · pick a new file to replace' : 'Click to choose an image · falls back to a colored card';
+    // If existing thumbnailData is a normal URL, pre-fill it; if it's old base64 we leave the field blank so the user supplies a real URL.
+    thumbUrlInp.value = (pl.thumbnailData && !pl.thumbnailData.startsWith('data:')) ? pl.thumbnailData : '';
   } else {
     titleEl.textContent = 'New Playlist';
     saveBtn.textContent = 'Create';
     nameInp.value = '';
     descInp.value = '';
-    thumbName.textContent = 'Click to choose an image · falls back to a colored card';
+    thumbUrlInp.value = '';
   }
-  thumbFile.value = '';
   document.getElementById('playlistEditModal').classList.add('open');
   setTimeout(() => nameInp.focus(), 100);
 }
@@ -5170,15 +5172,10 @@ async function savePlaylistEdit() {
   const name = document.getElementById('ple_name').value.trim();
   if (!name) { alert('Playlist name is required.'); return; }
   const description = document.getElementById('ple_desc').value.trim();
-  const thumbFile = document.getElementById('ple_thumbFile').files[0];
-  let thumbnailData = null;
-  if (thumbFile) {
-    try {
-      if (thumbFile.size > 500 * 1024) {
-        if (!confirm(`Thumbnail is ${Math.round(thumbFile.size/1024)}KB — large images use more storage. Continue?`)) return;
-      }
-      thumbnailData = await readFileAsDataURL(thumbFile);
-    } catch(err) { console.warn('Thumb read failed', err); }
+  const thumbUrl = (document.getElementById('ple_thumbUrl').value || '').trim();
+  if (thumbUrl && !isValidThumbnailUrl(thumbUrl)) {
+    alert('Thumbnail URL must be a normal http(s) link — not base64 data.');
+    return;
   }
 
   const lists = getPlaylists();
@@ -5187,11 +5184,11 @@ async function savePlaylistEdit() {
     if (pl) {
       pl.name = name;
       pl.description = description;
-      if (thumbnailData) pl.thumbnailData = thumbnailData;
+      pl.thumbnailData = thumbUrl || null;
     }
     savePlaylists(lists);
   } else {
-    const pl = { id: uid(), name, description, videoIds: [], thumbnailData, createdAt: new Date().toISOString() };
+    const pl = { id: uid(), name, description, videoIds: [], thumbnailData: thumbUrl || null, createdAt: new Date().toISOString() };
     lists.push(pl);
     savePlaylists(lists);
   }
@@ -6284,6 +6281,52 @@ function clearAnalyticsData() {
   localStorage.removeItem(COMPLETED_KEY);
   localStorage.removeItem(QUIZ_RES_KEY);
   renderAnalytics();
+}
+
+// =====================================================================
+// THUMBNAIL URL HELPERS (no more base64 in the database)
+// =====================================================================
+// Validate that a thumbnail value is a real http(s) URL, a same-origin
+// relative path (so "thumbnails/foo.jpg" in the GitHub repo works), or a
+// protocol-relative URL. Reject base64 data: URIs — they're what was
+// blowing up Firestore's 1MB-per-document limit.
+function isValidThumbnailUrl(v) {
+  if (!v) return false;
+  const s = String(v).trim();
+  if (!s) return false;
+  if (s.startsWith('data:')) return false;
+  if (s.startsWith('http://') || s.startsWith('https://') || s.startsWith('//')) return true;
+  // Relative path like "thumbnails/foo.jpg" or "/thumbnails/foo.jpg"
+  if (/^[a-zA-Z0-9_\-./]+\.(jpg|jpeg|png|gif|webp|svg|avif)(\?.*)?$/i.test(s)) return true;
+  return false;
+}
+
+// Wire up live previews for the Add Video and Add Course thumbnail fields.
+// Called once on page load.
+function initThumbnailUrlPreviews() {
+  const pairs = [
+    ['f_thumbUrl', 'f_thumbPreview', 'f_thumbPreviewImg'],
+    ['c_thumbUrl', 'c_thumbPreview', 'c_thumbPreviewImg']
+  ];
+  pairs.forEach(([inputId, wrapId, imgId]) => {
+    const inp = document.getElementById(inputId);
+    if (!inp) return;
+    const refresh = () => {
+      const url = (inp.value || '').trim();
+      const wrap = document.getElementById(wrapId);
+      const img  = document.getElementById(imgId);
+      if (!wrap || !img) return;
+      if (url && isValidThumbnailUrl(url)) {
+        img.src = url;
+        wrap.style.display = '';
+      } else {
+        wrap.style.display = 'none';
+        img.removeAttribute('src');
+      }
+    };
+    inp.addEventListener('input', refresh);
+    inp.addEventListener('blur', refresh);
+  });
 }
 
 // =====================================================================
@@ -7466,6 +7509,7 @@ initStorage();
 updateSubcategoryOptions();
 bootRouter();
 initMsalAuth();
+initThumbnailUrlPreviews();
 // OptimaPD v2: gate the site behind login + seed default admin/entity
 bootOptimaAuth();
 </script>
