@@ -3774,32 +3774,53 @@ function renderBrowseResults() {
 }
 
 function renderVideoDetail(id, fromCourse) {
+  // IMPORTANT — re-render guard. In Firebase mode, every updateDoc() we do
+  // here (e.g., bumping viewCount) fires the Firestore onSnapshot listener,
+  // which calls reRenderCurrentView() → renderVideoDetail() → updateDoc()
+  // → snapshot → ... in an infinite loop. The loop rebuilds the iframe on
+  // every cycle, so videos never finish loading and the cursor flickers as
+  // the page is constantly repainted.
+  //
+  // Fix: only do the expensive/destructive work (iframe build + view-count
+  // bump) when we're navigating to a *new* video. Snapshot-triggered re-runs
+  // only refresh the cheap metadata around the player.
+  const isNewNavigation = (window._currentPlayerVideoId !== id);
+
   currentView = 'video-detail';
   currentViewParams = { id, fromCourse: fromCourse || null };
   const v = DB.videos.find(x => x.id === id);
   if (!v) { showView('home'); return; }
 
-  // record view
-  recordView(id);
+  if (isNewNavigation) {
+    // record view (in My Learning history) and bump the on-document counter
+    recordView(id);
+    if (USE_FIREBASE && window._fs) {
+      const { doc, updateDoc, increment } = window._fs;
+      updateDoc(doc(firestore, 'videos', id), { viewCount: increment(1) }).catch(() => {});
+    } else {
+      v.viewCount = (v.viewCount || 0) + 1;
+      saveLocal();
+    }
 
-  // bump view count (non-blocking)
-  if (USE_FIREBASE && window._fs) {
-    const { doc, updateDoc, increment } = window._fs;
-    updateDoc(doc(firestore, 'videos', id), { viewCount: increment(1) }).catch(() => {});
+    // Build the player iframe ONCE per navigation. Re-rendering on snapshot
+    // updates would restart playback and (in the loop above) prevent the
+    // video from ever loading.
+    try {
+      document.getElementById('playerTitle').textContent = v.title || '(untitled)';
+      document.getElementById('playerWrap').innerHTML = buildEmbedOrVideo(v);
+      const fb = document.getElementById('playerFallback');
+      if (fb) fb.innerHTML = '';
+    } catch (err) {
+      console.error('[OptimaPD] player frame render failed:', err);
+    }
+
+    window._currentPlayerVideoId = id;
   } else {
-    v.viewCount = (v.viewCount || 0) + 1;
-    saveLocal();
-  }
-
-  // Build the player frame up front — always runs even if later steps error out
-  try {
-    document.getElementById('playerTitle').textContent = v.title || '(untitled)';
-    document.getElementById('playerWrap').innerHTML = buildEmbedOrVideo(v);
-    // Fallback box removed — broken videos are an admin problem to fix, not a learner-facing UX element.
-    const fb = document.getElementById('playerFallback');
-    if (fb) fb.innerHTML = '';
-  } catch (err) {
-    console.error('[OptimaPD] player frame render failed:', err);
+    // Same video, just a re-render (e.g., snapshot fired after a metadata edit).
+    // Keep the title in sync but DO NOT touch the iframe.
+    try {
+      document.getElementById('playerTitle').textContent = v.title || '(untitled)';
+    } catch (err) { /* noop */ }
   }
 
   // Resilient category lookup — missing/unknown categories fall back to tech so
@@ -4747,6 +4768,8 @@ function showView(name, params, __fromPopState) {
   // Always stop video playback when navigating away from the player
   if (currentView === 'video-detail' && name !== 'video-detail') {
     stopActiveVideo();
+    // Reset the player-build guard so coming back here re-builds the iframe.
+    window._currentPlayerVideoId = null;
   }
 
   const viewMap = {
@@ -6714,11 +6737,30 @@ function seekToChapter(seconds) {
   if (type === 'stream') {
     const base = player.getAttribute('data-base-url') || '';
     if (!base) return;
-    // Strip any existing t= or starttime= param, then append a fresh one.
-    // Microsoft Stream (SharePoint) uses ?t=<seconds> for start time.
-    let cleaned = base.replace(/([?&])(st|starttime|t)=[^&]*/g, '$1').replace(/[?&]$/, '');
+    // Microsoft Stream comes in three+ flavors, each honoring a different
+    // start-time hint:
+    //   • Classic Stream (web.microsoftstream.com)         → ?st=N
+    //   • Modern SharePoint Stream embed (embed.aspx)       → ?startTime=PT{N}S (ISO 8601)
+    //   • SharePoint-hosted .mp4 player                     → #t=Ns (HTML5 media fragment)
+    //   • Some intermediates                                → ?t=N or ?Position=N
+    // We can't tell which the user's URL is, so strip any pre-existing
+    // start-time params, then layer in ALL of them. The player picks up
+    // whichever one it understands; the others are ignored.
+    let cleaned = base
+      .replace(/([?&])(st|starttime|startTime|t|Position|nav)=[^&]*/gi, '$1')
+      .replace(/\?&/g, '?')
+      .replace(/&&+/g, '&')
+      .replace(/[?&]$/, '');
+    cleaned = cleaned.split('#')[0]; // strip existing fragment
     const sep = cleaned.includes('?') ? '&' : '?';
-    player.src = `${cleaned}${sep}t=${t}`;
+    player.src = `${cleaned}${sep}st=${t}&t=${t}&startTime=PT${t}S&Position=${t}#t=${t}s`;
+    // Best-effort: also try postMessage in case this Stream variant supports it.
+    try {
+      player.contentWindow && player.contentWindow.postMessage(
+        { type: 'embed.player.command.seek', data: { time: t } },
+        '*'
+      );
+    } catch (e) { /* cross-origin, expected */ }
     return;
   }
 
