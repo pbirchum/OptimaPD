@@ -3102,7 +3102,7 @@ function loadLocal() {
   }
   if (!DB.videos) DB.videos = [];
   if (!DB.courses) DB.courses = [];
-  renderHome();
+  bootRouter();
 }
 function saveLocal() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
@@ -3110,12 +3110,23 @@ function saveLocal() {
 
 function subscribeFirestore() {
   const { collection, onSnapshot } = window._fs;
+  // Track whether the initial snapshot for each collection has arrived.
+  // bootRouter() must fire only once, after BOTH collections are ready,
+  // so that DB.videos and DB.courses are both populated before routing.
+  let _vReady = false, _cReady = false;
+
+  function _maybeBootRouter() {
+    if (_vReady && _cReady) bootRouter();
+  }
+
   unsubVideos = onSnapshot(collection(firestore, 'videos'), snap => {
     DB.videos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!_vReady) { _vReady = true; _maybeBootRouter(); return; }
     reRenderCurrentView();
   });
   unsubCourses = onSnapshot(collection(firestore, 'courses'), snap => {
     DB.courses = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!_cReady) { _cReady = true; _maybeBootRouter(); return; }
     reRenderCurrentView();
   });
 }
@@ -3134,6 +3145,7 @@ function reRenderCurrentView() {
     updateCourseDropdown(document.getElementById('f_category').value);
     setRichTextContent('c_desc', '');
   }
+  else if (currentView === 'video-detail') renderVideoDetail(currentViewParams.id, currentViewParams.fromCourse);
   else if (currentView === 'course-detail') renderCourseDetail(currentViewParams.id);
 }
 
@@ -4816,9 +4828,7 @@ function bootRouter() {
   try {
     history.replaceState({ view: route.name, params: route.params }, '', buildUrlFor(route.name, route.params));
   } catch (_) {}
-  if (route.name !== 'home') {
-    showView(route.name, route.params, true);
-  }
+  showView(route.name, route.params || {}, true);
   window.addEventListener('popstate', (e) => {
     const s = e.state;
     if (s && s.view) {
@@ -6704,10 +6714,11 @@ function seekToChapter(seconds) {
   if (type === 'stream') {
     const base = player.getAttribute('data-base-url') || '';
     if (!base) return;
-    // Strip any existing st= or starttime= param, then append a fresh one.
+    // Strip any existing t= or starttime= param, then append a fresh one.
+    // Microsoft Stream (SharePoint) uses ?t=<seconds> for start time.
     let cleaned = base.replace(/([?&])(st|starttime|t)=[^&]*/g, '$1').replace(/[?&]$/, '');
     const sep = cleaned.includes('?') ? '&' : '?';
-    player.src = `${cleaned}${sep}st=${t}`;
+    player.src = `${cleaned}${sep}t=${t}`;
     return;
   }
 
@@ -8005,7 +8016,9 @@ window.editPlaylist = editPlaylist;
 initRichTextEditors();
 initStorage();
 updateSubcategoryOptions();
-bootRouter();
+// bootRouter() is now called inside loadLocal() (local mode) and
+// subscribeFirestore() (Firebase mode) after data is fully loaded,
+// so that video-detail routes work correctly on page refresh.
 initMsalAuth();
 initThumbnailUrlPreviews();
 // OptimaPD v2: gate the site behind login + seed default admin/entity
