@@ -1302,6 +1302,58 @@
   .chapter-row:hover .ch-time {
     background: rgba(63, 185, 221, 0.18);
   }
+  /* Click feedback — fires when a chapter is clicked so the user knows it
+     registered even if the underlying player (looking at you, Stream) ignores
+     our seek attempt. */
+  .chapter-row.flash {
+    animation: chapterFlash 0.5s ease;
+  }
+  @keyframes chapterFlash {
+    0%   { background: rgba(63, 185, 221, 0.35); }
+    100% { background: transparent; }
+  }
+  /* Hint about Stream's seek limitation — sits below the chapter list. */
+  .chapters-stream-hint {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(245, 184, 46, 0.10);
+    border: 1px solid rgba(245, 184, 46, 0.30);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  /* Floating toast near the player when a Stream chapter is clicked. */
+  .stream-seek-toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--brand-blue);
+    color: var(--text-primary);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    z-index: 250;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .stream-seek-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .stream-seek-toast .seek-time {
+    font-weight: 700;
+    color: var(--brand-blue);
+    font-family: 'Courier New', monospace;
+  }
 
   /* =========================================================
      OPTIMAPD v2 — LOGIN, PROFILE, BADGES, REPORTS, BANNER
@@ -2727,6 +2779,14 @@ service cloud.firestore {
       <button class="btn btn-secondary" onclick="window.closePlaylistEditModal()">Cancel</button>
       <button class="btn btn-primary" id="ple_saveBtn" onclick="window.savePlaylistEdit()">Create</button>
     </div>
+  </div>
+</div>
+
+<!-- Toast that appears when a Stream chapter is clicked (visible feedback) -->
+<div class="stream-seek-toast" id="streamSeekToast">
+  <div>📌 Jumping to <span class="seek-time" id="streamSeekToastTime">0:00</span>…</div>
+  <div style="font-size:11.5px; color: var(--text-muted); margin-top:6px;">
+    Microsoft Stream's player doesn't always honor jump-to-timestamp from outside. If the video stays where it was, drag the player's progress bar to the timestamp above.
   </div>
 </div>
 
@@ -6632,22 +6692,61 @@ function renderChaptersForVideo(v) {
   if (!el) return;
   const chapters = Array.isArray(v && v.chapters) ? v.chapters : [];
   if (!chapters.length) { el.innerHTML = ''; return; }
+
+  // Detect Stream embeds — they don't reliably honor programmatic seek.
+  // If this video is a Stream embed, show a one-line hint under the chapter
+  // list so the user knows what to do if the click doesn't seek.
+  const isStream = v && v.videoUrl &&
+    /(?:sharepoint|onedrive|microsoftstream|stream\.office)/i.test(v.videoUrl);
+
   el.innerHTML = `<div class="chapters-card">
     <div class="chapters-card-header">
       <h4>📑 Chapters</h4>
       <span class="ch-count">${chapters.length} chapter${chapters.length === 1 ? '' : 's'}</span>
     </div>
-    ${chapters.map(c => `<div class="chapter-row" onclick="window.seekToChapter(${c.time})">
+    ${chapters.map(c => `<div class="chapter-row" onclick="window.seekToChapter(${c.time}, event)">
       <span class="ch-time">${formatChapterTime(c.time)}</span>
       <span class="ch-title">${escapeHtml(c.title)}</span>
     </div>`).join('')}
+    ${isStream ? `<div class="chapters-stream-hint">
+      ⚠️ Microsoft Stream's player doesn't expose a public seek API. Clicking a chapter reloads the player with a start-time hint — the video may jump to the timestamp, or it may restart at 0 depending on which Stream variant your tenant uses. If it restarts, drag the progress bar to the timestamp shown in the chapter row.
+    </div>` : ''}
   </div>`;
 }
 
 // Universal seek — works for YouTube, Stream, generic iframes, and HTML5 video.
 // YouTube & Stream: reload iframe with the start-time query param.
 // HTML5 video: set currentTime + play (instant, no flicker).
-function seekToChapter(seconds) {
+// Brief floating toast confirming the click + telling the user how to
+// fall back to the progress bar if the player ignores our seek attempt.
+let _streamSeekToastTimer = null;
+function showStreamSeekToast(seconds) {
+  const toast = document.getElementById('streamSeekToast');
+  const timeEl = document.getElementById('streamSeekToastTime');
+  if (!toast || !timeEl) return;
+  timeEl.textContent = formatChapterTime(seconds);
+  toast.classList.add('show');
+  if (_streamSeekToastTimer) clearTimeout(_streamSeekToastTimer);
+  _streamSeekToastTimer = setTimeout(() => toast.classList.remove('show'), 4200);
+}
+
+// Brief flash on the clicked chapter row so the click is always visibly
+// acknowledged, no matter how the underlying player responds.
+function flashChapterRow(rowEl) {
+  if (!rowEl) return;
+  rowEl.classList.remove('flash');
+  // Force reflow so the animation restarts when re-clicked rapidly.
+  void rowEl.offsetWidth;
+  rowEl.classList.add('flash');
+}
+
+function seekToChapter(seconds, evt) {
+  // Visual feedback first — chapter row gets a brief highlight.
+  try {
+    const rowEl = evt && evt.currentTarget ? evt.currentTarget : null;
+    if (rowEl) flashChapterRow(rowEl);
+  } catch (e) {}
+
   const player = document.getElementById('opPlayer');
   if (!player) return;
   const t = Math.max(0, Math.floor(seconds || 0));
@@ -6672,31 +6771,54 @@ function seekToChapter(seconds) {
   }
 
   if (type === 'stream') {
-    // SharePoint Stream embeds are *fragile* about URL changes. Modifying
-    // the iframe's src — even just to append a start-time param — often
-    // breaks the player's auth context and leaves a black screen, because
-    // params like `nav=true` and the embed UniqueId are load-bearing.
+    // Microsoft Stream comes in several mutually-incompatible flavors and
+    // none of them gives us a documented JS seek API. We do everything we
+    // can in best-effort order — and CRITICALLY we always show visible
+    // feedback so the user knows their click registered:
     //
-    // Safer approach: don't touch the URL. Use postMessage to ask the
-    // player to seek. Different Stream player versions accept different
-    // message shapes, so we fire several formats and let whichever the
-    // player understands take effect. If none work, the video keeps
-    // playing where it was — no black screen, no broken state.
-    //
-    // The user can always fall back to the player's progress bar.
-    if (!player.contentWindow) return;
-    const seekMessages = [
-      { type: 'embed.player.command.seek',  data: { time: t } },
-      { type: 'video.command.seek',         time: t },
-      { command: 'seek',                    value: t },
-      { action: 'seek',                     seconds: t },
-      // OneDrive/Stream player has used these shapes in different versions:
-      { name: 'seek',                       args: [t] },
-      { method: 'seek',                     params: { time: t } }
-    ];
-    seekMessages.forEach(m => {
-      try { player.contentWindow.postMessage(m, '*'); } catch (e) { /* expected cross-origin */ }
-    });
+    //   1) Show a floating toast with the target timestamp + a hint to
+    //      drag the progress bar as a fallback. (ALWAYS happens.)
+    //   2) Fire postMessage in several formats. Stream Classic honors some;
+    //      modern SharePoint embeds typically ignore them. Free silent try.
+    //   3) URL reload — but ONLY when the URL is a normal embed URL with
+    //      ?query params. SharePoint *share links* (containing :i:/g/ or
+    //      :v:/g/) use path-based routing and break when query params are
+    //      appended (which produces "nothing happens" — the iframe load
+    //      fails silently or 404s).
+    const base = player.getAttribute('data-base-url') || '';
+    if (!base) return;
+
+    // 1) Visible toast — fires for every click regardless of whether the
+    //    seek succeeds. This is what fixes the "nothing happens at all" UX.
+    showStreamSeekToast(t);
+
+    // 2) postMessage attempts (silent, may work on Stream Classic).
+    try {
+      if (player.contentWindow) {
+        [
+          { type: 'embed.player.command.seek', data: { time: t } },
+          { type: 'video.command.seek',        time: t },
+          { command: 'seek',                   value: t },
+          { action: 'seek',                    seconds: t }
+        ].forEach(m => player.contentWindow.postMessage(m, '*'));
+      }
+    } catch (e) { /* cross-origin, expected */ }
+
+    // 3) URL reload — only safe for embed URLs (with ?query), NOT for
+    //    SharePoint share links which use path-based routing like
+    //    /:i:/g/personal/.../.../GUID?e=... where appending more params
+    //    breaks the URL routing entirely.
+    const isShareLink = /\/:[a-z]:\/[a-z]\//i.test(base);
+    if (!isShareLink) {
+      let cleaned = base
+        .replace(/([?&])(t|Position|startTime|starttime|st)=[^&]*/gi, '$1')
+        .replace(/\?&/g, '?')
+        .replace(/&&+/g, '&')
+        .replace(/[?&]$/, '');
+      cleaned = cleaned.split('#')[0];
+      const sep = cleaned.includes('?') ? '&' : '?';
+      player.src = `${cleaned}${sep}t=${t}&Position=${t}&startTime=PT${t}S#t=${t}s`;
+    }
     return;
   }
 
