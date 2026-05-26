@@ -1164,6 +1164,46 @@
   }
 
   /* =========================================================
+     ADMIN FILTER BAR (Video Library, Manage Courses)
+     ========================================================= */
+  .admin-filter-bar {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    padding: 12px 14px;
+    background: var(--bg-darkest);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    margin: 8px 0 18px;
+  }
+  .admin-filter-bar input,
+  .admin-filter-bar select {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-family: inherit; font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: border-color 0.15s;
+  }
+  .admin-filter-bar input:focus,
+  .admin-filter-bar select:focus {
+    outline: none; border-color: var(--brand-blue);
+  }
+  .admin-filter-search {
+    flex: 1 1 220px;
+    min-width: 200px;
+  }
+  .admin-filter-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--text-secondary); font-size: 12px;
+    cursor: pointer;
+  }
+  .admin-filter-toggle input { margin: 0; }
+  .admin-filter-result-count {
+    color: var(--text-muted); font-size: 12px;
+    padding: 6px 4px;
+  }
+
+  /* =========================================================
      ACTION BUTTONS (video detail page — Favorite / Playlist / Admin)
      ========================================================= */
   .player-actions {
@@ -1393,33 +1433,7 @@
     .login-brand { display: none; }
   }
 
-  /* ---------- TOP NAV: user menu + recent badges ---------- */
-  .nav-recent-badges {
-    display: flex; gap: 8px; align-items: center;
-    margin-right: 6px;
-  }
-  .nav-recent-badge {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--bg-card); border: 1px solid var(--border-subtle);
-    display: flex; align-items: center; justify-content: center;
-    position: relative; cursor: pointer;
-    transition: transform 0.15s;
-  }
-  .nav-recent-badge:hover { transform: scale(1.12); }
-  .nav-recent-badge svg { width: 22px; height: 22px; }
-  .nav-recent-badge .tier-dot {
-    position: absolute; bottom: -2px; right: -2px;
-    width: 11px; height: 11px; border-radius: 50%;
-    border: 2px solid var(--bg-darkest);
-  }
-  .nav-recent-badge .badge-tooltip {
-    position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
-    background: #0b1522; color: #fff; font-size: 11px; padding: 6px 10px;
-    border-radius: 6px; pointer-events: none; opacity: 0;
-    transition: opacity 0.15s; z-index: 200;
-    white-space: nowrap;
-  }
-  .nav-recent-badge:hover .badge-tooltip { opacity: 1; }
+  /* ---------- TOP NAV: user menu ---------- */
   .user-menu-wrap { position: relative; }
   .user-menu-btn {
     background: none; border: none; cursor: pointer; padding: 0;
@@ -1523,7 +1537,7 @@
     color: var(--bg-darkest); font-weight: 600;
   }
 
-  /* ---------- BADGE GALLERY (Clash Royale style) ---------- */
+  /* ---------- CERTIFICATES PAGE ---------- */
   .badges-container {
     max-width: 1180px; margin: 0 auto; padding: 36px 32px;
   }
@@ -1532,91 +1546,8 @@
     color: var(--text-secondary); margin-bottom: 28px;
     font-size: 14px; line-height: 1.6; max-width: 760px;
   }
-  .badge-cat-section {
-    margin-bottom: 36px;
-  }
-  .badge-cat-header {
-    display: flex; align-items: baseline; justify-content: space-between;
-    margin-bottom: 16px;
-  }
-  .badge-cat-header h2 {
-    font-size: 20px; font-weight: 600;
-  }
-  .badge-cat-header h2 .count {
-    font-size: 13px; color: var(--text-muted); margin-left: 8px; font-weight: 400;
-  }
-  .badge-strip {
-    display: flex; gap: 14px; overflow-x: auto;
-    padding: 8px 4px 16px;
-    scrollbar-width: thin;
-  }
-  .badge-strip::-webkit-scrollbar { height: 8px; }
-  .badge-strip::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
-  .badge-tile {
-    flex: 0 0 110px;
-    background: var(--bg-card); border: 1px solid var(--border-subtle);
-    border-radius: 12px; padding: 12px 8px;
-    display: flex; flex-direction: column; align-items: center;
-    cursor: pointer; position: relative;
-    transition: transform 0.18s, border-color 0.18s;
-  }
-  .badge-tile:hover {
-    transform: translateY(-3px);
-    border-color: var(--brand-blue);
-  }
-  .badge-tile.locked {
-    opacity: 0.7;
-  }
-  .badge-tile.locked .badge-art {
-    filter: grayscale(1) brightness(0.45);
-  }
-  .badge-art {
-    width: 76px; height: 76px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 8px;
-  }
-  .badge-art svg { width: 100%; height: 100%; }
-  .badge-name {
-    font-size: 12px; font-weight: 600;
-    text-align: center; line-height: 1.3;
-    color: var(--text-primary);
-  }
-  .badge-tier-label {
-    font-size: 10px; margin-top: 4px;
-    text-transform: uppercase; letter-spacing: 0.4px;
-    font-weight: 700;
-  }
-  .badge-tier-label.bronze { color: #CD7F32; }
-  .badge-tier-label.silver { color: #C0C0C0; }
-  .badge-tier-label.gold { color: var(--brand-gold); }
-  .badge-tier-label.platinum { color: #B9E5FF; }
-  .badge-tier-label.diamond {
-    background: linear-gradient(90deg, #69E1FF, #C29BFF, #FFD27D);
-    -webkit-background-clip: text; background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .badge-tooltip-rich {
-    position: absolute; bottom: calc(100% + 6px); left: 50%;
-    transform: translateX(-50%);
-    background: #0b1522; color: #fff;
-    padding: 10px 12px; border-radius: 8px;
-    width: 200px; opacity: 0; pointer-events: none;
-    transition: opacity 0.15s; z-index: 30;
-    font-size: 11px; line-height: 1.45;
-    text-align: left; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  }
-  .badge-tooltip-rich strong { display: block; margin-bottom: 4px; font-size: 12px; }
-  .badge-tooltip-rich .progress-bar {
-    width: 100%; height: 6px; background: rgba(255,255,255,0.1);
-    border-radius: 3px; overflow: hidden; margin-top: 6px;
-  }
-  .badge-tooltip-rich .progress-bar > div {
-    height: 100%; background: var(--brand-blue);
-    transition: width 0.3s;
-  }
-  .badge-tile:hover .badge-tooltip-rich { opacity: 1; }
 
-  /* Certificates inside badges page */
+  /* Certificates list cards */
   .cert-list {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 14px; margin-top: 14px;
@@ -1701,48 +1632,6 @@
   .reports-summary .stat .lbl { font-size: 11px; color: var(--text-muted);
     text-transform: uppercase; letter-spacing: 0.4px; }
 
-  /* ---------- BADGE DESIGNER ---------- */
-  .bd-form {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-  }
-  @media (max-width: 720px) { .bd-form { grid-template-columns: 1fr; } }
-  .bd-form label { font-size: 11px; color: var(--text-muted); text-transform: uppercase;
-    letter-spacing: 0.4px; }
-  .bd-form input, .bd-form select, .bd-form textarea {
-    width: 100%; padding: 9px 11px; margin-top: 4px;
-    background: var(--bg-darkest); border: 1px solid var(--border-subtle);
-    color: var(--text-primary); border-radius: 8px; font-family: inherit; font-size: 13px;
-  }
-  .bd-thresholds { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-  .bd-thresholds input { padding: 7px 9px; font-size: 12px; }
-
-  /* ── BADGES ── */
-  .badge-shelf { display: flex; flex-wrap: wrap; gap: 16px; padding: 4px 0; min-height: 40px; }
-  .badge-item {
-    width: 72px; height: 72px; cursor: pointer; position: relative;
-    transition: transform 0.18s; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .badge-item:hover { transform: scale(1.1); }
-  .badge-item img { width: 72px; height: 72px; object-fit: contain; display: block; }
-  .badge-placeholder {
-    width: 72px; height: 72px; border-radius: 50%; font-size: 28px;
-    background: linear-gradient(135deg, #1E3A5F, #3FB9DD);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .badge-tooltip {
-    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-    background: #0b1522; color: #fff; font-size: 11px; padding: 5px 9px;
-    border-radius: 5px; pointer-events: none; opacity: 0;
-    transition: opacity 0.15s; z-index: 30;
-    max-width: 160px; text-align: center; white-space: normal; line-height: 1.4;
-  }
-  .badge-item:hover .badge-tooltip { opacity: 1; }
-  .badge-complete-check {
-    position: absolute; top: -4px; right: -4px; width: 18px; height: 18px;
-    background: #2ecc71; border-radius: 50%; font-size: 10px;
-    display: flex; align-items: center; justify-content: center; color: #fff;
-  }
 
   /* ── QUIZ ── */
   .lesson-quiz-item {
@@ -1874,11 +1763,9 @@
       </div>
     </span>
     <a data-nav="mylearning" onclick="window.showView('mylearning')">My Learning</a>
-    <a data-nav="badges" onclick="window.showView('badges')">Badges</a>
     <a data-nav="admin" id="navAdminLink" class="admin-link-hidden" onclick="window.showView('admin')">Admin</a>
   </div>
   <div class="nav-right">
-    <div class="nav-recent-badges" id="navRecentBadges" title="Most recent badges earned"></div>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
       <input class="search-input" id="searchInput" placeholder="Search..." onkeydown="if(event.key===&apos;Enter&apos;) window.runSearch(this.value)" />
@@ -1893,7 +1780,7 @@
           <div class="role" id="userMenuRole">—</div>
         </div>
         <a onclick="window.toggleUserMenu(false); window.showView('profile')">👤 My Profile</a>
-        <a onclick="window.toggleUserMenu(false); window.showView('badges')">🏆 Badges &amp; Certificates</a>
+        <a onclick="window.toggleUserMenu(false); window.showView('certificates')">📜 My Certificates</a>
         <a id="userMenuAdminLink" style="display:none;" onclick="window.toggleUserMenu(false); window.showView('admin')">⚙️ Admin</a>
         <a class="signout" onclick="window.optimaSignOut()">↩ Sign out</a>
       </div>
@@ -2031,10 +1918,6 @@
     <div id="mlAuthRow" style="margin-top: 14px;"></div>
   </section>
   <section class="content-section">
-    <div class="ml-section" id="mlBadgesSection" style="display:none;">
-      <div class="section-header"><div class="section-title">🏅 Earned Badges <span class="subtitle" id="badgeCount">0 badges</span></div></div>
-      <div id="mlBadgesRow" class="badge-shelf"></div>
-    </div>
     <div class="ml-section">
       <div class="section-header"><div class="section-title">⭐ Favorites <span class="subtitle" id="favCount">0 videos</span></div></div>
       <div id="mlFavoritesRow"></div>
@@ -2178,39 +2061,12 @@
   </div>
 </div>
 
-<!-- ============== BADGES VIEW ============== -->
-<div id="view-badges" class="view">
+<!-- ============== CERTIFICATES VIEW ============== -->
+<div id="view-certificates" class="view">
   <div class="badges-container">
-    <h1>🏆 Badges &amp; Certificates</h1>
-    <p class="lead">Earn badges for milestones on the site, individual videos you watch, and courses you complete. Each badge upgrades through five tiers — Bronze, Silver, Gold, Platinum, Diamond — gaining color and detail as you progress. Hover any badge for details.</p>
-
-    <div class="badge-cat-section">
-      <div class="badge-cat-header">
-        <h2>Milestones <span class="count" id="badgeMilestonesCount"></span></h2>
-      </div>
-      <div class="badge-strip" id="badgeStripMilestones"></div>
-    </div>
-
-    <div class="badge-cat-section">
-      <div class="badge-cat-header">
-        <h2>Video Badges <span class="count" id="badgeVideosCount"></span></h2>
-      </div>
-      <div class="badge-strip" id="badgeStripVideos"></div>
-    </div>
-
-    <div class="badge-cat-section">
-      <div class="badge-cat-header">
-        <h2>Course Badges <span class="count" id="badgeCoursesCount"></span></h2>
-      </div>
-      <div class="badge-strip" id="badgeStripCourses"></div>
-    </div>
-
-    <div class="badge-cat-section">
-      <div class="badge-cat-header">
-        <h2>📜 My Certificates</h2>
-      </div>
-      <div id="certListWrap"></div>
-    </div>
+    <h1>📜 My Certificates</h1>
+    <p class="lead">Every course you complete on OptimaPD generates a downloadable PDF certificate with your name and the date you finished. Your collection lives here — download as many copies as you need.</p>
+    <div id="certListWrap"></div>
   </div>
 </div>
 
@@ -2227,7 +2083,6 @@
       <div class="admin-tab" data-tab="categories" onclick="window.switchAdminTab(event,'categories')">Categories</div>
       <div class="admin-tab" data-tab="people" onclick="window.switchAdminTab(event,'people')">👥 People &amp; Orgs</div>
       <div class="admin-tab" data-tab="reports" onclick="window.switchAdminTab(event,'reports')">📈 Reports</div>
-      <div class="admin-tab" data-tab="badge-designer" onclick="window.switchAdminTab(event,'badge-designer')">🏅 Badge Designer</div>
       <div class="admin-tab" data-tab="analytics" onclick="window.switchAdminTab(event,'analytics')">📊 Analytics</div>
       <div class="admin-tab" data-tab="help" onclick="window.switchAdminTab(event,'help')">Help</div>
       <div class="admin-tab" style="margin-left:auto; color: var(--danger);" onclick="window.optimaSignOut()">Log out</div>
@@ -2409,6 +2264,32 @@
     <div class="admin-panel" id="panel-library">
       <div class="admin-card">
         <h3>🎥 Your Video Library <span class="help-hint" id="libCount">0 videos</span></h3>
+
+        <div class="admin-filter-bar">
+          <input type="text" id="lib_search" class="admin-filter-search" placeholder="🔍 Search title, tags, subcategories…" oninput="window.renderVideoLibrary()" />
+          <select id="lib_cat" onchange="window.renderVideoLibrary()">
+            <option value="">All categories</option>
+            <option value="tech">Tech Skills</option>
+            <option value="pedagogy">Pedagogy Skills</option>
+            <option value="examples">Example Lessons</option>
+          </select>
+          <select id="lib_course" onchange="window.renderVideoLibrary()">
+            <option value="">Any course assignment</option>
+            <option value="__standalone__">Standalone only</option>
+          </select>
+          <label class="admin-filter-toggle">
+            <input type="checkbox" id="lib_featured" onchange="window.renderVideoLibrary()" />
+            <span>Featured only</span>
+          </label>
+          <select id="lib_sort" onchange="window.renderVideoLibrary()">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title-az">Title A → Z</option>
+            <option value="title-za">Title Z → A</option>
+            <option value="views">Most viewed</option>
+          </select>
+        </div>
+
         <div id="videoLibraryList"></div>
       </div>
     </div>
@@ -2456,7 +2337,29 @@
           </form>
         </div>
         <div class="admin-card">
-          <h3>Existing Courses</h3>
+          <h3>Existing Courses <span class="help-hint" id="coursesAdminCount">0 courses</span></h3>
+
+          <div class="admin-filter-bar">
+            <input type="text" id="cl_search" class="admin-filter-search" placeholder="🔍 Search course title or description…" oninput="window.renderCoursesList()" />
+            <select id="cl_cat" onchange="window.renderCoursesList()">
+              <option value="">All categories</option>
+              <option value="tech">Tech Skills</option>
+              <option value="pedagogy">Pedagogy Skills</option>
+              <option value="examples">Example Lessons</option>
+            </select>
+            <label class="admin-filter-toggle">
+              <input type="checkbox" id="cl_hasvideos" onchange="window.renderCoursesList()" />
+              <span>Has at least 1 video</span>
+            </label>
+            <select id="cl_sort" onchange="window.renderCoursesList()">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title-az">Title A → Z</option>
+              <option value="title-za">Title Z → A</option>
+              <option value="lessons">Most lessons</option>
+            </select>
+          </div>
+
           <div id="coursesList"></div>
         </div>
       </div>
@@ -2677,71 +2580,13 @@ service cloud.firestore {
         <div class="reports-summary" id="rpt_summary"></div>
         <div style="overflow-x:auto;">
           <table class="po-users-table" id="rpt_table">
-            <thead><tr><th>User</th><th>Email</th><th>Entity</th><th>Videos watched</th><th>Courses completed</th><th>Badges earned</th><th>Last active</th></tr></thead>
+            <thead><tr><th>User</th><th>Email</th><th>Entity</th><th>Courses completed</th><th>Last active</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- BADGE DESIGNER PANEL -->
-    <div class="admin-panel" id="panel-badge-designer">
-      <div class="admin-card">
-        <h3>🏅 Badge Designer</h3>
-        <p style="color:var(--text-secondary); font-size:13px;">Create custom Milestone badges. Each badge progresses through 5 tiers. Video and Course badges are auto-created for each piece of content.</p>
-
-        <div class="bd-form">
-          <div>
-            <label>Badge name</label>
-            <input type="text" id="bd_name" placeholder="e.g., Summer Institute Attendee" />
-          </div>
-          <div>
-            <label>Hover description</label>
-            <input type="text" id="bd_desc" placeholder="What earns this badge?" />
-          </div>
-          <div>
-            <label>Trigger metric</label>
-            <select id="bd_metric">
-              <option value="videosWatched">Videos watched</option>
-              <option value="coursesCompleted">Courses completed</option>
-              <option value="minutesOnSite">Minutes spent on site</option>
-              <option value="loginStreak">Consecutive-day login streak</option>
-              <option value="commentsPosted">Comments posted</option>
-              <option value="uploadsOwned">Videos owned (uploaded on behalf of user)</option>
-              <option value="manual">Manual award only</option>
-            </select>
-          </div>
-          <div>
-            <label>Art preset</label>
-            <select id="bd_art">
-              <option value="shield">Shield</option>
-              <option value="star">Star</option>
-              <option value="trophy">Trophy</option>
-              <option value="laurel">Laurel</option>
-              <option value="bookmark">Bookmark</option>
-              <option value="medal">Medal</option>
-            </select>
-          </div>
-          <div style="grid-column:1 / -1;">
-            <label>Tier thresholds (Bronze · Silver · Gold · Platinum · Diamond)</label>
-            <div class="bd-thresholds">
-              <input type="number" id="bd_t1" placeholder="Bronze" value="1" min="1" />
-              <input type="number" id="bd_t2" placeholder="Silver" value="5" min="1" />
-              <input type="number" id="bd_t3" placeholder="Gold" value="15" min="1" />
-              <input type="number" id="bd_t4" placeholder="Platinum" value="40" min="1" />
-              <input type="number" id="bd_t5" placeholder="Diamond" value="100" min="1" />
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:14px;">
-          <button class="btn btn-primary" onclick="window.createCustomMilestone()">+ Create badge</button>
-        </div>
-
-        <h4 style="font-size: 13px; color: var(--brand-blue); margin: 24px 0 8px; text-transform:uppercase; letter-spacing:.4px;">Existing milestone badges</h4>
-        <div id="customMilestoneList"></div>
-      </div>
-    </div>
 
   </div>
 </div>
@@ -2797,6 +2642,11 @@ service cloud.firestore {
     <div class="form-group">
       <label>Title</label>
       <input type="text" id="ev_title" />
+    </div>
+    <div class="form-group">
+      <label>Video URL or embed code</label>
+      <input type="text" id="ev_videoUrl" placeholder="Paste a URL or the entire &lt;iframe&gt; embed code" />
+      <p class="help">Change where this video is sourced from without re-creating the entry. Accepts either a normal share URL (YouTube watch link, Microsoft Stream link, direct MP4, etc.) or the full <code>&lt;iframe&gt;</code> embed snippet — the site will auto-extract the URL from the embed code on save.</p>
     </div>
     <div class="form-group">
       <label>Custom body heading</label>
@@ -3589,7 +3439,6 @@ function renderCoursesListView() {
 
 function renderMyLearning() {
   currentView = 'mylearning';
-  renderMyLearningBadges();
   renderMyLearningAuthRow();
 
   // Favorites
@@ -4471,14 +4320,68 @@ async function handleAddCourse(e) {
 
 function renderVideoLibrary() {
   const el = document.getElementById('videoLibraryList');
-  document.getElementById('libCount').textContent = `${DB.videos.length} video${DB.videos.length === 1 ? '' : 's'}`;
-  if (DB.videos.length === 0) {
+  if (!el) return;
+  // Keep the course-assignment dropdown options in sync with current courses.
+  const courseSel = document.getElementById('lib_course');
+  if (courseSel) {
+    const cur = courseSel.value;
+    courseSel.innerHTML =
+      `<option value="">Any course assignment</option>` +
+      `<option value="__standalone__">Standalone only</option>` +
+      DB.courses.map(c => `<option value="${c.id}">📚 ${escapeHtml(c.title)}</option>`).join('');
+    courseSel.value = cur;
+  }
+
+  // Read filter state from the UI.
+  const search = (document.getElementById('lib_search')?.value || '').trim().toLowerCase();
+  const catFilter = document.getElementById('lib_cat')?.value || '';
+  const courseFilter = document.getElementById('lib_course')?.value || '';
+  const featuredOnly = !!document.getElementById('lib_featured')?.checked;
+  const sortBy = document.getElementById('lib_sort')?.value || 'newest';
+
+  // Apply filters.
+  let rows = DB.videos.slice();
+  if (catFilter) rows = rows.filter(v => v.category === catFilter);
+  if (featuredOnly) rows = rows.filter(v => v.isFeatured);
+  if (courseFilter === '__standalone__') rows = rows.filter(v => !v.courseId);
+  else if (courseFilter) rows = rows.filter(v => v.courseId === courseFilter);
+  if (search) {
+    rows = rows.filter(v => {
+      const hay = [v.title, v.description, ...getSubcategories(v), ...(v.tags||[])]
+        .filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(search);
+    });
+  }
+
+  // Apply sort.
+  rows.sort((a, b) => {
+    if (sortBy === 'title-az') return (a.title||'').localeCompare(b.title||'');
+    if (sortBy === 'title-za') return (b.title||'').localeCompare(a.title||'');
+    if (sortBy === 'views')    return (b.viewCount||0) - (a.viewCount||0);
+    if (sortBy === 'oldest')   return new Date(a.createdAt||0) - new Date(b.createdAt||0);
+    /* newest */               return new Date(b.createdAt||0) - new Date(a.createdAt||0);
+  });
+
+  // Update counts: total + visible.
+  const totalCount = DB.videos.length;
+  const visibleCount = rows.length;
+  document.getElementById('libCount').textContent =
+    (visibleCount === totalCount)
+      ? `${totalCount} video${totalCount === 1 ? '' : 's'}`
+      : `${visibleCount} of ${totalCount} videos`;
+
+  if (totalCount === 0) {
     el.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:30px;">No videos yet. Head to <strong>+ Add Video</strong> to upload your first one.</p>`;
     return;
   }
-  el.innerHTML = DB.videos.map(v => {
-    const cat = CATEGORY_META[v.category];
-    const catClass = cat ? cat.color : 'tech';
+  if (visibleCount === 0) {
+    el.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:30px;">No videos match the current filters. <a style="color:var(--brand-blue); cursor:pointer;" onclick="window.clearLibraryFilters()">Clear filters</a>.</p>`;
+    return;
+  }
+
+  el.innerHTML = rows.map(v => {
+    const cat = CATEGORY_META[v.category] || { label: 'Uncategorized', color: 'tech' };
+    const catClass = cat.color || 'tech';
     const thumb = v.thumbnailData
       ? `<img src="${v.thumbnailData}">`
       : `<div class="thumb-default thumb-${catClass}" style="width:100%;height:100%;"></div>`;
@@ -4488,7 +4391,7 @@ function renderVideoLibrary() {
         <div class="video-list-thumb">${thumb}</div>
         <div class="video-list-info">
           <h5>${escapeHtml(v.title)}</h5>
-          <p>${escapeHtml(cat.label)}${getSubcategories(v).length ? ' · ' + escapeHtml(getSubcategories(v).join(' · ')) : ''}${course ? ' · 📚 ' + escapeHtml(course) : ''}${v.duration ? ' · ' + escapeHtml(v.duration) : ''}${v.isFeatured ? ' · ⭐ Featured' : ''}</p>
+          <p>${escapeHtml(cat.label)}${getSubcategories(v).length ? ' · ' + escapeHtml(getSubcategories(v).join(' · ')) : ''}${course ? ' · 📚 ' + escapeHtml(course) : ''}${v.duration ? ' · ' + escapeHtml(v.duration) : ''}${v.isFeatured ? ' · ⭐ Featured' : ''}${typeof v.viewCount === 'number' ? ' · 👁 ' + v.viewCount : ''}</p>
         </div>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.showView('video-detail', {id:'${v.id}'})">View</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openEditVideoModal('${v.id}')">Edit</button>
@@ -4498,6 +4401,18 @@ function renderVideoLibrary() {
     `;
   }).join('');
 }
+
+// Clear the Video Library filter UI and re-render.
+function clearLibraryFilters() {
+  const s = document.getElementById('lib_search'); if (s) s.value = '';
+  const c = document.getElementById('lib_cat'); if (c) c.value = '';
+  const co = document.getElementById('lib_course'); if (co) co.value = '';
+  const f = document.getElementById('lib_featured'); if (f) f.checked = false;
+  const so = document.getElementById('lib_sort'); if (so) so.value = 'newest';
+  renderVideoLibrary();
+}
+window.clearLibraryFilters = clearLibraryFilters;
+window.renderVideoLibrary = renderVideoLibrary;
 
 async function toggleFeatured(videoId) {
   const v = DB.videos.find(x => x.id === videoId);
@@ -4515,32 +4430,88 @@ async function deleteVideo(id) {
 
 function renderCoursesList() {
   const el = document.getElementById('coursesList');
-  if (DB.courses.length === 0) {
+  if (!el) return;
+
+  // Read filter UI state.
+  const search = (document.getElementById('cl_search')?.value || '').trim().toLowerCase();
+  const catFilter = document.getElementById('cl_cat')?.value || '';
+  const hasVideosOnly = !!document.getElementById('cl_hasvideos')?.checked;
+  const sortBy = document.getElementById('cl_sort')?.value || 'newest';
+
+  // Apply filters.
+  let rows = DB.courses.slice().map(c => ({
+    course: c,
+    videoCount: DB.videos.filter(v => v.courseId === c.id).length
+  }));
+  if (catFilter)     rows = rows.filter(r => r.course.category === catFilter);
+  if (hasVideosOnly) rows = rows.filter(r => r.videoCount > 0);
+  if (search) {
+    rows = rows.filter(r => {
+      const c = r.course;
+      const hay = [c.title, c.description, c.difficulty].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(search);
+    });
+  }
+
+  // Sort.
+  rows.sort((a, b) => {
+    if (sortBy === 'title-az') return (a.course.title||'').localeCompare(b.course.title||'');
+    if (sortBy === 'title-za') return (b.course.title||'').localeCompare(a.course.title||'');
+    if (sortBy === 'lessons')  return b.videoCount - a.videoCount;
+    if (sortBy === 'oldest')   return new Date(a.course.createdAt||0) - new Date(b.course.createdAt||0);
+    /* newest */               return new Date(b.course.createdAt||0) - new Date(a.course.createdAt||0);
+  });
+
+  // Counts.
+  const totalCount = DB.courses.length;
+  const visibleCount = rows.length;
+  const countEl = document.getElementById('coursesAdminCount');
+  if (countEl) {
+    countEl.textContent = (visibleCount === totalCount)
+      ? `${totalCount} course${totalCount === 1 ? '' : 's'}`
+      : `${visibleCount} of ${totalCount} courses`;
+  }
+
+  if (totalCount === 0) {
     el.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:30px;">No courses yet. Create one to group videos into a sequenced series.</p>`;
     return;
   }
-  el.innerHTML = DB.courses.map(c => {
-    const videoCount = DB.videos.filter(v => v.courseId === c.id).length;
+  if (visibleCount === 0) {
+    el.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:30px;">No courses match the current filters. <a style="color:var(--brand-blue); cursor:pointer;" onclick="window.clearCourseFilters()">Clear filters</a>.</p>`;
+    return;
+  }
+
+  el.innerHTML = rows.map(({ course: c, videoCount }) => {
     const thumbHtml = c.thumbnailData
       ? `<img src="${c.thumbnailData}" style="width:100%;height:100%;object-fit:cover;">`
       : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#8D4BE8,#F5B82E); display:flex; align-items:center; justify-content:center; font-size:20px;">🎓</div>`;
+    const catLabel = (CATEGORY_META[c.category] || { label: 'Uncategorized' }).label;
     return `
       <div class="video-list-item">
         <div class="video-list-thumb">${thumbHtml}</div>
         <div class="video-list-info">
           <h5>${escapeHtml(c.title)}</h5>
-          <p>${escapeHtml(CATEGORY_META[c.category].label)} · ${videoCount} lesson${videoCount === 1 ? '' : 's'} · ${escapeHtml(c.difficulty || '')}</p>
+          <p>${escapeHtml(catLabel)} · ${videoCount} lesson${videoCount === 1 ? '' : 's'} · ${escapeHtml(c.difficulty || '')}</p>
         </div>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.showView('course-detail', {id:'${c.id}'})">View</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.promptCourseThumbnail('${c.id}')">Thumbnail</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openQuizEditor('${c.id}')">📝 Quizzes (${(c.quizzes||[]).length})</button>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.promptCourseBadge('${c.id}')">${c.badgeData ? '🏅 Badge ✓' : '🏅 Badge'}</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openCertEditor('${c.id}')">${c.certificate && c.certificate.enabled ? '🎓 Cert ✓' : '🎓 Cert'}</button>
         <button class="btn btn-danger" onclick="window.deleteCourse('${c.id}')">Delete</button>
       </div>
     `;
   }).join('');
 }
+
+function clearCourseFilters() {
+  const s = document.getElementById('cl_search'); if (s) s.value = '';
+  const c = document.getElementById('cl_cat'); if (c) c.value = '';
+  const h = document.getElementById('cl_hasvideos'); if (h) h.checked = false;
+  const so = document.getElementById('cl_sort'); if (so) so.value = 'newest';
+  renderCoursesList();
+}
+window.clearCourseFilters = clearCourseFilters;
+window.renderCoursesList = renderCoursesList;
 
 async function promptCourseThumbnail(courseId) {
   const current = (DB.courses.find(c => c.id === courseId) || {}).thumbnailData || '';
@@ -4842,6 +4813,7 @@ function parseHashRoute() {
   if (parts[0] === 'courses') return { name: 'courses', params: null };
   if (parts[0] === 'my-learning') return { name: 'mylearning', params: null };
   if (parts[0] === 'admin') return { name: 'admin', params: null };
+  if (parts[0] === 'certificates') return { name: 'certificates', params: null };
   return { name: 'home', params: null };
 }
 
@@ -5316,6 +5288,9 @@ function openEditVideoModal(videoId) {
   populateEvCourseDropdown();
 
   document.getElementById('ev_title').value = v.title || '';
+  // Pre-populate the editable video URL so admins can change the source without re-uploading.
+  const evVideoUrl = document.getElementById('ev_videoUrl');
+  if (evVideoUrl) evVideoUrl.value = v.videoUrl || '';
   document.getElementById('ev_bodyHeading').value = v.bodyHeading || '';
   setRichTextContent('ev_desc', v.description || '');
   document.getElementById('ev_category').value = v.category || 'tech';
@@ -5344,8 +5319,19 @@ async function saveEditVideo() {
   if (!v) return;
 
   const evSubcats = readSelectedChips('ev_subcategoryChips');
+  // Allow the admin to swap the video URL — including pasting a full embed code.
+  const rawVideoUrl = (document.getElementById('ev_videoUrl')?.value || '').trim();
+  const newVideoUrl = normalizeVideoUrl(rawVideoUrl);
+  if (newVideoUrl !== rawVideoUrl) document.getElementById('ev_videoUrl').value = newVideoUrl;
+  // If the URL actually changed, force the player iframe to be rebuilt next time
+  // the user lands on this video — otherwise the old src stays mounted because
+  // of the re-render guard introduced for the snapshot-loop fix.
+  if ((v.videoUrl || '') !== newVideoUrl && window._currentPlayerVideoId === v.id) {
+    window._currentPlayerVideoId = null;
+  }
   const patch = {
     title: document.getElementById('ev_title').value.trim() || v.title,
+    videoUrl: newVideoUrl || null,
     bodyHeading: document.getElementById('ev_bodyHeading').value.trim() || 'About this video',
     description: getRichTextContent('ev_desc') || '',
     category: document.getElementById('ev_category').value,
@@ -5806,55 +5792,6 @@ function triggerCourseCompletion(course, userName, userEmail) {
 }
 function closeCertDownload() {
   document.getElementById('certDownloadModal').classList.remove('open');
-}
-
-// ============================================================
-// BADGE SYSTEM
-// ============================================================
-async function promptCourseBadge(courseId) {
-  const input = document.createElement('input');
-  input.type = 'file'; input.accept = 'image/*';
-  input.onchange = async () => {
-    const file = input.files[0];
-    if (!file) return;
-    if (file.size > 400 * 1024 && !confirm(`Badge is ${Math.round(file.size/1024)}KB. Badges work best under 400KB. Continue?`)) return;
-    try {
-      const data = await readFileAsDataURL(file);
-      await updateCourse(courseId, { badgeData: data });
-      if (!USE_FIREBASE) { const c = DB.courses.find(c=>c.id===courseId); if(c) c.badgeData = data; }
-      renderCoursesList();
-      alert('✓ Badge saved! Teachers who complete this course will see it in My Learning.');
-    } catch(err) { alert('Failed to save badge: ' + err.message); }
-  };
-  input.click();
-}
-
-function renderMyLearningBadges() {
-  const section = document.getElementById('mlBadgesSection');
-  const shelf = document.getElementById('mlBadgesRow');
-  const countEl = document.getElementById('badgeCount');
-  if (!section || !shelf) return;
-  const completions = getCompletedCourses();
-  const uid = (getUserSession() || {}).userId || 'anon';
-  const myCompletions = completions.filter(c => c.userId === uid);
-  const earnedCourses = myCompletions.map(c => DB.courses.find(x => x.id === c.courseId)).filter(Boolean);
-  const badgeCourses = earnedCourses.filter(c => c.badgeData);
-  countEl.textContent = `${earnedCourses.length} badge${earnedCourses.length !== 1 ? 's' : ''}`;
-  if (earnedCourses.length === 0) {
-    section.style.display = 'none'; return;
-  }
-  section.style.display = '';
-  shelf.innerHTML = earnedCourses.map(c => {
-    const inner = c.badgeData
-      ? `<img src="${c.badgeData}" alt="${escapeHtml(c.title)}" />`
-      : `<div class="badge-placeholder">🎓</div>`;
-    return `
-      <div class="badge-item" onclick="window.showView('course-detail',{id:'${c.id}'})" title="${escapeHtml(c.title)}">
-        ${inner}
-        <div class="badge-tooltip">${escapeHtml(c.title)}</div>
-        <div class="badge-complete-check">✓</div>
-      </div>`;
-  }).join('');
 }
 
 // ============================================================
@@ -6735,32 +6672,31 @@ function seekToChapter(seconds) {
   }
 
   if (type === 'stream') {
-    const base = player.getAttribute('data-base-url') || '';
-    if (!base) return;
-    // Microsoft Stream comes in three+ flavors, each honoring a different
-    // start-time hint:
-    //   • Classic Stream (web.microsoftstream.com)         → ?st=N
-    //   • Modern SharePoint Stream embed (embed.aspx)       → ?startTime=PT{N}S (ISO 8601)
-    //   • SharePoint-hosted .mp4 player                     → #t=Ns (HTML5 media fragment)
-    //   • Some intermediates                                → ?t=N or ?Position=N
-    // We can't tell which the user's URL is, so strip any pre-existing
-    // start-time params, then layer in ALL of them. The player picks up
-    // whichever one it understands; the others are ignored.
-    let cleaned = base
-      .replace(/([?&])(st|starttime|startTime|t|Position|nav)=[^&]*/gi, '$1')
-      .replace(/\?&/g, '?')
-      .replace(/&&+/g, '&')
-      .replace(/[?&]$/, '');
-    cleaned = cleaned.split('#')[0]; // strip existing fragment
-    const sep = cleaned.includes('?') ? '&' : '?';
-    player.src = `${cleaned}${sep}st=${t}&t=${t}&startTime=PT${t}S&Position=${t}#t=${t}s`;
-    // Best-effort: also try postMessage in case this Stream variant supports it.
-    try {
-      player.contentWindow && player.contentWindow.postMessage(
-        { type: 'embed.player.command.seek', data: { time: t } },
-        '*'
-      );
-    } catch (e) { /* cross-origin, expected */ }
+    // SharePoint Stream embeds are *fragile* about URL changes. Modifying
+    // the iframe's src — even just to append a start-time param — often
+    // breaks the player's auth context and leaves a black screen, because
+    // params like `nav=true` and the embed UniqueId are load-bearing.
+    //
+    // Safer approach: don't touch the URL. Use postMessage to ask the
+    // player to seek. Different Stream player versions accept different
+    // message shapes, so we fire several formats and let whichever the
+    // player understands take effect. If none work, the video keeps
+    // playing where it was — no black screen, no broken state.
+    //
+    // The user can always fall back to the player's progress bar.
+    if (!player.contentWindow) return;
+    const seekMessages = [
+      { type: 'embed.player.command.seek',  data: { time: t } },
+      { type: 'video.command.seek',         time: t },
+      { command: 'seek',                    value: t },
+      { action: 'seek',                     seconds: t },
+      // OneDrive/Stream player has used these shapes in different versions:
+      { name: 'seek',                       args: [t] },
+      { method: 'seek',                     params: { time: t } }
+    ];
+    seekMessages.forEach(m => {
+      try { player.contentWindow.postMessage(m, '*'); } catch (e) { /* expected cross-origin */ }
+    });
     return;
   }
 
@@ -6891,9 +6827,7 @@ function initThumbnailUrlPreviews() {
 const OPTIMA_USERS_KEY        = 'optimapd_users_v2';
 const OPTIMA_CURRENT_USER_KEY = 'optimapd_current_user_v2';
 const OPTIMA_ENTITIES_KEY     = 'optimapd_entities_v2';
-const OPTIMA_PROGRESS_KEY     = 'optimapd_user_progress_v2';
-const OPTIMA_CUSTOM_BADGE_KEY = 'optimapd_custom_milestones_v2';
-const OPTIMA_RECENT_KEY       = 'optimapd_recent_badges_v2';
+// Login log is still used by the Reports panel (Last Active column), so it stays.
 const OPTIMA_LOGIN_LOG_KEY    = 'optimapd_login_log_v2';
 
 const OPTIMA_SUBJECT_OPTIONS = [
@@ -6901,72 +6835,6 @@ const OPTIMA_SUBJECT_OPTIONS = [
   'Arts','Music','PE / Health','SPED','Tech / CS','Library / Media','Counseling'
 ];
 const OPTIMA_GRADE_OPTIONS = ['K','1','2','3','4','5','6','7','8','9','10','11','12'];
-
-const TIER_NAMES = ['Locked','Bronze','Silver','Gold','Platinum','Diamond'];
-const TIER_CLASS = ['','bronze','silver','gold','platinum','diamond'];
-const TIER_COLOR = ['#2a3a4e','#CD7F32','#C0C0C0','#F5B82E','#B9E5FF','#9FE7FF'];
-const TIER_HEX   = {1:'#CD7F32',2:'#C0C0C0',3:'#F5B82E',4:'#E6F4FF',5:'url(#diamondGrad)'};
-
-// Built-in milestone badges. Tiers map to thresholds for the chosen metric.
-const STARTER_MILESTONES = [
-  { id:'m_welcome',     name:'Welcome Aboard',     desc:'Signed in to OptimaPD for the first time.',  metric:'signinCount',     thresholds:[1,5,25,100,365],  art:'star'     },
-  { id:'m_curious',     name:'Curious Mind',       desc:'Videos you have watched on OptimaPD.',        metric:'videosWatched',   thresholds:[1,5,15,40,100],   art:'bookmark' },
-  { id:'m_conqueror',   name:'Course Conqueror',   desc:'Courses you have completed end-to-end.',      metric:'coursesCompleted',thresholds:[1,3,8,15,30],     art:'trophy'   },
-  { id:'m_streak',      name:'Daily Devotee',      desc:'Consecutive-day login streak.',                metric:'loginStreak',     thresholds:[3,7,14,30,100],   art:'laurel'   },
-  { id:'m_invested',    name:'Time Invested',      desc:'Minutes spent learning on OptimaPD.',          metric:'minutesOnSite',   thresholds:[30,120,300,600,1500], art:'shield' },
-  { id:'m_voice',       name:'Community Voice',    desc:'Comments and discussion contributions.',       metric:'commentsPosted',  thresholds:[1,5,15,30,100],   art:'medal'    },
-  { id:'m_creator',     name:'Featured Creator',   desc:'Videos uploaded on your behalf as the owner.', metric:'uploadsOwned',    thresholds:[1,3,8,15,30],     art:'star'     },
-  { id:'m_profile',     name:'Profile Perfectionist', desc:'Filled out grades, subjects, and entity.',  metric:'profileScore',    thresholds:[1,2,3,4,5],       art:'shield'   }
-];
-
-// SVG art presets. Each renders differently at each tier — Bronze starts simple, Diamond is fully detailed with gradient + sparkles.
-function badgeSvg(art, tier) {
-  const t = Math.max(0, Math.min(5, tier||0));
-  const main = t===0 ? '#3a4658' : (t===5 ? 'url(#diamondGrad)' : ['#CD7F32','#C0C0C0','#F5B82E','#D8F0FF'][t-1]);
-  const stroke = t===0 ? '#2a3340' : '#0b1522';
-  const detail = t>=3;
-  const sparkle = t>=4;
-  const halo = t>=5;
-  const defs = `<defs>
-    <linearGradient id="diamondGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#69E1FF"/>
-      <stop offset="50%" stop-color="#C29BFF"/>
-      <stop offset="100%" stop-color="#FFD27D"/>
-    </linearGradient>
-    <radialGradient id="halo${t}"><stop offset="0%" stop-color="${TIER_COLOR[t]||'#fff'}" stop-opacity=".55"/><stop offset="100%" stop-color="${TIER_COLOR[t]||'#fff'}" stop-opacity="0"/></radialGradient>
-  </defs>`;
-  const haloEl = halo ? `<circle cx="40" cy="40" r="38" fill="url(#halo${t})"/>` : '';
-  const sparkles = sparkle ? `
-    <circle cx="14" cy="20" r="1.6" fill="#fff" opacity=".85"/>
-    <circle cx="65" cy="14" r="1.2" fill="#fff" opacity=".7"/>
-    <circle cx="68" cy="58" r="1.6" fill="#fff" opacity=".85"/>` : '';
-
-  let shape = '';
-  if (art === 'star') {
-    shape = `<polygon points="40,10 49,30 71,32 54,47 59,69 40,58 21,69 26,47 9,32 31,30" fill="${main}" stroke="${stroke}" stroke-width="2" stroke-linejoin="round"/>` +
-            (detail ? `<polygon points="40,22 44,33 55,34 47,42 49,53 40,47 31,53 33,42 25,34 36,33" fill="rgba(255,255,255,.35)"/>` : '');
-  } else if (art === 'bookmark') {
-    shape = `<path d="M22 10 H58 V70 L40 58 L22 70 Z" fill="${main}" stroke="${stroke}" stroke-width="2" stroke-linejoin="round"/>` +
-            (detail ? `<rect x="28" y="22" width="24" height="3" fill="rgba(255,255,255,.4)"/><rect x="28" y="30" width="20" height="3" fill="rgba(255,255,255,.4)"/><rect x="28" y="38" width="22" height="3" fill="rgba(255,255,255,.4)"/>` : '');
-  } else if (art === 'trophy') {
-    shape = `<path d="M22 14 H58 V32 C58 44 50 50 40 50 C30 50 22 44 22 32 Z" fill="${main}" stroke="${stroke}" stroke-width="2"/>
-             <rect x="34" y="50" width="12" height="8" fill="${main}" stroke="${stroke}" stroke-width="2"/>
-             <rect x="26" y="58" width="28" height="6" rx="2" fill="${main}" stroke="${stroke}" stroke-width="2"/>` +
-            (detail ? `<path d="M18 18 C12 22 12 32 22 34" fill="none" stroke="${stroke}" stroke-width="2"/><path d="M62 18 C68 22 68 32 58 34" fill="none" stroke="${stroke}" stroke-width="2"/>` : '');
-  } else if (art === 'laurel') {
-    shape = `<circle cx="40" cy="40" r="20" fill="${main}" stroke="${stroke}" stroke-width="2"/>` +
-            (detail ? `<path d="M14 40 Q22 22 38 22 M66 40 Q58 22 42 22 M14 40 Q22 58 38 58 M66 40 Q58 58 42 58" fill="none" stroke="${stroke}" stroke-width="2.5"/>` : '') +
-            `<text x="40" y="46" text-anchor="middle" font-size="14" font-weight="800" fill="${stroke}">${t||'?'}</text>`;
-  } else if (art === 'medal') {
-    shape = `<path d="M30 8 L40 28 L50 8 L46 30 L34 30 Z" fill="${stroke}" opacity=".7"/>
-             <circle cx="40" cy="48" r="20" fill="${main}" stroke="${stroke}" stroke-width="2"/>` +
-            (detail ? `<circle cx="40" cy="48" r="13" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="2"/>` : '');
-  } else { // shield
-    shape = `<path d="M40 8 L66 16 V38 C66 54 54 66 40 72 C26 66 14 54 14 38 V16 Z" fill="${main}" stroke="${stroke}" stroke-width="2" stroke-linejoin="round"/>` +
-            (detail ? `<path d="M40 22 L52 26 V40 C52 50 46 56 40 60 C34 56 28 50 28 40 V26 Z" fill="rgba(255,255,255,.25)"/>` : '');
-  }
-  return `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">${defs}${haloEl}${shape}${sparkles}</svg>`;
-}
 
 // -------- localStorage helpers ----------------------------------------
 function getOptimaUsers()   { try { return JSON.parse(localStorage.getItem(OPTIMA_USERS_KEY) || '[]'); } catch(e){ return []; } }
@@ -7073,15 +6941,12 @@ async function optimaDoLogin(ev) {
     name: u.name, email: u.email, userId: u.id,
     initials: makeInitials(u.name || u.email)
   });
-  // Track login + streak
+  // Track login + streak (still used by the Reports panel's Last Active column)
   trackLoginAndStreak();
-  bumpMetric('signinCount', 1);
   hideLoginPage();
   applyUserUi();
   refreshAdminTabVisibility();
   showView('home');
-  // Welcome / award initial badge
-  checkBadgeUpgrades();
   document.getElementById('optPassword').value = '';
 }
 
@@ -7130,194 +6995,6 @@ function trackLoginAndStreak() {
   }
   log[u.id] = userLog;
   localStorage.setItem(OPTIMA_LOGIN_LOG_KEY, JSON.stringify(log));
-  // Reflect into progress metrics
-  setMetric('loginStreak', userLog.streak);
-}
-
-// -------- Progress + metrics ------------------------------------------
-function getUserProgress() {
-  const u = getCurrentOptimaUser();
-  if (!u) return {};
-  const all = JSON.parse(localStorage.getItem(OPTIMA_PROGRESS_KEY) || '{}');
-  return all[u.id] || {};
-}
-function saveUserProgress(p) {
-  const u = getCurrentOptimaUser();
-  if (!u) return;
-  const all = JSON.parse(localStorage.getItem(OPTIMA_PROGRESS_KEY) || '{}');
-  all[u.id] = p;
-  localStorage.setItem(OPTIMA_PROGRESS_KEY, JSON.stringify(all));
-}
-function bumpMetric(name, delta=1) {
-  const p = getUserProgress();
-  p[name] = (p[name]||0) + delta;
-  saveUserProgress(p);
-  checkBadgeUpgrades();
-}
-function setMetric(name, value) {
-  const p = getUserProgress();
-  if ((p[name]||0) === value) return;
-  p[name] = value;
-  saveUserProgress(p);
-  checkBadgeUpgrades();
-}
-
-// Compute live-derived metrics (count history, completions, etc.) so badges
-// stay accurate even if the user did things before signing in.
-function syncDerivedMetrics() {
-  const u = getCurrentOptimaUser();
-  if (!u) return;
-  const p = getUserProgress();
-  // Aggregate counters
-  let history = [];
-  try { history = getHistory() || []; } catch(e) {}
-  p.videosWatched = history.length;
-  // Per-video badges: count appearances in history
-  const counts = {};
-  history.forEach(h => {
-    const id = h.id || h.videoId || h;
-    if (!id) return;
-    counts[id] = (counts[id]||0) + 1;
-  });
-  Object.keys(counts).forEach(id => { p['video_' + id] = counts[id]; });
-  // Courses completed (filter by current user id)
-  let completions = [];
-  try { completions = (getCompletedCourses() || []).filter(c => c.userId === u.id); } catch(e) {}
-  p.coursesCompleted = completions.length;
-  completions.forEach(c => { p['course_' + c.courseId] = (p['course_' + c.courseId]||0) + 1; });
-  // profile completeness 0-5
-  let pc = 0;
-  if (u.name) pc++;
-  if (u.entityId) pc++;
-  if ((u.grades||[]).length) pc++;
-  if ((u.subjects||[]).length) pc++;
-  if (u.subjectOther || (u.subjects||[]).length > 1) pc++;
-  p.profileScore = pc;
-  // owned uploads
-  try {
-    p.uploadsOwned = ((DB && DB.videos) || []).filter(v => v.ownerEmail && v.ownerEmail.toLowerCase() === (u.email||'').toLowerCase()).length;
-  } catch(e) {}
-  saveUserProgress(p);
-}
-
-// -------- Badge engine ------------------------------------------------
-function getCustomMilestones() {
-  try { return JSON.parse(localStorage.getItem(OPTIMA_CUSTOM_BADGE_KEY) || '[]'); } catch(e){ return []; }
-}
-function saveCustomMilestones(a) { localStorage.setItem(OPTIMA_CUSTOM_BADGE_KEY, JSON.stringify(a)); }
-
-function getAllBadgeDefs() {
-  const milestones = [...STARTER_MILESTONES, ...getCustomMilestones()];
-  const videoBadges = ((window.DB && DB.videos) || []).map(v => ({
-    id: 'v_' + v.id, name: v.title, desc: 'Earned by watching "' + v.title + '".',
-    metric: 'video_' + v.id, thresholds:[1,3,5,10,20], art:'bookmark', category:'video'
-  }));
-  const courseBadges = ((window.DB && DB.courses) || []).map(c => ({
-    id: 'c_' + c.id, name: c.title, desc: 'Earned by completing "' + c.title + '".',
-    metric: 'course_' + c.id, thresholds:[1,2,3,4,5], art:'trophy', category:'course'
-  }));
-  return { milestones, videoBadges, courseBadges };
-}
-
-function computeTier(progress, thresholds) {
-  let t = 0;
-  for (let i=0; i<thresholds.length; i++) if (progress >= thresholds[i]) t = i+1;
-  return t;
-}
-
-function checkBadgeUpgrades() {
-  const u = getCurrentOptimaUser();
-  if (!u) return;
-  syncDerivedMetrics();
-  const p = getUserProgress();
-  const defs = getAllBadgeDefs();
-  const recentAll = JSON.parse(localStorage.getItem(OPTIMA_RECENT_KEY) || '{}');
-  const recent = recentAll[u.id] || [];
-  [...defs.milestones, ...defs.videoBadges, ...defs.courseBadges].forEach(b => {
-    const cur = p[b.metric] || 0;
-    const newTier = computeTier(cur, b.thresholds);
-    const prev = p['_tier_' + b.id] || 0;
-    if (newTier > prev) {
-      p['_tier_' + b.id] = newTier;
-      // Push to head of recent, dedupe
-      const filtered = recent.filter(r => r.id !== b.id);
-      filtered.unshift({ id: b.id, tier: newTier, ts: Date.now() });
-      while (filtered.length > 12) filtered.pop();
-      recent.length = 0; recent.push(...filtered);
-    }
-  });
-  saveUserProgress(p);
-  recentAll[u.id] = recent;
-  localStorage.setItem(OPTIMA_RECENT_KEY, JSON.stringify(recentAll));
-  renderRecentBadgesBanner();
-}
-
-function getRecentBadges(limit=3) {
-  const u = getCurrentOptimaUser();
-  if (!u) return [];
-  const all = JSON.parse(localStorage.getItem(OPTIMA_RECENT_KEY) || '{}');
-  return (all[u.id] || []).slice(0, limit);
-}
-
-function findBadgeDef(id) {
-  const defs = getAllBadgeDefs();
-  return [...defs.milestones, ...defs.videoBadges, ...defs.courseBadges].find(b => b.id === id);
-}
-
-function renderRecentBadgesBanner() {
-  const el = document.getElementById('navRecentBadges');
-  if (!el) return;
-  if (!getCurrentOptimaUser()) { el.innerHTML=''; return; }
-  const recent = getRecentBadges(3);
-  if (!recent.length) {
-    el.innerHTML = `<div style="font-size:11px; color:var(--text-muted); padding:0 4px;">No badges yet</div>`;
-    return;
-  }
-  el.innerHTML = recent.map(r => {
-    const b = findBadgeDef(r.id);
-    if (!b) return '';
-    return `<div class="nav-recent-badge" onclick="window.showView('badges')" title="${escapeHtml(b.name)} · ${TIER_NAMES[r.tier]||''}">
-      ${badgeSvg(b.art, r.tier)}
-      <div class="tier-dot" style="background:${TIER_COLOR[r.tier]||'#666'}"></div>
-      <div class="badge-tooltip">${escapeHtml(b.name)} · ${TIER_NAMES[r.tier]||''}</div>
-    </div>`;
-  }).join('');
-}
-
-// -------- Badge gallery view ------------------------------------------
-function renderBadgesView() {
-  if (!getCurrentOptimaUser()) return;
-  checkBadgeUpgrades();
-  const defs = getAllBadgeDefs();
-  const p = getUserProgress();
-  const tile = b => {
-    const tier = p['_tier_'+b.id]||0;
-    const cur  = p[b.metric]||0;
-    const nextTh = b.thresholds.find(t => cur < t);
-    const lock = tier === 0 ? 'locked' : '';
-    return `<div class="badge-tile ${lock}">
-      <div class="badge-art">${badgeSvg(b.art, tier)}</div>
-      <div class="badge-name">${escapeHtml(b.name)}</div>
-      <div class="badge-tier-label ${TIER_CLASS[tier]||''}">${tier ? TIER_NAMES[tier] : 'Locked'}</div>
-      <div class="badge-tooltip-rich">
-        <strong>${escapeHtml(b.name)}</strong>
-        ${escapeHtml(b.desc||'')}
-        <div style="margin-top:6px; opacity:0.85;">Progress: ${cur}${nextTh ? ' / ' + nextTh : ' (maxed)'}</div>
-        ${nextTh ? `<div class="progress-bar"><div style="width:${Math.min(100,(cur/nextTh)*100)}%"></div></div>` : ''}
-      </div>
-    </div>`;
-  };
-  document.getElementById('badgeStripMilestones').innerHTML = defs.milestones.map(tile).join('') || emptyBadges();
-  document.getElementById('badgeStripVideos').innerHTML     = defs.videoBadges.length ? defs.videoBadges.map(tile).join('') : emptyBadges('Video badges appear once videos are added to the library.');
-  document.getElementById('badgeStripCourses').innerHTML    = defs.courseBadges.length ? defs.courseBadges.map(tile).join('') : emptyBadges('Course badges appear once courses exist.');
-  const earnedCount = (arr) => arr.filter(b => (p['_tier_'+b.id]||0) > 0).length;
-  document.getElementById('badgeMilestonesCount').textContent = `(${earnedCount(defs.milestones)} of ${defs.milestones.length} earned)`;
-  document.getElementById('badgeVideosCount').textContent     = defs.videoBadges.length  ? `(${earnedCount(defs.videoBadges)} of ${defs.videoBadges.length})` : '';
-  document.getElementById('badgeCoursesCount').textContent    = defs.courseBadges.length ? `(${earnedCount(defs.courseBadges)} of ${defs.courseBadges.length})` : '';
-  renderCertificateList();
-}
-function emptyBadges(msg) {
-  return `<div style="color:var(--text-muted); padding:18px; font-size:13px;">${msg||'No badges in this category yet.'}</div>`;
 }
 
 // -------- Certificates list (driven by getCompletedCourses) -----------
@@ -7433,7 +7110,6 @@ function saveProfile() {
     initials: makeInitials(users[i].name)
   });
   applyUserUi();
-  checkBadgeUpgrades();
   alert('Profile saved.');
 }
 
@@ -7445,7 +7121,6 @@ function applyUserUi() {
   document.getElementById('userMenuName').textContent = u.name || u.email;
   document.getElementById('userMenuRole').textContent = u.role === 'admin' ? 'Administrator' : u.role === 'orgadmin' ? 'Org Admin · ' + (getEntityName(u.entityId)||'') : 'Educator';
   refreshAdminTabVisibility();
-  renderRecentBadgesBanner();
 }
 
 function refreshAdminTabVisibility() {
@@ -7657,41 +7332,6 @@ function randomTempPassword() {
   return pick(a)+pick(b)+pick(b)+pick(b)+pick(n)+pick(n)+pick(n);
 }
 
-// -------- Badge Designer ----------------------------------------------
-function renderCustomMilestones() {
-  const wrap = document.getElementById('customMilestoneList');
-  if (!wrap) return;
-  const items = getCustomMilestones();
-  if (!items.length) { wrap.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">No custom milestone badges yet.</div>'; return; }
-  wrap.innerHTML = items.map(b => `<div style="display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid var(--border-subtle);">
-    <div style="width:44px; height:44px;">${badgeSvg(b.art, 3)}</div>
-    <div style="flex:1;">
-      <div style="font-weight:600; font-size:13px;">${escapeHtml(b.name)}</div>
-      <div style="color:var(--text-muted); font-size:12px;">${escapeHtml(b.desc||'')} · metric: ${escapeHtml(b.metric)} · thresholds: ${b.thresholds.join('/')}</div>
-    </div>
-    <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="window.deleteCustomMilestone('${b.id}')">Delete</button>
-  </div>`).join('');
-}
-function createCustomMilestone() {
-  const name = document.getElementById('bd_name').value.trim();
-  const desc = document.getElementById('bd_desc').value.trim();
-  const metric = document.getElementById('bd_metric').value;
-  const art = document.getElementById('bd_art').value;
-  const t = [1,2,3,4,5].map(i => parseInt(document.getElementById('bd_t'+i).value)||1);
-  if (!name) { alert('Give the badge a name.'); return; }
-  const arr = getCustomMilestones();
-  arr.push({ id:'cm_'+Date.now(), name, desc, metric, art, thresholds: t });
-  saveCustomMilestones(arr);
-  document.getElementById('bd_name').value=''; document.getElementById('bd_desc').value='';
-  renderCustomMilestones();
-  alert('Badge created. It now appears in everyone\'s Milestones gallery.');
-}
-function deleteCustomMilestone(id) {
-  if (!confirm('Delete this custom milestone?')) return;
-  saveCustomMilestones(getCustomMilestones().filter(x => x.id !== id));
-  renderCustomMilestones();
-}
-
 // -------- Reports panel ------------------------------------------------
 let _currentReportRows = [];
 function showHide(id, visible) { const e=document.getElementById(id); if (e) e.style.display = visible ? '' : 'none'; }
@@ -7750,47 +7390,38 @@ function runReport() {
   const me = getCurrentOptimaUser();
   if (!me) return;
   const users = gatherReportUsers();
-  const progAll = JSON.parse(localStorage.getItem(OPTIMA_PROGRESS_KEY) || '{}');
   const loginAll = JSON.parse(localStorage.getItem(OPTIMA_LOGIN_LOG_KEY) || '{}');
   const completions = (typeof getCompletedCourses === 'function' ? getCompletedCourses() : []);
   _currentReportRows = users.map(u => {
-    const p = progAll[u.id] || {};
     const l = loginAll[u.id] || {};
-    const badgeCount = Object.keys(p).filter(k => k.startsWith('_tier_') && p[k] > 0).length;
     return {
       id: u.id, name: u.name||'', email: u.email||'',
       entity: getEntityName(u.entityId)||'', role: u.role,
-      videosWatched: p.videosWatched || 0,
       coursesCompleted: completions.filter(c => c.userId === u.id).length,
-      badges: badgeCount,
       lastActive: l.last || ''
     };
   });
   // Summary
   document.getElementById('rpt_summary').innerHTML = `
     <div class="stat"><div class="num">${_currentReportRows.length}</div><div class="lbl">Users</div></div>
-    <div class="stat"><div class="num">${_currentReportRows.reduce((s,r)=>s+r.videosWatched,0)}</div><div class="lbl">Total videos watched</div></div>
     <div class="stat"><div class="num">${_currentReportRows.reduce((s,r)=>s+r.coursesCompleted,0)}</div><div class="lbl">Total courses completed</div></div>
-    <div class="stat"><div class="num">${_currentReportRows.reduce((s,r)=>s+r.badges,0)}</div><div class="lbl">Badges earned (sum)</div></div>
   `;
   const tbody = document.querySelector('#rpt_table tbody');
   tbody.innerHTML = _currentReportRows.map(r => `<tr>
     <td>${escapeHtml(r.name)}</td>
     <td>${escapeHtml(r.email)}</td>
     <td>${escapeHtml(r.entity)}</td>
-    <td>${r.videosWatched}</td>
     <td>${r.coursesCompleted}</td>
-    <td>${r.badges}</td>
     <td>${escapeHtml(r.lastActive)}</td>
-  </tr>`).join('') || '<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px;">No users in this scope.</td></tr>';
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">No users in this scope.</td></tr>';
 }
 
 function exportReportCSV() {
   if (!_currentReportRows.length) { alert('Run the report first.'); return; }
-  const headers = ['Name','Email','Entity','Role','Videos Watched','Courses Completed','Badges Earned','Last Active'];
+  const headers = ['Name','Email','Entity','Role','Courses Completed','Last Active'];
   const lines = [headers.join(',')];
   _currentReportRows.forEach(r => {
-    const row = [r.name, r.email, r.entity, r.role, r.videosWatched, r.coursesCompleted, r.badges, r.lastActive]
+    const row = [r.name, r.email, r.entity, r.role, r.coursesCompleted, r.lastActive]
       .map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',');
     lines.push(row);
   });
@@ -7826,27 +7457,17 @@ Return the answer using these labeled sections, in this order:
    Mix of: tools mentioned, frameworks (PICRAT, UDL, SAMR, TPACK, etc.), pedagogical moves, grade bands, subjects.
    These power Opti's RAG search — be specific over clever.
 
-5) BADGE CONCEPT
-   - Badge name (≤ 28 chars)
-   - 1-sentence hover description
-   - Suggested art preset: shield | star | trophy | laurel | bookmark | medal
-   - 5-tier progression idea: how should the badge change visually from Bronze → Diamond as the user re-watches / applies the skill?
-   - Optional flavor text for the Diamond tier — what does mastery look like for this skill?
-
-6) DURATION + TRANSCRIPT-DERIVED CHAPTERS
+5) DURATION + TRANSCRIPT-DERIVED CHAPTERS
    - Total runtime (mm:ss)
    - 3–8 chapter markers as "mm:ss — Chapter title"
 
-7) RECOMMENDED PREREQUISITES
+6) RECOMMENDED PREREQUISITES
    Any OptimaPD videos/courses the viewer should watch FIRST. If none, say "None."
 
-8) RELATED CONTENT
+7) RELATED CONTENT
    Up to 5 existing OptimaPD videos that pair well with this one. (I'll fill these in if you don't have access to the library.)
 
-9) ONE-LINER FOR HOMEPAGE TILE  (≤ 90 chars)
-   The subtitle that shows under the video card.
-
-10) OPTIONAL ENHANCEMENTS
+8) OPTIONAL ENHANCEMENTS
     - Suggested quiz questions (3–5) if the video lends itself to a check-for-understanding quiz.
     - Suggested "Featured Creator" attribution if the video was recorded by an Optima educator.
     - Any accessibility notes (captions, alt text for slides, etc.).
@@ -7880,7 +7501,6 @@ switchAdminTab = function(ev, name) {
   _origSwitchAdminTab(ev, name);
   if (name === 'people')          renderPeopleOrgsPanel();
   if (name === 'reports')         renderReportsPanel();
-  if (name === 'badge-designer')  renderCustomMilestones();
   if (name === 'help')            paintVideoPromptText();
 };
 window.switchAdminTab = switchAdminTab;
@@ -7890,7 +7510,6 @@ switchAdminTabByName = function(name) {
   _origSwitchAdminTabByName(name);
   if (name === 'people')          renderPeopleOrgsPanel();
   if (name === 'reports')         renderReportsPanel();
-  if (name === 'badge-designer')  renderCustomMilestones();
   if (name === 'help')            paintVideoPromptText();
 };
 window.switchAdminTabByName = switchAdminTabByName;
@@ -7907,14 +7526,26 @@ requireAdmin = function(cb) {
 };
 adminLogout = function() { optimaSignOut(); };
 
-// Wrap showView so badges/profile views render correctly when navigated to.
+// Wrap showView so profile/certificates views render correctly when navigated to.
 const _origShowView = showView;
 showView = function(name, params, __fromPopState) {
   // Block content views if not signed in
   if (!getCurrentOptimaUser()) { showLoginPage(); return; }
+  // The 'certificates' view isn't in the legacy view map — show it manually.
+  if (name === 'certificates') {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const certView = document.getElementById('view-certificates');
+    if (certView) certView.classList.add('active');
+    currentView = 'certificates';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    renderCertificateList();
+    if (!__fromPopState) {
+      try { history.pushState({ view:'certificates', params:null }, '', location.pathname + '#/certificates'); } catch(_) {}
+    }
+    return;
+  }
   _origShowView(name, params, __fromPopState);
   if (name === 'profile') renderProfileView();
-  if (name === 'badges')  renderBadgesView();
   if (name === 'admin')   { applyUserUi(); }
 };
 window.showView = showView;
@@ -7931,12 +7562,8 @@ async function bootOptimaAuth() {
     setUserSession({ name:u.name, email:u.email, userId:u.id, initials: makeInitials(u.name||u.email) });
     applyUserUi();
     trackLoginAndStreak();
-    checkBadgeUpgrades();
   }
 }
-
-// Periodically check for badge upgrades (e.g., when user navigates after watching)
-setInterval(() => { if (getCurrentOptimaUser()) checkBadgeUpgrades(); }, 30000);
 
 // Export the new functions for inline onclick handlers
 window.optimaDoLogin            = optimaDoLogin;
@@ -7955,11 +7582,8 @@ window.addEntity                = addEntity;
 window.removeEntity             = removeEntity;
 window.runReport                = runReport;
 window.exportReportCSV          = exportReportCSV;
-window.createCustomMilestone    = createCustomMilestone;
-window.deleteCustomMilestone    = deleteCustomMilestone;
 window.copyVideoPrompt          = copyVideoPrompt;
 window.downloadCertificateFor   = downloadCertificateFor;
-window.checkBadgeUpgrades       = checkBadgeUpgrades;
 
 // =====================================================================
 // END v2 BLOCK
@@ -8010,8 +7634,6 @@ window.resetCategoriesToDefaults = resetCategoriesToDefaults;
 window.addAttachmentRow = addAttachmentRow;
 
 window.openEditVideoModal = openEditVideoModal;
-// Badges
-window.promptCourseBadge = promptCourseBadge;
 // Quiz editor
 window.openQuizEditor = openQuizEditor;
 window.closeQuizEditor = closeQuizEditor;
