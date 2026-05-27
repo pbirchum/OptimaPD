@@ -541,6 +541,105 @@
   .player-desc h3 { font-size: 16px; margin-bottom: 10px; color: var(--text-primary); margin-top: 18px; }
   .player-desc p { color: var(--text-secondary); line-height: 1.65; font-size: 14px; margin-bottom: 14px; }
 
+  /* "About this video" heading row — heading + Edit pill button on the right.
+     The Edit button now matches .btn-secondary so it blends with the rest of
+     the site's button system. */
+  .desc-heading-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px; margin-bottom: 10px;
+  }
+  .desc-heading-row h3 { margin: 0; }
+  .desc-edit-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.10);
+    color: var(--text-primary);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .desc-edit-btn:hover {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(63, 185, 221, 0.55);
+    color: var(--text-primary);
+  }
+  .desc-edit-btn .op-ico { width: 12px; height: 12px; }
+  .desc-edit-input {
+    width: 100%;
+    background: var(--bg-darkest);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    transition: border-color 0.15s;
+  }
+  .desc-edit-input:focus { outline: none; border-color: var(--brand-blue); }
+
+  /* Comments section — block, headings, author input, list items. The author
+     input now matches the rest of the form inputs (.form-group input). */
+  .comments-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .comments-section h3 {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 16px; margin-bottom: 14px; color: var(--text-primary);
+  }
+  .comment-form {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 22px;
+  }
+  .comment-form #commentAuthor {
+    width: 100%;
+    max-width: 360px;
+    background: var(--bg-darkest);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text-primary);
+    font-family: inherit; font-size: 13px;
+    transition: border-color 0.15s;
+  }
+  .comment-form #commentAuthor:focus { outline: none; border-color: var(--brand-blue); }
+  .comment-form .form-actions {
+    display: flex; gap: 8px; justify-content: flex-end;
+  }
+  .comment-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .comment-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+  }
+  .comment-author {
+    font-weight: 600; color: var(--text-primary); font-size: 13px;
+  }
+  .comment-date {
+    color: var(--text-muted); font-size: 11px;
+  }
+  .comment-delete {
+    margin-left: auto;
+    background: rgba(224, 75, 110, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(224, 75, 110, 0.3);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-family: inherit; font-size: 11px; font-weight: 600;
+    cursor: pointer;
+  }
+  .comment-delete:hover { background: rgba(224, 75, 110, 0.25); }
+  .comment-body { color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+
   /* Opti side panel */
   .opti-panel {
     background: var(--bg-dark);
@@ -1323,6 +1422,158 @@
     font-size: 12px;
     line-height: 1.55;
   }
+  /* =========================================================
+     CHAPTERS SIDE PANEL  — slide-out from right edge of player.
+     The classic .chapters-card above is no longer rendered in the document
+     flow — chapters now live in #chaptersSidePanel and the user opens them
+     with the .chapters-toggle button (which also sits in the player action bar).
+     This UI matches Microsoft Stream's chapters panel so the experience is
+     consistent across YouTube + Stream embeds.
+     ========================================================= */
+  .chapters-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s, border-color 0.15s, color 0.15s;
+    line-height: 1;
+  }
+  .chapters-toggle:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(63, 185, 221, 0.55);
+    transform: translateY(-1px);
+  }
+  .chapters-toggle .op-ico { color: var(--brand-blue); }
+  .chapters-toggle .ch-count-badge {
+    background: rgba(63, 185, 221, 0.15);
+    color: var(--brand-blue);
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 11px; font-weight: 700;
+  }
+  /* Slide-out panel — fixed to the viewport, anchored to the right edge.
+     Hidden off-screen by default; .open slides it in. */
+  .chapters-side-panel {
+    position: fixed;
+    top: 70px;
+    right: 0;
+    width: 360px;
+    max-width: 92vw;
+    height: calc(100vh - 70px);
+    background: var(--bg-card);
+    border-left: 1px solid var(--border-subtle);
+    box-shadow: -16px 0 40px rgba(0, 0, 0, 0.45);
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+  }
+  .chapters-side-panel.open { transform: translateX(0); }
+  .chapters-side-panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+  .chapters-side-panel-header h3 {
+    font-size: 16px; font-weight: 600; color: var(--text-primary); margin: 0;
+  }
+  .chapters-side-panel-header .csp-actions {
+    display: flex; gap: 4px; align-items: center;
+  }
+  .csp-icon-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .csp-icon-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
+  .chapters-side-panel-meta {
+    padding: 10px 20px 14px;
+    color: var(--text-muted);
+    font-size: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+  .chapters-side-panel-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 12px 24px;
+  }
+  .chapters-side-panel-list .chapter-row-sp {
+    display: flex; gap: 12px;
+    padding: 10px 8px;
+    margin: 2px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.12s;
+    color: var(--text-secondary);
+  }
+  .chapter-row-sp:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+  }
+  .chapter-row-sp .ch-thumb {
+    width: 92px;
+    height: 52px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: var(--bg-darkest);
+    background-size: cover;
+    background-position: center;
+    border: 1px solid var(--border-subtle);
+    position: relative;
+    overflow: hidden;
+  }
+  .chapter-row-sp .ch-thumb::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.55) 100%);
+  }
+  .chapter-row-sp .ch-body {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+  }
+  .chapter-row-sp .ch-title-sp {
+    font-size: 13px; line-height: 1.4;
+    color: var(--text-primary);
+    overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+  .chapter-row-sp .ch-time-sp {
+    margin-top: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--brand-blue);
+  }
+  .chapter-row-sp.flash { animation: chapterFlash 0.5s ease; }
+
+  /* Stream hint inside the side panel */
+  .chapters-side-panel .chapters-stream-hint {
+    margin: 8px 16px;
+  }
+
+  /* Backdrop — clicking dismisses the panel on touch / small screens. */
+  .chapters-side-panel-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.25s ease;
+    z-index: 140;
+    pointer-events: none;
+  }
+  .chapters-side-panel-backdrop.show {
+    background: rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+  }
+
   /* Floating toast near the player when a Stream chapter is clicked. */
   .stream-seek-toast {
     position: fixed;
@@ -1788,6 +2039,26 @@
   }
   .user-chip:hover { border-color: var(--brand-blue); }
   .user-avatar-sm { width: 24px; height: 24px; border-radius: 50%; background: var(--brand-blue); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--brand-navy); flex-shrink: 0; }
+
+  /* =========================================================
+     ICON SYSTEM  — designed SVG icons instead of emojis
+     ========================================================= */
+  .op-ico {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    color: currentColor;
+    vertical-align: -2px;
+  }
+  .op-ico svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .op-ico.lg { width: 18px; height: 18px; }
+  .op-ico.xl { width: 28px; height: 28px; }
+  /* When an icon sits inside a heading next to brand-blue text, give it the
+     same tint so headings read as designed icons rather than raw glyphs. */
+  h3 > .op-ico, h4 > .op-ico { color: var(--brand-blue); margin-right: 4px; }
+  .admin-tab > .op-ico { color: var(--text-secondary); margin-right: 4px; }
+  .admin-tab.active > .op-ico { color: var(--brand-blue); }
 </style>
 </head>
 <body>
@@ -1819,7 +2090,7 @@
   </div>
   <div class="nav-right">
     <div class="search-wrap">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon"><span class="op-ico" data-icon="search" aria-hidden="true"></span></span>
       <input class="search-input" id="searchInput" placeholder="Search..." onkeydown="if(event.key===&apos;Enter&apos;) window.runSearch(this.value)" />
     </div>
     <div class="user-menu-wrap">
@@ -1832,8 +2103,8 @@
           <div class="role" id="userMenuRole">—</div>
         </div>
         <a onclick="window.toggleUserMenu(false); window.showView('profile')">👤 My Profile</a>
-        <a onclick="window.toggleUserMenu(false); window.showView('certificates')">📜 My Certificates</a>
-        <a id="userMenuAdminLink" style="display:none;" onclick="window.toggleUserMenu(false); window.showView('admin')">⚙️ Admin</a>
+        <a onclick="window.toggleUserMenu(false); window.showView('certificates')"><span class="op-ico" data-icon="certificate" aria-hidden="true"></span> My Certificates</a>
+        <a id="userMenuAdminLink" style="display:none;" onclick="window.toggleUserMenu(false); window.showView('admin')"><span class="op-ico" data-icon="settings" aria-hidden="true"></span> Admin</a>
         <a class="signout" onclick="window.optimaSignOut()">↩ Sign out</a>
       </div>
     </div>
@@ -1894,8 +2165,8 @@
       <h1>Upskill your teaching. On your schedule.</h1>
       <p>The in-house professional development library for Optima educators. Short how-to videos for tech fixes, structured courses for deep skills, teacher-built lesson examples, and Opti — your on-demand teaching resource guide.</p>
       <div class="hero-meta" id="heroStats">
-        <span>📺 0 videos</span>
-        <span>🎓 0 courses</span>
+        <span><span class="op-ico" data-icon="film" aria-hidden="true"></span> 0 videos</span>
+        <span><span class="op-ico" data-icon="graduation" aria-hidden="true"></span> 0 courses</span>
         <span><span class="owl-inline"></span>&nbsp;Ask Opti</span>
       </div>
       <div class="hero-buttons">
@@ -1971,12 +2242,12 @@
   </section>
   <section class="content-section">
     <div class="ml-section">
-      <div class="section-header"><div class="section-title">⭐ Favorites <span class="subtitle" id="favCount">0 videos</span></div></div>
+      <div class="section-header"><div class="section-title"><span class="op-ico" data-icon="star" aria-hidden="true"></span> Favorites <span class="subtitle" id="favCount">0 videos</span></div></div>
       <div id="mlFavoritesRow"></div>
     </div>
     <div class="ml-section">
       <div class="section-header">
-        <div class="section-title">🎵 My Playlists <span class="subtitle" id="plCount">0 playlists</span></div>
+        <div class="section-title"><span class="op-ico" data-icon="list" aria-hidden="true"></span> My Playlists <span class="subtitle" id="plCount">0 playlists</span></div>
         <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px;" onclick="window.createNewPlaylist()">+ New Playlist</button>
       </div>
       <div id="mlPlaylistList" class="unified-grid"></div>
@@ -2004,7 +2275,7 @@
 <div id="view-course-detail" class="view">
   <section class="course-hero">
     <div>
-      <div class="course-badge" id="courseBadge">🎓 Course</div>
+      <div class="course-badge" id="courseBadge"><span class="op-ico" data-icon="graduation" aria-hidden="true"></span> Course</div>
       <h1 id="courseTitle">Course Title</h1>
       <div class="course-meta-row" id="courseMeta"></div>
       <p class="course-desc" id="courseDesc"></p>
@@ -2116,7 +2387,7 @@
 <!-- ============== CERTIFICATES VIEW ============== -->
 <div id="view-certificates" class="view">
   <div class="badges-container">
-    <h1>📜 My Certificates</h1>
+    <h1><span class="op-ico xl" data-icon="certificate" aria-hidden="true"></span> My Certificates</h1>
     <p class="lead">Every course you complete on OptimaPD generates a downloadable PDF certificate with your name and the date you finished. Your collection lives here — download as many copies as you need.</p>
     <div id="certListWrap"></div>
   </div>
@@ -2133,9 +2404,9 @@
       <div class="admin-tab" data-tab="library" onclick="window.switchAdminTab(event,'library')">Video Library</div>
       <div class="admin-tab" data-tab="courses" onclick="window.switchAdminTab(event,'courses')">Manage Courses</div>
       <div class="admin-tab" data-tab="categories" onclick="window.switchAdminTab(event,'categories')">Categories</div>
-      <div class="admin-tab" data-tab="people" onclick="window.switchAdminTab(event,'people')">👥 People &amp; Orgs</div>
-      <div class="admin-tab" data-tab="reports" onclick="window.switchAdminTab(event,'reports')">📈 Reports</div>
-      <div class="admin-tab" data-tab="analytics" onclick="window.switchAdminTab(event,'analytics')">📊 Analytics</div>
+      <div class="admin-tab" data-tab="people" onclick="window.switchAdminTab(event,'people')"><span class="op-ico" data-icon="users" aria-hidden="true"></span> People &amp; Orgs</div>
+      <div class="admin-tab" data-tab="reports" onclick="window.switchAdminTab(event,'reports')"><span class="op-ico" data-icon="chartLine" aria-hidden="true"></span> Reports</div>
+      <div class="admin-tab" data-tab="analytics" onclick="window.switchAdminTab(event,'analytics')"><span class="op-ico" data-icon="chart" aria-hidden="true"></span> Analytics</div>
       <div class="admin-tab" data-tab="help" onclick="window.switchAdminTab(event,'help')">Help</div>
       <div class="admin-tab" style="margin-left:auto; color: var(--danger);" onclick="window.optimaSignOut()">Log out</div>
     </div>
@@ -2144,7 +2415,7 @@
     <div class="admin-panel active" id="panel-add">
       <div class="admin-grid">
         <div class="admin-card">
-          <h3>📤 Add a New Video</h3>
+          <h3><span class="op-ico" data-icon="upload" aria-hidden="true"></span> Add a New Video</h3>
 
           <div class="success-banner" id="addSuccess"></div>
 
@@ -2163,7 +2434,7 @@
             <div class="form-group">
               <label>— OR — Upload Video File</label>
               <label class="upload-zone" for="f_videoFile">
-                <span class="icon">⬆️</span>
+                <span class="icon"><span class="op-ico xl" data-icon="upload" aria-hidden="true"></span></span>
                 <h4>Click to select a video file</h4>
                 <p id="f_videoFileName">MP4, MOV, WebM</p>
                 <input type="file" id="f_videoFile" accept="video/*" onchange="document.getElementById('f_videoFileName').textContent = this.files[0] ? this.files[0].name : 'MP4, MOV, WebM'" />
@@ -2207,13 +2478,7 @@
                 <label>Subject (for Example Lessons)</label>
                 <select id="f_subject">
                   <option value="">— any —</option>
-                  <option value="math">Math</option>
-                  <option value="science">Science</option>
-                  <option value="ela">ELA / English</option>
-                  <option value="social">Social Studies</option>
-                  <option value="arts">Arts</option>
-                  <option value="elective">Elective</option>
-                  <option value="pe">PE / Health</option>
+                  <!-- options injected at runtime from getOptimaSubjects() -->
                 </select>
               </div>
               <div class="form-group">
@@ -2256,9 +2521,12 @@
             </div>
 
             <div class="form-group">
-              <label>Thumbnail URL <span style="color:var(--danger); font-weight:600;">*</span></label>
-              <input type="url" id="f_thumbUrl" required placeholder="https://… link to a hosted image (jpg/png/webp)" />
-              <p class="help">Paste a link to an image hosted anywhere — a <code>thumbnails/</code> folder in your GitHub repo, Firebase Storage, Imgur, OneDrive (public share), Cloudinary, etc. The image file itself never lives in the database, so the site stays fast. <strong>Recommended: 16:9, 800×450 or smaller, &lt;200KB.</strong></p>
+              <label>Thumbnail URL <span style="color:var(--text-muted); font-weight:400;">(optional — can be added later)</span></label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="url" id="f_thumbUrl" placeholder="https://… link to a hosted image (jpg/png/webp)" style="flex:1;" />
+                <button type="button" class="btn btn-secondary" id="f_fetchThumbBtn" onclick="window.fetchSourceThumbnail('f')" style="white-space:nowrap; font-size:13px; padding:8px 12px;" title="Auto-detect the thumbnail from the video URL (YouTube only)"><span class="op-ico" data-icon="link" aria-hidden="true"></span> Fetch from source</button>
+              </div>
+              <p class="help">Optional — you can leave this blank and add a thumbnail later from <strong>Admin → Video Library → Thumbnail</strong>. YouTube videos auto-use the YouTube thumbnail when no custom one is set. <strong>Recommended: 16:9, 800×450 or smaller, &lt;200KB.</strong></p>
               <div id="f_thumbPreview" style="margin-top:8px; display:none;">
                 <img id="f_thumbPreviewImg" alt="thumbnail preview" style="max-width:240px; max-height:135px; border-radius:8px; border:1px solid var(--border-subtle); object-fit:cover;" />
               </div>
@@ -2283,7 +2551,7 @@
         </div>
 
         <div class="admin-card">
-          <h3>📖 Quick Tips</h3>
+          <h3><span class="op-ico" data-icon="bookOpen" aria-hidden="true"></span> Quick Tips</h3>
 
           <div style="margin-bottom: 18px;">
             <h5 style="font-size: 13px; color: var(--brand-blue); margin-bottom: 6px;">Where should I host my video files?</h5>
@@ -2318,7 +2586,7 @@
         <h3>🎥 Your Video Library <span class="help-hint" id="libCount">0 videos</span></h3>
 
         <div class="admin-filter-bar">
-          <input type="text" id="lib_search" class="admin-filter-search" placeholder="🔍 Search title, tags, subcategories…" oninput="window.renderVideoLibrary()" />
+          <input type="text" id="lib_search" class="admin-filter-search" placeholder="Search title, tags, subcategories…" oninput="window.renderVideoLibrary()" />
           <select id="lib_cat" onchange="window.renderVideoLibrary()">
             <option value="">All categories</option>
             <option value="tech">Tech Skills</option>
@@ -2350,7 +2618,7 @@
     <div class="admin-panel" id="panel-courses">
       <div class="admin-grid">
         <div class="admin-card">
-          <h3>🎓 Create a New Course</h3>
+          <h3><span class="op-ico" data-icon="graduation" aria-hidden="true"></span> Create a New Course</h3>
           <form onsubmit="window.handleAddCourse(event)">
             <div class="form-group">
               <label>Course Title *</label>
@@ -2392,7 +2660,7 @@
           <h3>Existing Courses <span class="help-hint" id="coursesAdminCount">0 courses</span></h3>
 
           <div class="admin-filter-bar">
-            <input type="text" id="cl_search" class="admin-filter-search" placeholder="🔍 Search course title or description…" oninput="window.renderCoursesList()" />
+            <input type="text" id="cl_search" class="admin-filter-search" placeholder="Search course title or description…" oninput="window.renderCoursesList()" />
             <select id="cl_cat" onchange="window.renderCoursesList()">
               <option value="">All categories</option>
               <option value="tech">Tech Skills</option>
@@ -2420,7 +2688,7 @@
     <!-- CATEGORIES PANEL -->
     <div class="admin-panel" id="panel-categories">
       <div class="admin-card">
-        <h3>🗂️ Manage Categories &amp; Subcategories</h3>
+        <h3><span class="op-ico" data-icon="folder" aria-hidden="true"></span> Manage Categories &amp; Subcategories</h3>
         <p style="color:var(--text-secondary); font-size:13px; margin-bottom:18px;">Rename or reorder the subcategories that show up on the home tiles and in the Add Video form. Existing videos keep their assigned subcategory even if you rename it, but you can always reassign them from the Video Library.</p>
         <div id="categoryEditor"></div>
         <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-light);">
@@ -2428,12 +2696,23 @@
           <span style="font-size:12px; color:var(--text-muted); margin-left:10px;">Restores the original OptimaEd tool list (Engage, Experience Editor, Teams, etc.).</span>
         </div>
       </div>
+
+      <div class="admin-card" style="margin-top:18px;">
+        <h3><span class="op-ico" data-icon="book" aria-hidden="true"></span> Manage Subjects</h3>
+        <p style="color:var(--text-secondary); font-size:13px; margin-bottom:14px;">Subjects are used on profiles, the Example Lessons subject filter, and Reports. Add, rename, or remove them here — changes apply everywhere on the site.</p>
+        <div id="subjectEditor"></div>
+        <div style="display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;">
+          <input type="text" id="subj_newName" placeholder="New subject name (e.g., Drama)" style="flex:1; min-width:200px; padding:9px 12px; background:var(--bg-darkest); border:1px solid var(--border-subtle); color:var(--text-primary); border-radius:8px; font-family:inherit; font-size:13px;" />
+          <button class="btn btn-primary" onclick="window.addSubject()">+ Add subject</button>
+          <button class="btn btn-secondary" onclick="window.resetSubjectsToDefaults()">Reset to defaults</button>
+        </div>
+      </div>
     </div>
 
     <!-- ANALYTICS PANEL -->
     <div class="admin-panel" id="panel-analytics">
       <div class="admin-card" style="max-width: 960px;">
-        <h3>📊 Site Analytics</h3>
+        <h3><span class="op-ico" data-icon="chart" aria-hidden="true"></span> Site Analytics</h3>
         <p style="color:var(--text-secondary); font-size:13px; margin-bottom:20px; line-height:1.6;">
           Tracks completions, video views, and tag usage stored in this browser. Once Microsoft authentication is configured, per-user data will be tracked here. Use <strong>Export Data</strong> in the Help tab to back up analytics data.
         </p>
@@ -2441,7 +2720,7 @@
           <p style="color:var(--text-muted); font-size:13px;">Loading analytics…</p>
         </div>
         <div style="margin-top: 18px;">
-          <button class="btn btn-secondary" onclick="window.renderAnalytics()">↻ Refresh</button>
+          <button class="btn btn-secondary" onclick="window.renderAnalytics()"><span class="op-ico" data-icon="refresh" aria-hidden="true"></span> Refresh</button>
           <button class="btn btn-danger" style="margin-left:8px;" onclick="window.clearAnalyticsData()">Clear Analytics Data</button>
         </div>
       </div>
@@ -2450,7 +2729,7 @@
     <!-- HELP PANEL -->
     <div class="admin-panel" id="panel-help">
       <div class="admin-card" style="max-width: 800px; margin: 0 auto;">
-        <h3>📚 How OptimaPD Works</h3>
+        <h3><span class="op-ico" data-icon="bookOpen" aria-hidden="true"></span> How OptimaPD Works</h3>
 
         <h4 style="font-size: 14px; color: var(--brand-blue); margin: 20px 0 8px;">How data is saved</h4>
         <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 12px;">
@@ -2473,8 +2752,8 @@
         <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 12px;">
           Download your entire library as a JSON file for safekeeping or to move to another browser.
         </p>
-        <button class="btn btn-secondary" onclick="window.exportData()">⬇ Export Data (JSON)</button>
-        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">⬆ Import Data</button>
+        <button class="btn btn-secondary" onclick="window.exportData()"><span class="op-ico" data-icon="download" aria-hidden="true"></span> Export Data (JSON)</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()"><span class="op-ico" data-icon="upload" aria-hidden="true"></span> Import Data</button>
         <input type="file" id="importFile" accept=".json" style="display:none;" onchange="window.importData(event)" />
 
         <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">Video URL tips</h4>
@@ -2484,7 +2763,7 @@
           <strong>Direct MP4 files</strong> (hosted anywhere): paste the direct URL ending in .mp4 or .webm.
         </p>
 
-        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">🖼️ Hosting your thumbnails — the recommended recipe</h4>
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;"><span class="op-ico" data-icon="image" aria-hidden="true"></span> Hosting your thumbnails — the recommended recipe</h4>
         <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65;">
           Thumbnails are stored as URLs, not files. The image lives in your OptimaPD GitHub repo (same place as <code>index.html</code>), and the site just references it. Database stays tiny, site stays fast, images stay version-controlled.
         </p>
@@ -2503,7 +2782,7 @@
           <li><strong>Raw GitHub URL (full path):</strong><br><code>https://raw.githubusercontent.com/pbirchum/OptimaPD/main/thumbnails/my-lesson.png</code></li>
         </ul>
         <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-top: 12px; padding: 10px 14px; background: rgba(245, 184, 46, 0.10); border-left: 3px solid var(--brand-gold); border-radius: 4px;">
-          <strong>⚠️ Common gotchas the site now catches for you:</strong>
+          <strong><span class="op-ico" data-icon="warning" aria-hidden="true"></span> Common gotchas the site now catches for you:</strong>
         </p>
         <ul style="color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin: 6px 0 12px 22px;">
           <li><strong>GitHub "blob" URLs:</strong> If you paste <code>https://github.com/pbirchum/OptimaPD/blob/main/thumbnails/foo.png</code>, the site will <strong>auto-convert</strong> it to the correct <code>raw.githubusercontent.com</code> URL on save. The <code>blob</code> URL is GitHub's HTML viewer page (with the repo header, file sidebar, etc.) — not the raw image. You'll see the corrected URL appear in the field after you tab out.</li>
@@ -2530,12 +2809,12 @@ service cloud.firestore {
           <strong>Important:</strong> these rules let anyone with the database URL read or write — that's fine during development since the URL isn't published anywhere, but you'll want to tighten this once Microsoft Auth is wired up. At that point we'll swap in rules like <code>allow read, write: if request.auth != null;</code>.
         </p>
 
-        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">📋 Video upload prompt (copy &amp; paste into a new chat)</h4>
+        <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;"><span class="op-ico" data-icon="copy" aria-hidden="true"></span> Video upload prompt (copy &amp; paste into a new chat)</h4>
         <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.65; margin-bottom: 10px;">
           When you want to upload a new video, open a fresh chat in this project and paste the prompt below.
           It will produce a description, smart tags, a badge concept, and everything you need to fill out the Add Video form.
         </p>
-        <button class="btn btn-secondary" id="copyPromptBtn" onclick="window.copyVideoPrompt()">📋 Copy prompt to clipboard</button>
+        <button class="btn btn-secondary" id="copyPromptBtn" onclick="window.copyVideoPrompt()"><span class="op-ico" data-icon="copy" aria-hidden="true"></span> Copy prompt to clipboard</button>
         <pre id="videoPromptText" style="margin-top:14px; padding:14px; background:var(--bg-darkest); border:1px solid var(--border-subtle); border-radius:8px; font-size:11.5px; line-height:1.5; color:var(--text-secondary); white-space:pre-wrap; max-height:340px; overflow:auto; font-family:'Courier New',monospace;"></pre>
 
         <h4 style="font-size: 14px; color: var(--brand-blue); margin: 24px 0 8px;">🔐 Microsoft / Azure migration notes</h4>
@@ -2577,7 +2856,7 @@ service cloud.firestore {
     <!-- REPORTS PANEL -->
     <div class="admin-panel" id="panel-reports">
       <div class="admin-card">
-        <h3>📈 Activity Reports</h3>
+        <h3><span class="op-ico" data-icon="chartLine" aria-hidden="true"></span> Activity Reports</h3>
         <p style="color:var(--text-secondary); font-size:13px;">Filter by a single user, a custom group, or a sub-category. Export the result as CSV.</p>
 
         <div class="reports-filters">
@@ -2626,13 +2905,23 @@ service cloud.firestore {
 
         <div class="reports-actions">
           <button class="btn btn-primary" onclick="window.runReport()">Run report</button>
-          <button class="btn btn-secondary" onclick="window.exportReportCSV()">⬇ Export CSV</button>
+          <button class="btn btn-secondary" onclick="window.exportReportCSV()"><span class="op-ico" data-icon="download" aria-hidden="true"></span> Export CSV</button>
         </div>
 
         <div class="reports-summary" id="rpt_summary"></div>
         <div style="overflow-x:auto;">
           <table class="po-users-table" id="rpt_table">
-            <thead><tr><th>User</th><th>Email</th><th>Entity</th><th>Courses completed</th><th>Last active</th></tr></thead>
+            <thead><tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Entity</th>
+              <th>Courses completed</th>
+              <th>Course names &amp; dates</th>
+              <th>Total videos watched</th>
+              <th>Videos watched (title · date)</th>
+              <th>Time on site</th>
+              <th>Last active</th>
+            </tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -2740,6 +3029,14 @@ service cloud.firestore {
 6:48 — Adding the first object" style="font-family:'Courier New',monospace; font-size:13px; line-height:1.6;"></textarea>
     </div>
     <div class="form-group">
+      <label>Thumbnail URL</label>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input type="url" id="ev_thumbUrl" placeholder="https://… link to a hosted image (leave blank to use YouTube thumbnail)" style="flex:1;" />
+        <button type="button" class="btn btn-secondary" onclick="window.fetchSourceThumbnail('ev')" style="white-space:nowrap; font-size:13px; padding:8px 12px;" title="Auto-detect the thumbnail from the video URL (YouTube only)"><span class="op-ico" data-icon="link" aria-hidden="true"></span> Fetch from source</button>
+      </div>
+      <p class="help">Leave blank for YouTube videos — the site will use the YouTube thumbnail automatically.</p>
+    </div>
+    <div class="form-group">
       <label>Supplemental files</label>
       <div id="ev_attachmentsContainer"></div>
       <button type="button" class="btn btn-secondary" style="margin-top:8px;" onclick="window.evAddAttachmentRow()">+ Add file link</button>
@@ -2782,9 +3079,28 @@ service cloud.firestore {
   </div>
 </div>
 
+<!-- =====================================================
+     CHAPTERS SIDE PANEL  — populated by renderChaptersForVideo()
+     Slides in from the right when the user clicks the "Chapters" toggle
+     button in the video player action bar.
+     ===================================================== -->
+<div class="chapters-side-panel-backdrop" id="chaptersSidePanelBackdrop" onclick="window.closeChaptersPanel()"></div>
+<div class="chapters-side-panel" id="chaptersSidePanel" role="dialog" aria-labelledby="cspTitle" aria-hidden="true">
+  <div class="chapters-side-panel-header">
+    <h3 id="cspTitle"><span class="op-ico" data-icon="chapters" aria-hidden="true"></span> Chapters</h3>
+    <div class="csp-actions">
+      <button class="csp-icon-btn" id="cspMinimizeBtn" onclick="window.closeChaptersPanel()" title="Minimize" aria-label="Minimize chapters panel">
+        <span class="op-ico" data-icon="close" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+  <div class="chapters-side-panel-meta" id="cspMeta"></div>
+  <div class="chapters-side-panel-list" id="cspList"></div>
+</div>
+
 <!-- Toast that appears when a Stream chapter is clicked (visible feedback) -->
 <div class="stream-seek-toast" id="streamSeekToast">
-  <div>📌 Jumping to <span class="seek-time" id="streamSeekToastTime">0:00</span>…</div>
+  <div><span class="op-ico" data-icon="pin" aria-hidden="true"></span> Jumping to <span class="seek-time" id="streamSeekToastTime">0:00</span>…</div>
   <div style="font-size:11.5px; color: var(--text-muted); margin-top:6px;">
     Microsoft Stream's player doesn't always honor jump-to-timestamp from outside. If the video stays where it was, drag the player's progress bar to the timestamp above.
   </div>
@@ -2850,7 +3166,7 @@ service cloud.firestore {
 
 <script type="module">
 // ============================================================
-// 🔥 FIREBASE CONFIG
+// FIREBASE CONFIG
 // ============================================================
 // Paste the 6 values from your Firebase Console > Project Settings > Your App
 // Until these are filled in, the site runs in local-testing mode (localStorage).
@@ -2901,10 +3217,12 @@ let SUBCATEGORIES = (() => {
 
 function saveSubcategories() { localStorage.setItem(SUBCAT_KEY, JSON.stringify(SUBCATEGORIES)); }
 
+// CATEGORY_META — `icon` is now an icon key from OP_ICON_SVGS rather than an
+// emoji glyph. Anywhere this is rendered, use opIcon(cat.icon) to inject SVG.
 const CATEGORY_META = {
-  tech: { label: 'Tech Skills', desc: 'Tutorials and courses for every tool in the Optima stack.', icon: '💻', color: 'tech' },
-  pedagogy: { label: 'Pedagogy Skills', desc: 'Research-backed instructional frameworks for spatial learning.', icon: '🧠', color: 'pedagogy' },
-  examples: { label: 'Example Lessons', desc: 'Teacher-built VR and AI lesson showcases — filter by subject or grade.', icon: '✨', color: 'examples' }
+  tech: { label: 'Tech Skills', desc: 'Tutorials and courses for every tool in the Optima stack.', icon: 'settings', color: 'tech' },
+  pedagogy: { label: 'Pedagogy Skills', desc: 'Research-backed instructional frameworks for spatial learning.', icon: 'bulb', color: 'pedagogy' },
+  examples: { label: 'Example Lessons', desc: 'Teacher-built VR and AI lesson showcases — filter by subject or grade.', icon: 'sparkle', color: 'examples' }
 };
 
 let DB = { videos: [], courses: [] };
@@ -2935,8 +3253,71 @@ function recordView(videoId) {
   const h = getHistory().filter(x => x.id !== videoId);
   h.unshift({ id: videoId, when: new Date().toISOString() });
   saveHistory(h.slice(0, 50));
+  // Per-user audit log — drives Reports → videos watched + total counts + dates.
+  // Append every view (not just unique) so the report shows when each rewatch happened.
+  try { recordUserVideoView(videoId); } catch (e) { console.warn('[OptimaPD] recordUserVideoView failed', e); }
   // Check if completing this video finishes a course
   setTimeout(() => checkCourseCompletion(videoId), 300);
+}
+
+// ============================================================
+// USER ACTIVITY TRACKING (drives Admin → Reports)
+// ============================================================
+// Structure stored at OPTIMA_USER_ACTIVITY_KEY:
+//   { [userId]: { views: [{videoId, when}], timeOnSiteSec: N, sessionStarts: [iso, ...] } }
+const OPTIMA_USER_ACTIVITY_KEY = 'optimapd_user_activity_v1';
+function getUserActivityAll() {
+  try { return JSON.parse(localStorage.getItem(OPTIMA_USER_ACTIVITY_KEY) || '{}'); } catch (e) { return {}; }
+}
+function saveUserActivityAll(o) { localStorage.setItem(OPTIMA_USER_ACTIVITY_KEY, JSON.stringify(o)); }
+function getActiveUserId() {
+  const u = (typeof getCurrentOptimaUser === 'function') ? getCurrentOptimaUser() : null;
+  if (u && u.id) return u.id;
+  const s = (typeof getUserSession === 'function') ? getUserSession() : null;
+  return (s && s.userId) || null;
+}
+function recordUserVideoView(videoId) {
+  const uid = getActiveUserId();
+  if (!uid) return;
+  const all = getUserActivityAll();
+  if (!all[uid]) all[uid] = { views: [], timeOnSiteSec: 0, sessionStarts: [] };
+  all[uid].views.push({ videoId, when: new Date().toISOString() });
+  // Cap to last 1000 views per user so localStorage stays sane.
+  if (all[uid].views.length > 1000) all[uid].views = all[uid].views.slice(-1000);
+  saveUserActivityAll(all);
+}
+function recordUserSessionStart() {
+  const uid = getActiveUserId();
+  if (!uid) return;
+  const all = getUserActivityAll();
+  if (!all[uid]) all[uid] = { views: [], timeOnSiteSec: 0, sessionStarts: [] };
+  all[uid].sessionStarts = all[uid].sessionStarts || [];
+  all[uid].sessionStarts.push(new Date().toISOString());
+  if (all[uid].sessionStarts.length > 200) all[uid].sessionStarts = all[uid].sessionStarts.slice(-200);
+  saveUserActivityAll(all);
+}
+function bumpUserTimeOnSite(seconds) {
+  const uid = getActiveUserId();
+  if (!uid || !seconds) return;
+  const all = getUserActivityAll();
+  if (!all[uid]) all[uid] = { views: [], timeOnSiteSec: 0, sessionStarts: [] };
+  all[uid].timeOnSiteSec = (all[uid].timeOnSiteSec || 0) + seconds;
+  saveUserActivityAll(all);
+}
+
+// Heartbeat — accumulate ~30 seconds of time-on-site at a time while the tab
+// is visible. Pauses while the tab is hidden so we don't count idle background
+// time. Activated once the user logs in (see bootOptimaAuth).
+let _optimaHeartbeatId = null;
+function startActivityHeartbeat() {
+  if (_optimaHeartbeatId) return;
+  _optimaHeartbeatId = setInterval(() => {
+    if (document.hidden) return;
+    bumpUserTimeOnSite(30);
+  }, 30000);
+}
+function stopActivityHeartbeat() {
+  if (_optimaHeartbeatId) { clearInterval(_optimaHeartbeatId); _optimaHeartbeatId = null; }
 }
 
 function getPlaylists() {
@@ -3203,7 +3584,7 @@ async function migrateToCloud() {
     const data = { ...v }; delete data.id; delete data.blobUrl;
     await addDoc(collection(firestore, 'videos'), data);
   }
-  alert('✓ Migration complete. Your local data is still safe — you can clear it manually from the Help tab if you want to.');
+  alert('Migration complete. Your local data is still safe — you can clear it manually from the Help tab if you want to.');
 }
 
 // ============================================================
@@ -3246,7 +3627,7 @@ function buildEmbedOrVideo(video) {
     return `<video id="opPlayer" data-embed-type="html5" controls autoplay><source src="${video.blobUrl}"></video>`;
   }
   if (!video.videoUrl) {
-    return `<div class="placeholder-msg"><div class="icon">🎬</div>This video has no URL yet. Edit it in Admin → Video Library to add one.</div>`;
+    return `<div class="placeholder-msg"><div class="icon">${opIcon('film',{size:'xl'})}</div>This video has no URL yet. Edit it in Admin → Video Library to add one.</div>`;
   }
   const ytId = toYouTubeId(video.videoUrl);
   if (ytId) {
@@ -3288,16 +3669,10 @@ function renderPlayerFallback(video) {
 
 function fileIconFor(name) {
   const ext = (name || '').split('.').pop().toLowerCase();
-  if (['pdf'].includes(ext)) return '📄';
-  if (['doc','docx'].includes(ext)) return '📝';
-  if (['xls','xlsx','csv'].includes(ext)) return '📊';
-  if (['ppt','pptx'].includes(ext)) return '📽️';
-  if (['zip','rar','7z'].includes(ext)) return '🗜️';
-  if (['png','jpg','jpeg','gif','svg'].includes(ext)) return '🖼️';
-  if (['unity','unitypackage','fbx','obj','blend'].includes(ext)) return '🎮';
-  if (['mp4','mov','webm','avi'].includes(ext)) return '🎬';
-  if (['mp3','wav','ogg'].includes(ext)) return '🎵';
-  return '📎';
+  if (['xls','xlsx','csv'].includes(ext)) return opIcon('sheet');
+  if (['png','jpg','jpeg','gif','svg','webp'].includes(ext)) return opIcon('image');
+  if (['mp4','mov','webm','avi'].includes(ext)) return opIcon('film');
+  return opIcon('doc');
 }
 
 function formatRelativeDate(iso) {
@@ -3319,8 +3694,9 @@ function formatRelativeDate(iso) {
 function renderVideoCard(v) {
   const cat = CATEGORY_META[v.category];
   const catClass = cat ? cat.color : 'tech';
-  const thumbBg = v.thumbnailData
-    ? `<img src="${v.thumbnailData}" alt="">`
+  const autoThumb = v.thumbnailData || getYouTubeThumbnailUrl(v.videoUrl);
+  const thumbBg = autoThumb
+    ? `<img src="${autoThumb}" alt="" loading="lazy">`
     : `<div class="thumb-default thumb-${catClass}" style="width:100%; height:100%;"></div>`;
   const courseInfo = v.courseId ? (() => {
     const c = DB.courses.find(c => c.id === v.courseId);
@@ -3353,7 +3729,7 @@ function renderEmptyState(category, msg) {
   const cat = CATEGORY_META[category];
   return `
     <div class="empty-state">
-      <span class="icon">${cat ? cat.icon : '📺'}</span>
+      <span class="icon">${opIcon(cat ? cat.icon : 'film', { size: 'xl' })}</span>
       <h4>${msg || (cat ? 'No videos in ' + cat.label + ' yet' : 'Nothing here yet')}</h4>
       <p>Head to the Admin panel to add your first video. Once it's published, it'll show up here and in search.</p>
       <button class="btn btn-primary" onclick="window.requireAdmin(function(){ window.showView('admin'); })">+ Add a Video</button>
@@ -3371,7 +3747,7 @@ function renderCourseTile(c) {
     <div class="course-tile" onclick="window.showView('course-detail', {id:'${c.id}'})">
       <div class="course-tile-thumb">
         ${thumb}
-        <span class="course-tile-badge">🎓 Course</span>
+        <span class="course-tile-badge">${opIcon('graduation')} Course</span>
         <span class="course-tile-count">${videoCount} lesson${videoCount === 1 ? '' : 's'}</span>
       </div>
       <div class="course-tile-body">
@@ -3391,8 +3767,8 @@ function renderHome() {
   const totalVids = DB.videos.length;
   const totalCourses = DB.courses.length;
   document.getElementById('heroStats').innerHTML = `
-    <span>📺 ${totalVids} video${totalVids === 1 ? '' : 's'}</span>
-    <span>🎓 ${totalCourses} course${totalCourses === 1 ? '' : 's'}</span>
+    <span>${opIcon('film')} ${totalVids} video${totalVids === 1 ? '' : 's'}</span>
+    <span>${opIcon('graduation')} ${totalCourses} course${totalCourses === 1 ? '' : 's'}</span>
     <span><span class="owl-inline"></span>&nbsp;Ask Opti</span>
   `;
 
@@ -3477,7 +3853,7 @@ function renderCoursesListView() {
       <div class="vid-card" onclick="window.showView('course-detail', {id:'${c.id}'})">
         <div class="vid-thumb">
           ${thumb}
-          <span class="vid-badge">🎓 Course</span>
+          <span class="vid-badge">${opIcon('graduation')} Course</span>
           ${durLabel ? `<span class="vid-duration">${durLabel}</span>` : ''}
         </div>
         <div class="vid-body">
@@ -3505,7 +3881,7 @@ function renderMyLearning() {
   const favIds = getFavorites();
   const favVideos = favIds.map(id => DB.videos.find(v => v.id === id)).filter(Boolean);
   document.getElementById('favCount').textContent = `${favVideos.length} video${favVideos.length === 1 ? '' : 's'}`;
-  renderRow('mlFavoritesRow', favVideos, 'No favorites yet. Tap the ⭐ on any video to save it here.');
+  renderRow('mlFavoritesRow', favVideos, 'No favorites yet. Tap the star on any video to save it here.');
 
   // Playlists (unified grid — same shape as video cards)
   const lists = getPlaylists();
@@ -3553,7 +3929,7 @@ function openPlaylistDetail(playlistId) {
   // Use the browse view to show the playlist contents
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-browse').classList.add('active');
-  document.getElementById('browseTitle').textContent = `🎵 ${pl.name}`;
+  document.getElementById('browseTitle').textContent = pl.name;
   document.getElementById('browseDesc').textContent = `${videos.length} video${videos.length === 1 ? '' : 's'} in this playlist.`;
   document.getElementById('browseFilters').innerHTML = `
     <button class="btn btn-danger" style="margin-top: 14px;" onclick="window.deleteMyPlaylist('${pl.id}')">Delete playlist</button>
@@ -3737,17 +4113,22 @@ function renderVideoDetail(id, fromCourse) {
   const cat = CATEGORY_META[v.category] || CATEGORY_META.tech || { label: 'Uncategorized', color: 'tech' };
 
   try {
-    let metaBits = [`📚 ${cat.label}`];
+    // Build the meta row as {icon, text} pairs so designed SVG icons render
+    // inline alongside each value. The icon next to the duration marker stays
+    // — that styling is what the user explicitly approved.
+    const metaBits = [{ icon: 'folder', text: cat.label }];
     const subList = getSubcategories(v);
-    if (subList.length) metaBits.push(`🏷 ${subList.join(' · ')}`);
-    if (v.duration) metaBits.push(`⏱ ${v.duration}`);
+    if (subList.length) metaBits.push({ icon: 'tag', text: subList.join(' · ') });
+    if (v.duration) metaBits.push({ icon: 'clock', text: v.duration });
     if (v.courseId) {
       const c = DB.courses.find(c => c.id === v.courseId);
-      if (c) metaBits.push(`🎓 ${c.title} · Lesson ${v.lessonNumber || '?'}`);
+      if (c) metaBits.push({ icon: 'graduation', text: `${c.title} · Lesson ${v.lessonNumber || '?'}` });
     }
-    if (v.subject) metaBits.push(`📖 ${String(v.subject).toUpperCase()}`);
-    if (v.grade) metaBits.push(`🎒 ${v.grade}`);
-    document.getElementById('playerMeta').innerHTML = metaBits.map(b => `<span>${escapeHtml(b)}</span>`).join('');
+    if (v.subject) metaBits.push({ icon: 'book', text: String(v.subject).toUpperCase() });
+    if (v.grade) metaBits.push({ icon: 'bag', text: v.grade });
+    document.getElementById('playerMeta').innerHTML = metaBits.map(b =>
+      `<span>${opIcon(b.icon)} ${escapeHtml(b.text)}</span>`
+    ).join('');
 
     const tags = (v.tags || []).map(t => `<span class="tag-pill">#${escapeHtml(t)}</span>`).join('');
     document.getElementById('playerTags').innerHTML = tags;
@@ -3821,7 +4202,7 @@ function renderRelatedVideos(v, fromCourse) {
             .filter(mn => currentMoves.includes((mn || '').toLowerCase()))
             .slice(0, 2);
           const reasonHtml = sharedMoves.length > 0
-            ? `<div style="font-size:11px; color: var(--brand-teal); margin-top: 4px;">🎯 ${escapeHtml(sharedMoves.join(' · '))}</div>`
+            ? `<div style="font-size:11px; color: var(--brand-teal); margin-top: 4px;">${opIcon('target')} ${escapeHtml(sharedMoves.join(' · '))}</div>`
             : '';
           return `
             <div class="vid-card" onclick="window.showView('video-detail', {id:'${rel.id}'})" style="cursor:pointer;">
@@ -3866,7 +4247,7 @@ function renderPlayerDesc(v) {
   const body = v.description || '';
   const canEdit = isAdminLoggedIn();
   const editBtn = canEdit
-    ? `<button class="desc-edit-btn" onclick="window.toggleDescEdit('${v.id}')">✎ Edit</button>`
+    ? `<button class="desc-edit-btn" onclick="window.toggleDescEdit('${v.id}')"><span class="op-ico" data-icon="pencil" aria-hidden="true"></span> Edit</button>`
     : '';
   // Detect whether the body is already HTML (from the rich-text editor) or plain text.
   const hasHtml = /<(p|br|div|span|b|i|u|strong|em|ul|ol|li|font|h[1-6]|a|code|blockquote)\b/i.test(body);
@@ -3934,7 +4315,7 @@ function renderPlayerAttachments(v) {
   if (atts.length === 0) { el.innerHTML = ''; return; }
   el.innerHTML = `
     <div class="attachments-section">
-      <h3>📎 Supplemental files</h3>
+      <h3>${opIcon('doc')} Supplemental files</h3>
       ${atts.map(a => `
         <a class="attachment-item" href="${escapeHtml(a.url)}" target="_blank" rel="noopener">
           <div class="attachment-icon">${fileIconFor(a.name)}</div>
@@ -3953,7 +4334,7 @@ async function renderPlayerComments(v) {
   const el = document.getElementById('playerComments');
   el.innerHTML = `
     <div class="comments-section">
-      <h3>💬 Comments</h3>
+      <h3>${opIcon('comment')} Comments</h3>
       <form class="comment-form" onsubmit="window.submitComment(event, '${v.id}')">
         <input type="text" id="commentAuthor" placeholder="Your name (optional)" maxlength="60" />
         <div id="commentText_wrap"></div>
@@ -4086,29 +4467,29 @@ function renderCourseDetail(id) {
   const lessons = DB.videos.filter(v => v.courseId === c.id).sort((a,b) => (a.lessonNumber || 0) - (b.lessonNumber || 0));
 
   document.getElementById('courseTitle').textContent = c.title;
-  document.getElementById('courseBadge').innerHTML = `🎓 ${lessons.length}-Lesson Course`;
+  document.getElementById('courseBadge').innerHTML = `${opIcon('graduation')} ${lessons.length}-Lesson Course`;
   const descEl = document.getElementById('courseDesc');
   // course description may contain HTML from rich-text editor; keep safe fallback
   if (/[<&]/.test(c.description || '')) descEl.innerHTML = c.description;
   else descEl.textContent = c.description || '';
 
   const metaBits = [
-    `📺 ${lessons.length} video${lessons.length === 1 ? '' : 's'}`,
-    `📚 ${c.difficulty || 'All Levels'}`,
-    `🗂 ${CATEGORY_META[c.category].label}`
+    { icon: 'film',  text: `${lessons.length} video${lessons.length === 1 ? '' : 's'}` },
+    { icon: 'book',  text: c.difficulty || 'All Levels' },
+    { icon: 'folder',text: CATEGORY_META[c.category].label }
   ];
-  document.getElementById('courseMeta').innerHTML = metaBits.map(b => `<span>${escapeHtml(b)}</span>`).join('');
+  document.getElementById('courseMeta').innerHTML = metaBits.map(b => `<span>${opIcon(b.icon)} ${escapeHtml(b.text)}</span>`).join('');
 
   const prog = getCourseProgress(c.id);
   document.getElementById('courseProgressPct').textContent = prog.percent + '%';
-  document.getElementById('courseProgressText').textContent = `${prog.watched} of ${lessons.length} lessons completed${prog.complete ? ' · ✅ Course Complete' : ''}`;
+  document.getElementById('courseProgressText').innerHTML = `${prog.watched} of ${lessons.length} lessons completed${prog.complete ? ' · ' + opIcon('check') + ' Course Complete' : ''}`;
 
   const listEl = document.getElementById('lessonList');
   const isAdmin = isAdminLoggedIn();
   if (lessons.length === 0) {
     listEl.innerHTML = `
       <div class="empty-state">
-        <span class="icon">📚</span>
+        <span class="icon">${opIcon('bookOpen',{size:'xl'})}</span>
         <h4>No lessons in this course yet</h4>
         <p>Head to Admin &rarr; Video Library, pick a video, and click <strong>Edit</strong> to assign it to this course.</p>
         <button class="btn btn-primary" onclick="window.requireAdmin(function(){ window.showView('admin'); })">Open Admin</button>
@@ -4134,12 +4515,12 @@ function renderCourseDetail(id) {
         const result = getQuizScore(q.id);
         return `
           <div class="lesson-quiz-item ${passed ? 'quiz-done' : ''}" onclick="window.openQuizPlayer('${c.id}','${q.id}')">
-            <div class="quiz-icon ${passed ? 'done' : ''}">📝</div>
+            <div class="quiz-icon ${passed ? 'done' : ''}">${opIcon('doc')}</div>
             <div class="quiz-item-info">
               <strong>${escapeHtml(q.title || 'Quiz')}</strong>
               <span>${q.questions ? q.questions.length : 0} questions · ${q.required ? 'Required' : 'Optional'} · Passing: ${q.passingScore || 70}%</span>
             </div>
-            ${passed ? `<span class="quiz-passed-tag">✓ Passed${result ? ' · ' + result.score + '%' : ''}</span>` : '<span style="font-size:12px;color:var(--text-muted);">Tap to take</span>'}
+            ${passed ? `<span class="quiz-passed-tag">${opIcon('check')} Passed${result ? ' · ' + result.score + '%' : ''}</span>` : '<span style="font-size:12px;color:var(--text-muted);">Tap to take</span>'}
           </div>`;
       }
       const l = item.data;
@@ -4153,7 +4534,7 @@ function renderCourseDetail(id) {
       ` : '';
       return `
       <div class="lesson-item" onclick="window.showView('video-detail', {id: '${l.id}', fromCourse: '${c.id}'})">
-        <div class="lesson-num" style="${watched ? 'background:rgba(46,204,113,.15);color:#2ecc71;' : ''}">${watched ? '✓' : i+1}</div>
+        <div class="lesson-num" style="${watched ? 'background:rgba(46,204,113,.15);color:#2ecc71;' : ''}">${watched ? opIcon('check') : i+1}</div>
         <div class="lesson-title-wrap">
           <div class="lesson-title">${escapeHtml(l.title)}</div>
           <div class="lesson-sub">${escapeHtml((l.description || '').replace(/<[^>]+>/g, '').slice(0, 80) || (l.subcategory || ''))}</div>
@@ -4187,7 +4568,7 @@ function switchAdminTab(ev, name) {
   document.getElementById('panel-' + name).classList.add('active');
   if (name === 'library') renderVideoLibrary();
   if (name === 'courses') renderCoursesList();
-  if (name === 'categories') renderCategoryEditor();
+  if (name === 'categories') { renderCategoryEditor(); renderSubjectEditor(); refreshSubjectDropdowns(); }
   if (name === 'analytics') renderAnalytics();
 }
 
@@ -4200,7 +4581,7 @@ function switchAdminTabByName(name) {
   if (panelEl) panelEl.classList.add('active');
   if (name === 'library') renderVideoLibrary();
   if (name === 'courses') renderCoursesList();
-  if (name === 'categories') renderCategoryEditor();
+  if (name === 'categories') { renderCategoryEditor(); renderSubjectEditor(); refreshSubjectDropdowns(); }
   if (name === 'analytics') renderAnalytics();
 }
 
@@ -4285,12 +4666,13 @@ async function handleAddVideo(e) {
   const attachments = collectAttachments();
 
   if (!title) { alert('Title is required.'); return; }
-  if (!thumbUrl) { alert('Thumbnail URL is required. Paste a link to a hosted image (your GitHub repo\'s thumbnails/ folder is the easiest spot).'); document.getElementById('f_thumbUrl').focus(); return; }
+  // Thumbnail is fully optional — videos without one get a default colored card on the
+  // home grid, and admins can attach a thumbnail later from the Video Library row.
   if (looksLikeSharePointShareLink(thumbUrl)) {
     alert('That looks like a SharePoint / OneDrive share link, which is an HTML viewer page — not a direct image. It won\'t render as a thumbnail.\n\nHost the image in your OptimaPD GitHub repo\'s thumbnails/ folder instead. See Admin → Help → Hosting your thumbnails for the recipe.');
     document.getElementById('f_thumbUrl').focus(); return;
   }
-  if (!isValidThumbnailUrl(thumbUrl)) { alert('Thumbnail URL must be a normal http(s) link to an image file. Paste a hosted image URL — do not paste base64 data.'); document.getElementById('f_thumbUrl').focus(); return; }
+  if (thumbUrl && !isValidThumbnailUrl(thumbUrl)) { alert('Thumbnail URL must be a normal http(s) link to an image file. Paste a hosted image URL — do not paste base64 data.'); document.getElementById('f_thumbUrl').focus(); return; }
   if (!videoUrl && !videoFile) {
     if (!confirm('No video URL or file provided. Add anyway (placeholder)?')) return;
   }
@@ -4330,7 +4712,7 @@ async function handleAddVideo(e) {
   try {
     await saveVideo(video);
     const b = document.getElementById('addSuccess');
-    b.textContent = `✓ "${title}" published. It's now live in the ${CATEGORY_META[category].label} section.`;
+    b.textContent = `"${title}" published. It's now live in the ${CATEGORY_META[category].label} section.`;
     b.classList.add('show');
     setTimeout(() => b.classList.remove('show'), 4000);
 
@@ -4372,7 +4754,7 @@ async function handleAddCourse(e) {
     if (preview) preview.style.display = 'none';
     renderCoursesList();
     updateCourseDropdown(document.getElementById('f_category').value);
-    alert(`✓ Course "${course.title}" created. Now add videos and assign them to it.`);
+    alert(`Course "${course.title}" created. Now add videos and assign them to it.`);
   } catch(err) {
     alert('Failed to save course: ' + err.message);
   }
@@ -4388,7 +4770,7 @@ function renderVideoLibrary() {
     courseSel.innerHTML =
       `<option value="">Any course assignment</option>` +
       `<option value="__standalone__">Standalone only</option>` +
-      DB.courses.map(c => `<option value="${c.id}">📚 ${escapeHtml(c.title)}</option>`).join('');
+      DB.courses.map(c => `<option value="${c.id}">${escapeHtml(c.title)}</option>`).join('');
     courseSel.value = cur;
   }
 
@@ -4442,8 +4824,9 @@ function renderVideoLibrary() {
   el.innerHTML = rows.map(v => {
     const cat = CATEGORY_META[v.category] || { label: 'Uncategorized', color: 'tech' };
     const catClass = cat.color || 'tech';
-    const thumb = v.thumbnailData
-      ? `<img src="${v.thumbnailData}">`
+    const vAutoThumb = v.thumbnailData || getYouTubeThumbnailUrl(v.videoUrl);
+    const thumb = vAutoThumb
+      ? `<img src="${vAutoThumb}" loading="lazy">`
       : `<div class="thumb-default thumb-${catClass}" style="width:100%;height:100%;"></div>`;
     const course = v.courseId ? (DB.courses.find(c => c.id === v.courseId) || {}).title : null;
     return `
@@ -4451,10 +4834,11 @@ function renderVideoLibrary() {
         <div class="video-list-thumb">${thumb}</div>
         <div class="video-list-info">
           <h5>${escapeHtml(v.title)}</h5>
-          <p>${escapeHtml(cat.label)}${getSubcategories(v).length ? ' · ' + escapeHtml(getSubcategories(v).join(' · ')) : ''}${course ? ' · 📚 ' + escapeHtml(course) : ''}${v.duration ? ' · ' + escapeHtml(v.duration) : ''}${v.isFeatured ? ' · ⭐ Featured' : ''}${typeof v.viewCount === 'number' ? ' · 👁 ' + v.viewCount : ''}</p>
+          <p>${escapeHtml(cat.label)}${getSubcategories(v).length ? ' · ' + escapeHtml(getSubcategories(v).join(' · ')) : ''}${course ? ' · ' + opIcon('graduation') + ' ' + escapeHtml(course) : ''}${v.duration ? ' · ' + escapeHtml(v.duration) : ''}${v.isFeatured ? ' · ' + opIcon('star') + ' Featured' : ''}${typeof v.viewCount === 'number' ? ' · ' + opIcon('eye') + ' ' + v.viewCount : ''}</p>
         </div>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.showView('video-detail', {id:'${v.id}'})">View</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openEditVideoModal('${v.id}')">Edit</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.promptVideoThumbnail('${v.id}')">Thumbnail</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.toggleFeatured('${v.id}')">${v.isFeatured ? 'Unfeature' : 'Feature'}</button>
         <button class="btn btn-danger" onclick="window.deleteVideo('${v.id}')">Delete</button>
       </div>
@@ -4544,7 +4928,7 @@ function renderCoursesList() {
   el.innerHTML = rows.map(({ course: c, videoCount }) => {
     const thumbHtml = c.thumbnailData
       ? `<img src="${c.thumbnailData}" style="width:100%;height:100%;object-fit:cover;">`
-      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#8D4BE8,#F5B82E); display:flex; align-items:center; justify-content:center; font-size:20px;">🎓</div>`;
+      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#8D4BE8,#F5B82E); display:flex; align-items:center; justify-content:center; color:#fff;">${opIcon('graduation',{size:'xl'})}</div>`;
     const catLabel = (CATEGORY_META[c.category] || { label: 'Uncategorized' }).label;
     return `
       <div class="video-list-item">
@@ -4555,8 +4939,8 @@ function renderCoursesList() {
         </div>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.showView('course-detail', {id:'${c.id}'})">View</button>
         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.promptCourseThumbnail('${c.id}')">Thumbnail</button>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openQuizEditor('${c.id}')">📝 Quizzes (${(c.quizzes||[]).length})</button>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openCertEditor('${c.id}')">${c.certificate && c.certificate.enabled ? '🎓 Cert ✓' : '🎓 Cert'}</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openQuizEditor('${c.id}')">${opIcon('doc')} Quizzes (${(c.quizzes||[]).length})</button>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px;" onclick="window.openCertEditor('${c.id}')">${c.certificate && c.certificate.enabled ? opIcon('certificate') + ' Cert ' + opIcon('check') : opIcon('certificate') + ' Cert'}</button>
         <button class="btn btn-danger" onclick="window.deleteCourse('${c.id}')">Delete</button>
       </div>
     `;
@@ -4572,6 +4956,36 @@ function clearCourseFilters() {
 }
 window.clearCourseFilters = clearCourseFilters;
 window.renderCoursesList = renderCoursesList;
+
+// Attach or replace a video thumbnail post-upload — invoked from the Video
+// Library row action. Mirrors promptCourseThumbnail so the admin flow feels
+// identical for videos and courses.
+async function promptVideoThumbnail(videoId) {
+  const v = DB.videos.find(x => x.id === videoId);
+  if (!v) return;
+  const current = v.thumbnailData || '';
+  const url = prompt(
+    'Paste the new thumbnail URL (hosted image — GitHub repo, Firebase Storage, Imgur, etc.):\n\n' +
+    'Leave blank to remove the custom thumbnail. YouTube videos will fall back to the YouTube auto-thumbnail.',
+    current && !current.startsWith('data:') ? current : ''
+  );
+  if (url === null) return; // cancelled
+  const trimmed = normalizeThumbnailUrl(url.trim());
+  if (trimmed && looksLikeSharePointShareLink(trimmed)) {
+    alert('SharePoint / OneDrive share links are HTML viewer pages, not direct images, so they can\'t be used as thumbnails. Host the image in your OptimaPD GitHub repo\'s thumbnails/ folder instead.');
+    return;
+  }
+  if (trimmed && !isValidThumbnailUrl(trimmed)) {
+    alert('That URL doesn\'t look right. Use a normal http(s) link to a hosted image — not base64 data.');
+    return;
+  }
+  try {
+    await updateVideo(videoId, { thumbnailData: trimmed || null });
+    if (!USE_FIREBASE) v.thumbnailData = trimmed || null;
+    renderVideoLibrary();
+  } catch (err) { alert('Update failed: ' + err.message); }
+}
+window.promptVideoThumbnail = promptVideoThumbnail;
 
 async function promptCourseThumbnail(courseId) {
   const current = (DB.courses.find(c => c.id === courseId) || {}).thumbnailData || '';
@@ -4621,12 +5035,12 @@ function renderCategoryEditor() {
     const meta = CATEGORY_META[cat];
     return `
       <div class="cat-editor-block">
-        <h5>${meta.icon} ${escapeHtml(meta.label)}</h5>
+        <h5>${opIcon(meta.icon)} ${escapeHtml(meta.label)}</h5>
         <div id="catSubList_${cat}">
           ${SUBCATEGORIES[cat].map((sub, i) => `
             <div class="cat-sub-row">
               <input type="text" value="${escapeHtml(sub)}" onchange="window.renameSubcategory('${cat}', ${i}, this.value)" />
-              <button onclick="window.deleteSubcategory('${cat}', ${i})">✕</button>
+              <button onclick="window.deleteSubcategory('${cat}', ${i})" title="Remove">${opIcon('close')}</button>
             </div>
           `).join('')}
         </div>
@@ -4736,6 +5150,118 @@ function resetCategoriesToDefaults() {
 }
 
 // ============================================================
+// SUBJECT EDITOR (Admin → Categories → Manage Subjects)
+// ============================================================
+function renderSubjectEditor() {
+  const wrap = document.getElementById('subjectEditor');
+  if (!wrap) return;
+  const subjects = getOptimaSubjects();
+  if (!subjects.length) {
+    wrap.innerHTML = `<p style="color:var(--text-muted); font-size:12px;">No subjects yet. Add one below.</p>`;
+    return;
+  }
+  wrap.innerHTML = subjects.map((s, i) => `
+    <div class="subj-row" style="display:flex; gap:8px; align-items:center; padding:8px 10px; background:var(--bg-darkest); border:1px solid var(--border-subtle); border-radius:8px; margin-bottom:6px;">
+      <input type="text" value="${escapeHtml(s)}" data-idx="${i}" onchange="window.renameSubject(${i}, this.value)" style="flex:1; padding:7px 10px; background:var(--bg-card); border:1px solid var(--border-subtle); color:var(--text-primary); border-radius:6px; font-family:inherit; font-size:13px;" />
+      <button class="btn btn-secondary" style="padding:6px 10px; font-size:12px;" onclick="window.moveSubject(${i}, -1)" ${i === 0 ? 'disabled' : ''} title="Move up">↑</button>
+      <button class="btn btn-secondary" style="padding:6px 10px; font-size:12px;" onclick="window.moveSubject(${i}, 1)" ${i === subjects.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+      <button class="btn btn-danger" style="padding:6px 10px; font-size:12px;" onclick="window.deleteSubject(${i})" title="Remove">Remove</button>
+    </div>
+  `).join('');
+}
+
+function addSubject() {
+  const input = document.getElementById('subj_newName');
+  if (!input) return;
+  const name = (input.value || '').trim();
+  if (!name) { input.focus(); return; }
+  const subjects = getOptimaSubjects();
+  if (subjects.some(s => s.toLowerCase() === name.toLowerCase())) {
+    alert('That subject already exists.');
+    return;
+  }
+  subjects.push(name);
+  saveOptimaSubjects(subjects);
+  input.value = '';
+  renderSubjectEditor();
+  refreshSubjectDropdowns();
+}
+
+function renameSubject(idx, newName) {
+  const subjects = getOptimaSubjects();
+  newName = (newName || '').trim();
+  if (!newName) { renderSubjectEditor(); return; }
+  if (subjects.some((s, i) => i !== idx && s.toLowerCase() === newName.toLowerCase())) {
+    alert('That subject name already exists.');
+    renderSubjectEditor();
+    return;
+  }
+  subjects[idx] = newName;
+  saveOptimaSubjects(subjects);
+  refreshSubjectDropdowns();
+}
+
+function moveSubject(idx, dir) {
+  const subjects = getOptimaSubjects();
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= subjects.length) return;
+  [subjects[idx], subjects[newIdx]] = [subjects[newIdx], subjects[idx]];
+  saveOptimaSubjects(subjects);
+  renderSubjectEditor();
+  refreshSubjectDropdowns();
+}
+
+function deleteSubject(idx) {
+  const subjects = getOptimaSubjects();
+  if (!confirm(`Remove "${subjects[idx]}" from the subjects list? Existing video and user assignments will keep the label but it'll no longer appear in dropdowns.`)) return;
+  subjects.splice(idx, 1);
+  saveOptimaSubjects(subjects);
+  renderSubjectEditor();
+  refreshSubjectDropdowns();
+}
+
+function resetSubjectsToDefaults() {
+  if (!confirm('Reset the subjects list to the OptimaPD defaults?')) return;
+  saveOptimaSubjects(OPTIMA_SUBJECT_DEFAULTS.slice());
+  renderSubjectEditor();
+  refreshSubjectDropdowns();
+}
+
+// Re-populate every place subjects show up (the Add Video form, the Reports
+// filter, the Profile chip row) without forcing a full page reload.
+function refreshSubjectDropdowns() {
+  const subjects = getOptimaSubjects();
+  // Add Video form
+  const fSel = document.getElementById('f_subject');
+  if (fSel) {
+    const cur = fSel.value;
+    fSel.innerHTML = `<option value="">— any —</option>` +
+      subjects.map(s => `<option value="${escapeHtml(s.toLowerCase())}">${escapeHtml(s)}</option>`).join('');
+    if (cur) fSel.value = cur;
+  }
+  // Reports filter
+  const rSel = document.getElementById('rpt_subject');
+  if (rSel) {
+    const cur = rSel.value;
+    rSel.innerHTML = subjects.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+    if (cur) rSel.value = cur;
+  }
+  // Profile chip row — only re-render if profile view is active
+  const profSubj = document.getElementById('prof_subjects');
+  if (profSubj && document.getElementById('view-profile')?.classList.contains('active')) {
+    if (typeof renderProfileForm === 'function') {
+      try { renderProfileForm(); } catch (e) {}
+    }
+  }
+}
+
+window.addSubject = addSubject;
+window.renameSubject = renameSubject;
+window.moveSubject = moveSubject;
+window.deleteSubject = deleteSubject;
+window.resetSubjectsToDefaults = resetSubjectsToDefaults;
+
+// ============================================================
 // EXPORT / IMPORT
 // ============================================================
 
@@ -4766,7 +5292,7 @@ function importData(e) {
           const d = { ...v }; delete d.id; delete d.blobUrl;
           await addDoc(collection(firestore, 'videos'), d);
         }
-        alert('✓ Import complete.');
+        alert('Import complete.');
       } else {
         if (confirm('This will replace your current local library. Continue?')) {
           DB = parsed; saveLocal(); location.reload();
@@ -4801,6 +5327,8 @@ function showView(name, params, __fromPopState) {
     stopActiveVideo();
     // Reset the player-build guard so coming back here re-builds the iframe.
     window._currentPlayerVideoId = null;
+    // Hide the chapters side panel — it's only meaningful on a video page.
+    try { closeChaptersPanel(); } catch (e) {}
   }
 
   const viewMap = {
@@ -4911,7 +5439,7 @@ function runSearch(q) {
   if (results.length === 0) {
     el.innerHTML = `
       <div class="empty-state">
-        <span class="icon">🔍</span>
+        <span class="icon">${opIcon('search')}</span>
         <h4>No results for "${escapeHtml(q)}"</h4>
         <p>Try a different term, or upload a video on this topic.</p>
       </div>`;
@@ -5071,7 +5599,7 @@ function optiReply(question, contextVideoId) {
     const moveHint = topMove ? ` It demonstrates "${topMove.name}".` : '';
     return {
       text: `I found "${v.title}" in the library.${moveHint} ${snippet}`,
-      cite: `📺 ${v.title}${v.duration ? ' · ' + v.duration : ''}`,
+      cite: `${v.title}${v.duration ? ' · ' + v.duration : ''}`,
       videoId: v.id
     };
   }
@@ -5218,8 +5746,8 @@ function mountRichTextEditor(logicalId, placeholder) {
         <button type="button" class="rt-btn" data-cmd="insertUnorderedList" title="Bulleted list">•</button>
         <button type="button" class="rt-btn" data-cmd="insertOrderedList" title="Numbered list">1.</button>
         <span class="rt-sep"></span>
-        <button type="button" class="rt-btn" data-cmd="createLink" title="Insert link">🔗</button>
-        <button type="button" class="rt-btn" data-cmd="removeFormat" title="Clear formatting">✕</button>
+        <button type="button" class="rt-btn" data-cmd="createLink" title="Insert link">${opIcon('link')}</button>
+        <button type="button" class="rt-btn" data-cmd="removeFormat" title="Clear formatting">${opIcon('close')}</button>
       </div>
       <div class="rt-content" contenteditable="true" data-placeholder="${escapeHtml(placeholder || 'Write here...')}"></div>
     </div>
@@ -5363,6 +5891,8 @@ function openEditVideoModal(videoId) {
   const evChaptersEl = document.getElementById('ev_chapters');
   if (evChaptersEl) evChaptersEl.value = chaptersToInputText(v.chapters || []);
   document.getElementById('ev_featured').checked = !!v.isFeatured;
+  const evThumbEl = document.getElementById('ev_thumbUrl');
+  if (evThumbEl) evThumbEl.value = v.thumbnailData || '';
   renderEvAttachments(v.attachments || []);
 
   document.getElementById('editVideoModal').classList.add('open');
@@ -5403,6 +5933,7 @@ async function saveEditVideo() {
     tags: document.getElementById('ev_tags').value.split(',').map(t => t.trim()).filter(Boolean),
     chapters: parseChaptersInput(document.getElementById('ev_chapters')?.value || ''),
     isFeatured: document.getElementById('ev_featured').checked,
+    thumbnailData: (document.getElementById('ev_thumbUrl')?.value || '').trim() || null,
     attachments: collectEvAttachments(),
   };
 
@@ -5832,7 +6363,7 @@ function triggerCourseCompletion(course, userName, userEmail) {
   const certEl = document.getElementById('certDownloadModal');
   if (certEl) {
     const hasCert = course.certificate && course.certificate.enabled;
-    document.getElementById('certDlTitle').textContent = `🎉 You completed "${course.title}"!`;
+    document.getElementById('certDlTitle').textContent = `You completed "${course.title}"!`;
     document.getElementById('certDlBody').textContent = hasCert
       ? `Congratulations, ${userName}! Your certificate of completion is ready.`
       : `Congratulations, ${userName}! You've finished all lessons${course.quizzes && course.quizzes.some(q=>q.required) ? ' and passed all required quizzes' : ''}.`;
@@ -5893,7 +6424,7 @@ function renderQuizEditorList(c) {
           </div>
         </div>
         <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="window.openQuizQuestions('${c.id}','${q.id}')">✎ Questions</button>
-        <button class="btn btn-danger" style="padding:4px 8px;font-size:11px;" onclick="window.deleteQuizById('${c.id}','${q.id}')">✕</button>
+        <button class="btn btn-danger" style="padding:4px 8px;font-size:11px;" onclick="window.deleteQuizById('${c.id}','${q.id}')" title="Remove">${opIcon('close')}</button>
       </div>`;
   }).join('');
 }
@@ -5972,9 +6503,9 @@ function renderQEditorList(c, quiz) {
   el.innerHTML = qs.map((q, i) => {
     let detail = '';
     if (q.type === 'multiple_choice') {
-      detail = (q.options||[]).map((o, oi) => `<div style="font-size:12px;color:${oi===q.correctAnswer?'#2ecc71':'var(--text-muted)'};padding:1px 0;">${oi===q.correctAnswer?'✓':'○'} ${escapeHtml(o)}</div>`).join('');
+      detail = (q.options||[]).map((o, oi) => `<div style="font-size:12px;color:${oi===q.correctAnswer?'#2ecc71':'var(--text-muted)'};padding:1px 0;">${oi===q.correctAnswer?opIcon('check'):'○'} ${escapeHtml(o)}</div>`).join('');
     } else if (q.type === 'true_false') {
-      detail = `<div style="font-size:12px;color:#2ecc71;">✓ ${q.correctAnswer===0?'True':'False'}</div>`;
+      detail = `<div style="font-size:12px;color:#2ecc71;">${opIcon('check')} ${q.correctAnswer===0?'True':'False'}</div>`;
     } else if (q.type === 'free_response') {
       detail = `<div style="font-size:12px;color:var(--text-muted);">Open-ended · no auto-grading</div>`;
     } else if (q.type === 'matching') {
@@ -5988,7 +6519,7 @@ function renderQEditorList(c, quiz) {
             <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:7px;">${escapeHtml(q.prompt)}</div>
             ${detail}
           </div>
-          <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="window.deleteQuestion('${q.id}')">✕</button>
+          <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="window.deleteQuestion('${q.id}')" title="Remove">${opIcon('close')}</button>
         </div>
       </div>`;
   }).join('');
@@ -6090,7 +6621,7 @@ function renderQuizPlayer(c, quiz, showResults, answers, score) {
     el.innerHTML = `
       <div class="quiz-result-wrap">
         <div class="quiz-result-pct ${passed?'pass':'fail'}">${pct}%</div>
-        <div class="quiz-result-label">${passed ? '✓ Passed' : '✗ Not passed'} · ${quiz.title}</div>
+        <div class="quiz-result-label">${passed ? opIcon('check') + ' Passed' : opIcon('close') + ' Not passed'} · ${quiz.title}</div>
         <p style="font-size:13px;color:var(--text-secondary);margin-top:8px;">
           ${passed ? `You met the passing score of ${quiz.passingScore||70}%.` : `Passing score is ${quiz.passingScore||70}%. Review the material and try again.`}
         </p>
@@ -6124,7 +6655,7 @@ function renderQuizPlayer(c, quiz, showResults, answers, score) {
           return `<div class="quiz-q-block">
             <div class="quiz-q-num">Q${i+1}</div>
             <div class="quiz-q-prompt">${escapeHtml(q.prompt)}</div>
-            <div style="font-size:13px;color:${correct?'#2ecc71':'#e74c3c'};">${correct?'✓ Correct':'✗ Incorrect'}</div>
+            <div style="font-size:13px;color:${correct?'#2ecc71':'#e74c3c'};">${correct?opIcon('check')+' Correct':opIcon('close')+' Incorrect'}</div>
             ${!correct ? `<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">Correct answer: ${escapeHtml(correctLabel)}</div>` : ''}
           </div>`;
         }).join('')}
@@ -6258,7 +6789,7 @@ function openCertEditor(courseId) {
   document.getElementById('cert_body').value = cert.bodyText || 'This certifies that {name} has successfully completed';
   document.getElementById('cert_sig').value = cert.signatureText || 'OptimaPD · Optima Education';
   _certBgData.data = cert.backgroundData || null;
-  document.getElementById('cert_bgName').textContent = _certBgData.data ? '✓ Background image loaded' : 'Click to upload background · white by default';
+  document.getElementById('cert_bgName').textContent = _certBgData.data ? 'Background image loaded' : 'Click to upload background · white by default';
   updateCertPreview();
   document.getElementById('certEditorModal').classList.add('open');
 }
@@ -6310,7 +6841,7 @@ async function saveCertSettings() {
   await updateCourse(_certCourseId, { certificate: cert });
   if (!USE_FIREBASE) c.certificate = cert;
   renderCoursesList();
-  alert('✓ Certificate settings saved.');
+  alert('Certificate settings saved.');
   closeCertEditor();
 }
 
@@ -6404,7 +6935,7 @@ async function emailCertificate(course, userName, userEmail) {
       course_name: course.title, completion_date: today,
       site_name: 'OptimaPD'
     });
-    if (statusEl) { statusEl.textContent = `✓ Confirmation sent to ${userEmail}`; statusEl.style.display=''; }
+    if (statusEl) { statusEl.textContent = `Confirmation sent to ${userEmail}`; statusEl.style.display=''; }
   } catch(err) {
     if (statusEl) { statusEl.textContent = `Could not send email: ${err.text || err.message}`; statusEl.style.display=''; }
   }
@@ -6553,7 +7084,7 @@ function renderAnalytics() {
     <div class="a-section">
       <h4>Teaching Moves Engagement</h4>
       <div class="tag-cloud">${topMoves.map(([move, count]) =>
-        `<span class="tag-chip">🎯 ${escapeHtml(move)} <strong>${count}</strong></span>`).join('')}
+        `<span class="tag-chip">${opIcon('target')} ${escapeHtml(move)} <strong>${count}</strong></span>`).join('')}
       </div>
     </div>` : ''}
 
@@ -6687,32 +7218,93 @@ function formatChapterTime(seconds) {
   return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
 }
 
+// Render chapters into the slide-out side panel (matches the MS Stream UX).
+// The old inline .chapters-card under the player is no longer used — the
+// #playerChapters slot now just holds the "Chapters" toggle pill.
 function renderChaptersForVideo(v) {
-  const el = document.getElementById('playerChapters');
-  if (!el) return;
+  const togglesHost = document.getElementById('playerChapters');
+  const panel       = document.getElementById('chaptersSidePanel');
+  const listEl      = document.getElementById('cspList');
+  const metaEl      = document.getElementById('cspMeta');
+  if (!togglesHost || !panel || !listEl) return;
+
   const chapters = Array.isArray(v && v.chapters) ? v.chapters : [];
-  if (!chapters.length) { el.innerHTML = ''; return; }
+
+  // No chapters → no toggle, no panel. Hide the panel if it was open from a
+  // prior video.
+  if (!chapters.length) {
+    togglesHost.innerHTML = '';
+    closeChaptersPanel();
+    return;
+  }
+
+  // The toggle lives inline next to the player so it's discoverable. Clicking
+  // it pops out the side panel; clicking again (or the X inside the panel)
+  // minimizes it back.
+  togglesHost.innerHTML = `
+    <button class="chapters-toggle" id="chaptersToggleBtn" onclick="window.toggleChaptersPanel()" aria-controls="chaptersSidePanel" aria-expanded="false">
+      ${opIcon('chapters')} <span>Chapters</span>
+      <span class="ch-count-badge">${chapters.length}</span>
+    </button>
+  `;
 
   // Detect Stream embeds — they don't reliably honor programmatic seek.
-  // If this video is a Stream embed, show a one-line hint under the chapter
-  // list so the user knows what to do if the click doesn't seek.
   const isStream = v && v.videoUrl &&
     /(?:sharepoint|onedrive|microsoftstream|stream\.office)/i.test(v.videoUrl);
 
-  el.innerHTML = `<div class="chapters-card">
-    <div class="chapters-card-header">
-      <h4>📑 Chapters</h4>
-      <span class="ch-count">${chapters.length} chapter${chapters.length === 1 ? '' : 's'}</span>
+  // Resolve a thumbnail for the per-chapter mini-image. Stream embeds don't
+  // expose per-timestamp thumbs without an API call, so we fall back to the
+  // video's main thumbnail (just like the MS screenshot you showed).
+  const fallbackThumb = (v.thumbnailData || (typeof getYouTubeThumbnailUrl === 'function' ? getYouTubeThumbnailUrl(v.videoUrl) : '') || '');
+
+  metaEl.innerHTML = `${chapters.length} chapter${chapters.length === 1 ? '' : 's'}` +
+    (v.title ? ` · <span style="color:var(--text-secondary);">${escapeHtml(v.title)}</span>` : '');
+
+  listEl.innerHTML = chapters.map(c => `
+    <div class="chapter-row-sp" onclick="window.seekToChapter(${c.time}, event)">
+      <div class="ch-thumb"${fallbackThumb ? ` style="background-image:url('${escapeHtml(fallbackThumb)}');"` : ''}></div>
+      <div class="ch-body">
+        <div class="ch-title-sp">${escapeHtml(c.title)}</div>
+        <div class="ch-time-sp">${formatChapterTime(c.time)}</div>
+      </div>
     </div>
-    ${chapters.map(c => `<div class="chapter-row" onclick="window.seekToChapter(${c.time}, event)">
-      <span class="ch-time">${formatChapterTime(c.time)}</span>
-      <span class="ch-title">${escapeHtml(c.title)}</span>
-    </div>`).join('')}
-    ${isStream ? `<div class="chapters-stream-hint">
-      ⚠️ Microsoft Stream's player doesn't expose a public seek API. Clicking a chapter reloads the player with a start-time hint — the video may jump to the timestamp, or it may restart at 0 depending on which Stream variant your tenant uses. If it restarts, drag the progress bar to the timestamp shown in the chapter row.
-    </div>` : ''}
-  </div>`;
+  `).join('') + (isStream ? `
+    <div class="chapters-stream-hint">
+      ${opIcon('warning')} Microsoft Stream's player doesn't expose a public seek API. If a chapter click doesn't seek, drag the progress bar to the timestamp shown in the row.
+    </div>
+  ` : '');
 }
+
+// Open / close / toggle helpers for the side panel.
+function openChaptersPanel() {
+  const panel = document.getElementById('chaptersSidePanel');
+  const bd    = document.getElementById('chaptersSidePanelBackdrop');
+  const btn   = document.getElementById('chaptersToggleBtn');
+  if (!panel) return;
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+  if (bd) bd.classList.add('show');
+  if (btn) btn.setAttribute('aria-expanded', 'true');
+}
+function closeChaptersPanel() {
+  const panel = document.getElementById('chaptersSidePanel');
+  const bd    = document.getElementById('chaptersSidePanelBackdrop');
+  const btn   = document.getElementById('chaptersToggleBtn');
+  if (!panel) return;
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  if (bd) bd.classList.remove('show');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+function toggleChaptersPanel() {
+  const panel = document.getElementById('chaptersSidePanel');
+  if (!panel) return;
+  if (panel.classList.contains('open')) closeChaptersPanel();
+  else openChaptersPanel();
+}
+window.openChaptersPanel = openChaptersPanel;
+window.closeChaptersPanel = closeChaptersPanel;
+window.toggleChaptersPanel = toggleChaptersPanel;
 
 // Universal seek — works for YouTube, Stream, generic iframes, and HTML5 video.
 // YouTube & Stream: reload iframe with the start-time query param.
@@ -6731,7 +7323,9 @@ function showStreamSeekToast(seconds) {
 }
 
 // Brief flash on the clicked chapter row so the click is always visibly
-// acknowledged, no matter how the underlying player responds.
+// acknowledged, no matter how the underlying player responds. Works on both
+// the legacy .chapter-row and the new .chapter-row-sp inside the side panel
+// (the .flash keyframe just changes background, so either class is fine).
 function flashChapterRow(rowEl) {
   if (!rowEl) return;
   rowEl.classList.remove('flash');
@@ -6939,6 +7533,63 @@ function initThumbnailUrlPreviews() {
 }
 
 // =====================================================================
+// YOUTUBE THUMBNAIL AUTO-FETCH
+// =====================================================================
+// Given a video URL, returns the best-quality YouTube thumbnail URL,
+// or null if the video isn't from YouTube.
+function getYouTubeThumbnailUrl(videoUrl) {
+  if (!videoUrl) return null;
+  const ytId = toYouTubeId(videoUrl);
+  if (!ytId) return null;
+  // maxresdefault (1280×720) is ideal for thumbnails; falls back gracefully
+  // in the browser if the creator didn't upload an HD thumb.
+  return 'https://img.youtube.com/vi/' + ytId + '/maxresdefault.jpg';
+}
+
+// Called by the "Fetch from source" buttons in both the Add Video and
+// Edit Video forms. `prefix` is 'f' for add-form or 'ev' for edit-modal.
+window.fetchSourceThumbnail = function(prefix) {
+  const videoUrlEl = document.getElementById(prefix + '_videoUrl');
+  const thumbUrlEl = document.getElementById(prefix + '_thumbUrl');
+  if (!videoUrlEl || !thumbUrlEl) return;
+
+  const videoUrl = (videoUrlEl.value || '').trim();
+  if (!videoUrl) {
+    alert('Enter a video URL first, then click Fetch from source.');
+    return;
+  }
+
+  const ytThumb = getYouTubeThumbnailUrl(videoUrl);
+  if (ytThumb) {
+    thumbUrlEl.value = ytThumb;
+    // Trigger the live preview if wired up
+    thumbUrlEl.dispatchEvent(new Event('input', { bubbles: true }));
+    thumbUrlEl.dispatchEvent(new Event('blur', { bubbles: true }));
+  } else {
+    alert('Auto-fetch is currently supported for YouTube videos only. For Microsoft Stream or other sources, paste a custom thumbnail URL.');
+  }
+};
+
+// Auto-fill thumbnail when the video URL field loses focus and the
+// thumbnail field is still empty — only for YouTube URLs.
+function wireAutoFetchOnBlur(videoUrlId, thumbUrlId) {
+  const videoUrlEl = document.getElementById(videoUrlId);
+  if (!videoUrlEl) return;
+  videoUrlEl.addEventListener('blur', () => {
+    const thumbEl = document.getElementById(thumbUrlId);
+    if (!thumbEl) return;
+    // Only auto-fill if the thumbnail field is currently empty
+    if ((thumbEl.value || '').trim()) return;
+    const ytThumb = getYouTubeThumbnailUrl((videoUrlEl.value || '').trim());
+    if (ytThumb) {
+      thumbEl.value = ytThumb;
+      thumbEl.dispatchEvent(new Event('input', { bubbles: true }));
+      thumbEl.dispatchEvent(new Event('blur', { bubbles: true }));
+    }
+  });
+}
+
+// =====================================================================
 // OPTIMAPD v2 — AUTH, USERS, BADGES, REPORTS, CERTIFICATES
 // =====================================================================
 // All v2 functionality (login landing, role-based UI, badges, reports,
@@ -6952,10 +7603,32 @@ const OPTIMA_ENTITIES_KEY     = 'optimapd_entities_v2';
 // Login log is still used by the Reports panel (Last Active column), so it stays.
 const OPTIMA_LOGIN_LOG_KEY    = 'optimapd_login_log_v2';
 
-const OPTIMA_SUBJECT_OPTIONS = [
-  'Math','ELA / Reading','Science','Social Studies','World Languages',
-  'Arts','Music','PE / Health','SPED','Tech / CS','Library / Media','Counseling'
+// Subjects list — admin-editable from Admin → Categories → Subjects.
+// Persisted in localStorage so users can add/edit/remove without code changes.
+const OPTIMA_SUBJECTS_KEY = 'optimapd_subjects_v1';
+const OPTIMA_SUBJECT_DEFAULTS = [
+  'Math','ELA / Reading','Science','Social Studies','Languages',
+  'Art','Music','SPED','Tech / CS','Library / Media','Counseling'
 ];
+function getOptimaSubjects() {
+  try {
+    const raw = localStorage.getItem(OPTIMA_SUBJECTS_KEY);
+    if (!raw) return OPTIMA_SUBJECT_DEFAULTS.slice();
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) && arr.length ? arr : OPTIMA_SUBJECT_DEFAULTS.slice();
+  } catch (e) { return OPTIMA_SUBJECT_DEFAULTS.slice(); }
+}
+function saveOptimaSubjects(arr) {
+  if (!Array.isArray(arr)) return;
+  localStorage.setItem(OPTIMA_SUBJECTS_KEY, JSON.stringify(arr));
+}
+// Backwards-compat shim — anything still referencing OPTIMA_SUBJECT_OPTIONS
+// gets the live list via a getter.
+Object.defineProperty(window, 'OPTIMA_SUBJECT_OPTIONS', {
+  get() { return getOptimaSubjects(); },
+  configurable: true
+});
+const OPTIMA_SUBJECT_OPTIONS = getOptimaSubjects();
 const OPTIMA_GRADE_OPTIONS = ['K','1','2','3','4','5','6','7','8','9','10','11','12'];
 
 // -------- localStorage helpers ----------------------------------------
@@ -7065,6 +7738,7 @@ async function optimaDoLogin(ev) {
   });
   // Track login + streak (still used by the Reports panel's Last Active column)
   trackLoginAndStreak();
+  try { recordUserSessionStart(); startActivityHeartbeat(); } catch (e) {}
   hideLoginPage();
   applyUserUi();
   refreshAdminTabVisibility();
@@ -7073,6 +7747,7 @@ async function optimaDoLogin(ev) {
 }
 
 function optimaSignOut() {
+  try { stopActivityHeartbeat(); } catch (e) {}
   setCurrentOptimaUser(null);
   try { sessionStorage.removeItem('optimapd_user'); } catch(e) {}
   try { sessionStorage.removeItem(ADMIN_SESSION_KEY); } catch(e) {}
@@ -7137,7 +7812,7 @@ function renderCertificateList() {
     return `<div class="cert-card">
       <div class="cert-title">${escapeHtml(title)}</div>
       <div class="cert-meta">Completed ${escapeHtml(date)}</div>
-      <button class="btn btn-secondary" onclick="window.downloadCertificateFor('${c.courseId}')">⬇ Download PDF</button>
+      <button class="btn btn-secondary" onclick="window.downloadCertificateFor('${c.courseId}')">${opIcon('download')} Download PDF</button>
     </div>`;
   }).join('') + `</div>`;
 }
@@ -7508,44 +8183,156 @@ function gatherReportUsers() {
   return all;
 }
 
+// Format a duration in seconds as "Hh Mm" / "Mm" — used in the report's
+// time-on-site column. Compact so the cell doesn't blow up.
+function formatTimeOnSite(secs) {
+  secs = Math.max(0, Math.floor(secs || 0));
+  if (secs < 60) return secs + 's';
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+function formatShortDate(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  } catch (e) { return iso; }
+}
+function getVideoTitleById(videoId) {
+  const v = DB.videos.find(x => x.id === videoId);
+  return v ? (v.title || '(untitled video)') : '(deleted video)';
+}
+function getCourseTitleById(courseId) {
+  const c = DB.courses.find(x => x.id === courseId);
+  return c ? (c.title || '(untitled course)') : '(deleted course)';
+}
+
 function runReport() {
   const me = getCurrentOptimaUser();
   if (!me) return;
   const users = gatherReportUsers();
   const loginAll = JSON.parse(localStorage.getItem(OPTIMA_LOGIN_LOG_KEY) || '{}');
   const completions = (typeof getCompletedCourses === 'function' ? getCompletedCourses() : []);
+  const activityAll = getUserActivityAll();
   _currentReportRows = users.map(u => {
     const l = loginAll[u.id] || {};
+    const activity = activityAll[u.id] || { views: [], timeOnSiteSec: 0 };
+    const userCompletions = completions.filter(c => c.userId === u.id);
+    // Build a course-completion list with names and dates
+    const courseRows = userCompletions.map(c => ({
+      courseId: c.courseId,
+      title: getCourseTitleById(c.courseId),
+      completedAt: c.completedAt || ''
+    })).sort((a,b) => (b.completedAt||'').localeCompare(a.completedAt||''));
+    // Build the video views list — each entry shows title + when + standalone/course origin
+    const viewRows = (activity.views || []).map(v => {
+      const vid = DB.videos.find(x => x.id === v.videoId);
+      return {
+        videoId: v.videoId,
+        title: getVideoTitleById(v.videoId),
+        when: v.when || '',
+        courseId: vid && vid.courseId ? vid.courseId : null,
+        courseTitle: vid && vid.courseId ? getCourseTitleById(vid.courseId) : null
+      };
+    }).sort((a,b) => (b.when||'').localeCompare(a.when||''));
     return {
       id: u.id, name: u.name||'', email: u.email||'',
       entity: getEntityName(u.entityId)||'', role: u.role,
-      coursesCompleted: completions.filter(c => c.userId === u.id).length,
+      coursesCompleted: userCompletions.length,
+      courseRows,
+      totalVideosWatched: viewRows.length,
+      viewRows,
+      timeOnSiteSec: activity.timeOnSiteSec || 0,
       lastActive: l.last || ''
     };
   });
   // Summary
+  const totalViews = _currentReportRows.reduce((s,r)=>s+r.totalVideosWatched,0);
+  const totalSecs  = _currentReportRows.reduce((s,r)=>s+r.timeOnSiteSec,0);
   document.getElementById('rpt_summary').innerHTML = `
     <div class="stat"><div class="num">${_currentReportRows.length}</div><div class="lbl">Users</div></div>
     <div class="stat"><div class="num">${_currentReportRows.reduce((s,r)=>s+r.coursesCompleted,0)}</div><div class="lbl">Total courses completed</div></div>
+    <div class="stat"><div class="num">${totalViews}</div><div class="lbl">Total video views</div></div>
+    <div class="stat"><div class="num">${formatTimeOnSite(totalSecs)}</div><div class="lbl">Total time on site</div></div>
   `;
+  // Table — render condensed cells (top 3 items) so the grid stays readable;
+  // the full lists ship in the CSV export.
   const tbody = document.querySelector('#rpt_table tbody');
-  tbody.innerHTML = _currentReportRows.map(r => `<tr>
-    <td>${escapeHtml(r.name)}</td>
-    <td>${escapeHtml(r.email)}</td>
-    <td>${escapeHtml(r.entity)}</td>
-    <td>${r.coursesCompleted}</td>
-    <td>${escapeHtml(r.lastActive)}</td>
-  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">No users in this scope.</td></tr>';
+  tbody.innerHTML = _currentReportRows.map(r => {
+    const courseCell = r.courseRows.length
+      ? r.courseRows.slice(0, 3).map(c => `<div style="font-size:12px; line-height:1.45;"><span style="color:var(--text-primary);">${escapeHtml(c.title)}</span> <span style="color:var(--text-muted);">· ${escapeHtml(formatShortDate(c.completedAt))}</span></div>`).join('')
+        + (r.courseRows.length > 3 ? `<div style="font-size:11px; color:var(--text-muted); margin-top:3px;">+${r.courseRows.length - 3} more (see CSV)</div>` : '')
+      : `<span style="color:var(--text-muted); font-size:12px;">—</span>`;
+    const viewCell = r.viewRows.length
+      ? r.viewRows.slice(0, 3).map(v => `<div style="font-size:12px; line-height:1.45;"><span style="color:var(--text-primary);">${escapeHtml(v.title)}</span>${v.courseTitle ? ` <span style="color:var(--brand-blue); font-size:11px;">[${escapeHtml(v.courseTitle)}]</span>` : ''} <span style="color:var(--text-muted);">· ${escapeHtml(formatShortDate(v.when))}</span></div>`).join('')
+        + (r.viewRows.length > 3 ? `<div style="font-size:11px; color:var(--text-muted); margin-top:3px;">+${r.viewRows.length - 3} more (see CSV)</div>` : '')
+      : `<span style="color:var(--text-muted); font-size:12px;">—</span>`;
+    return `<tr>
+      <td>${escapeHtml(r.name)}</td>
+      <td>${escapeHtml(r.email)}</td>
+      <td>${escapeHtml(r.entity)}</td>
+      <td>${r.coursesCompleted}</td>
+      <td>${courseCell}</td>
+      <td>${r.totalVideosWatched}</td>
+      <td>${viewCell}</td>
+      <td>${escapeHtml(formatTimeOnSite(r.timeOnSiteSec))}</td>
+      <td>${escapeHtml(formatShortDate(r.lastActive))}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="9" style="text-align:center; color:var(--text-muted); padding:20px;">No users in this scope.</td></tr>';
 }
 
 function exportReportCSV() {
   if (!_currentReportRows.length) { alert('Run the report first.'); return; }
-  const headers = ['Name','Email','Entity','Role','Courses Completed','Last Active'];
-  const lines = [headers.join(',')];
+  // Summary sheet — one row per user with all aggregate metrics. Detailed
+  // per-event rows ship as a second block below so the CSV is one file.
+  const headers = [
+    'Name','Email','Entity','Role',
+    'Courses Completed (count)',
+    'Courses Completed (titles | dates)',
+    'Total Videos Watched',
+    'Videos Watched (title | when | course)',
+    'Time on Site (seconds)',
+    'Time on Site (formatted)',
+    'Last Active'
+  ];
+  const lines = ['SUMMARY'];
+  lines.push(headers.join(','));
   _currentReportRows.forEach(r => {
-    const row = [r.name, r.email, r.entity, r.role, r.coursesCompleted, r.lastActive]
-      .map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',');
+    const courseStr = r.courseRows.map(c => `${c.title} | ${c.completedAt}`).join(' ;; ');
+    const viewStr   = r.viewRows.map(v => `${v.title} | ${v.when}${v.courseTitle ? ' | ' + v.courseTitle : ''}`).join(' ;; ');
+    const row = [
+      r.name, r.email, r.entity, r.role,
+      r.coursesCompleted,
+      courseStr,
+      r.totalVideosWatched,
+      viewStr,
+      r.timeOnSiteSec,
+      formatTimeOnSite(r.timeOnSiteSec),
+      r.lastActive
+    ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',');
     lines.push(row);
+  });
+  // Detailed event log — one row per video view, one row per course completion.
+  lines.push('');
+  lines.push('DETAILED EVENT LOG');
+  lines.push(['Event Type','User','Email','Entity','Item','Course (if applicable)','Date/Time'].join(','));
+  _currentReportRows.forEach(r => {
+    r.courseRows.forEach(c => {
+      lines.push([
+        'Course Completed', r.name, r.email, r.entity,
+        c.title, '', c.completedAt
+      ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(','));
+    });
+    r.viewRows.forEach(v => {
+      lines.push([
+        v.courseTitle ? 'Video Watched (in course)' : 'Video Watched (standalone)',
+        r.name, r.email, r.entity,
+        v.title, v.courseTitle || '', v.when
+      ].map(s => `"${String(s||'').replace(/"/g,'""')}"`).join(','));
+    });
   });
   const csv = lines.join('\n');
   const blob = new Blob([csv], { type:'text/csv' });
@@ -7607,7 +8394,7 @@ function copyVideoPrompt() {
     const btn = document.getElementById('copyPromptBtn');
     if (!btn) return;
     const orig = btn.textContent;
-    btn.textContent = '✓ Copied!';
+    btn.textContent = 'Copied!';
     setTimeout(() => { btn.textContent = orig; }, 1800);
   }, () => alert('Could not copy. Select and copy the text manually below.'));
 }
@@ -7684,6 +8471,7 @@ async function bootOptimaAuth() {
     setUserSession({ name:u.name, email:u.email, userId:u.id, initials: makeInitials(u.name||u.email) });
     applyUserUi();
     trackLoginAndStreak();
+    try { recordUserSessionStart(); startActivityHeartbeat(); } catch (e) {}
   }
 }
 
@@ -7799,14 +8587,106 @@ window.editPlaylist = editPlaylist;
 // ============================================================
 // INIT
 // ============================================================
+// ============================================================
+// ICON SYSTEM
+// ============================================================
+// Designed SVG icons. Render with: <span class="op-ico" data-icon="NAME"></span>
+// (or programmatically via opIcon('NAME')). Stroke + fill use currentColor so
+// icons inherit whatever color their parent text is.
+const OP_ICON_SVGS = {
+  // Generic
+  pencil:        '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',
+  download:      '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  upload:        '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+  link:          '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+  close:         '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  check:         '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',
+  warning:       '<svg viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  refresh:       '<svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15A9 9 0 0 1 5.64 18.36L1 14"/></svg>',
+  copy:          '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  star:          '<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  eye:           '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  // Nav / tabs
+  users:         '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  chart:         '<svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/><line x1="3" y1="22" x2="21" y2="22"/></svg>',
+  chartLine:     '<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>',
+  settings:      '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  // Content
+  film:          '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>',
+  book:          '<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  bookOpen:      '<svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  graduation:    '<svg viewBox="0 0 24 24"><path d="M22 10v6"/><path d="M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></svg>',
+  certificate:   '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>',
+  trophy:        '<svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 4h2a3 3 0 0 1 0 6h-2"/><path d="M7 4H5a3 3 0 0 0 0 6h2"/></svg>',
+  tag:           '<svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+  folder:        '<svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+  image:         '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  doc:           '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  sheet:         '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>',
+  list:          '<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+  chapters:      '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="11" width="18" height="4" rx="1"/><rect x="3" y="18" width="18" height="3" rx="1"/></svg>',
+  // Video player
+  play:          '<svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4" fill="currentColor" stroke="none"/></svg>',
+  clock:         '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  bookmark:      '<svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
+  target:        '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  comment:       '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  // Misc
+  bulb:          '<svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.7 1 1.5 1 2.3v1h6v-1c0-.8.4-1.6 1-2.3A7 7 0 0 0 12 2z"/></svg>',
+  bag:           '<svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
+  hashtag:       '<svg viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>',
+  pin:           '<svg viewBox="0 0 24 24"><path d="M12 2v9"/><path d="M5 8h14l-2 6H7z"/><path d="M9 22h6"/><path d="M12 14v8"/></svg>',
+  search:        '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  mail:          '<svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+  sparkle:       '<svg viewBox="0 0 24 24"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="M5.6 5.6l2.1 2.1"/><path d="M16.3 16.3l2.1 2.1"/><path d="M5.6 18.4l2.1-2.1"/><path d="M16.3 7.7l2.1-2.1"/></svg>',
+};
+
+function opIcon(name, opts) {
+  const svg = OP_ICON_SVGS[name] || OP_ICON_SVGS.tag;
+  const size = (opts && opts.size) || '';
+  const cls = 'op-ico' + (size ? ' ' + size : '');
+  return '<span class="' + cls + '" aria-hidden="true">' + svg + '</span>';
+}
+
+// Walk the DOM and inject SVG into every <span class="op-ico" data-icon="X">.
+// Called on init and after any innerHTML burst that may add new placeholders.
+function renderOpIcons(root) {
+  const scope = root || document;
+  scope.querySelectorAll('.op-ico[data-icon]').forEach(el => {
+    if (el.firstElementChild && el.firstElementChild.tagName === 'svg') return;
+    const name = el.getAttribute('data-icon');
+    el.innerHTML = OP_ICON_SVGS[name] || OP_ICON_SVGS.tag;
+  });
+}
+// Re-render icons whenever new ones are injected. MutationObserver keeps the
+// icons populated even in dynamically rendered views (admin tabs, comments).
+const _opIconObserver = new MutationObserver(muts => {
+  for (const m of muts) {
+    for (const n of m.addedNodes) {
+      if (n.nodeType === 1) {
+        if (n.matches && n.matches('.op-ico[data-icon]')) renderOpIcons(n.parentNode || document);
+        else if (n.querySelector && n.querySelector('.op-ico[data-icon]')) renderOpIcons(n);
+      }
+    }
+  }
+});
+_opIconObserver.observe(document.body, { childList: true, subtree: true });
+window.opIcon = opIcon;
+window.renderOpIcons = renderOpIcons;
+renderOpIcons();
+
 initRichTextEditors();
 initStorage();
 updateSubcategoryOptions();
+// Populate the f_subject dropdown from the admin-editable Subjects list.
+try { refreshSubjectDropdowns(); } catch (e) { console.warn('[OptimaPD] subject dropdown init failed', e); }
 // bootRouter() is now called inside loadLocal() (local mode) and
 // subscribeFirestore() (Firebase mode) after data is fully loaded,
 // so that video-detail routes work correctly on page refresh.
 initMsalAuth();
 initThumbnailUrlPreviews();
+wireAutoFetchOnBlur('f_videoUrl', 'f_thumbUrl');
+wireAutoFetchOnBlur('ev_videoUrl', 'ev_thumbUrl');
 // OptimaPD v2: gate the site behind login + seed default admin/entity
 bootOptimaAuth();
 </script>
@@ -7898,7 +8778,7 @@ bootOptimaAuth();
         </div>
         <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="window.saveCertSettings()">Save Certificate</button>
-          <button class="btn btn-secondary" onclick="window.previewDownloadCert()">⬇ Preview Download</button>
+          <button class="btn btn-secondary" onclick="window.previewDownloadCert()"><span class="op-ico" data-icon="download" aria-hidden="true"></span> Preview Download</button>
         </div>
       </div>
       <div>
@@ -7920,12 +8800,12 @@ bootOptimaAuth();
 <div class="modal-backdrop" id="certDownloadModal" onclick="if(event.target===this) window.closeCertDownload()">
   <div class="modal" style="max-width:540px; text-align:center;">
     <button class="modal-close" onclick="window.closeCertDownload()">×</button>
-    <div style="font-size:48px; margin-bottom:12px;">🎓</div>
+    <div style="margin-bottom:12px; color:var(--brand-gold);"><span class="op-ico" data-icon="graduation" style="width:48px;height:48px;" aria-hidden="true"></span></div>
     <h2 id="certDlTitle" style="margin-bottom:6px;">Course Complete!</h2>
     <p id="certDlBody" style="color:var(--text-secondary); font-size:14px; line-height:1.6; margin-bottom:24px;"></p>
     <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-      <button class="btn btn-primary" id="certDlDownloadBtn">⬇ Download Certificate</button>
-      <button class="btn btn-secondary" id="certDlEmailBtn">✉ Email Certificate</button>
+      <button class="btn btn-primary" id="certDlDownloadBtn"><span class="op-ico" data-icon="download" aria-hidden="true"></span> Download Certificate</button>
+      <button class="btn btn-secondary" id="certDlEmailBtn"><span class="op-ico" data-icon="mail" aria-hidden="true"></span> Email Certificate</button>
       <button class="btn btn-secondary" onclick="window.closeCertDownload()">Close</button>
     </div>
     <p id="certEmailStatus" style="font-size:12px; color:var(--brand-teal); margin-top:12px; display:none;"></p>
