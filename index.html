@@ -3984,7 +3984,7 @@ function renderBrowse(cat) {
       <div class="filter-row">
         <span class="filter-group-label">Subject:</span>
         <div class="filter-chip active" data-subject="all" onclick="window.applyBrowseFilter('subject', null)">All</div>
-        ${['Math','Science','ELA','Social','Arts','Elective','PE'].map(s =>
+        ${getOptimaSubjects().map(s =>
           `<div class="filter-chip" data-subject="${s.toLowerCase()}" onclick="window.applyBrowseFilter('subject', '${s.toLowerCase()}')">${s}</div>`
         ).join('')}
       </div>
