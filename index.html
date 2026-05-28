@@ -3009,6 +3009,21 @@ service cloud.firestore {
     </div>
     <div class="form-row">
       <div class="form-group">
+        <label>Subject</label>
+        <select id="ev_subject"></select>
+      </div>
+      <div class="form-group">
+        <label>Grade Level</label>
+        <select id="ev_grade">
+          <option value="">— none —</option>
+          <option value="elementary">Elementary</option>
+          <option value="middle">Middle</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
         <label>Assign to Course</label>
         <select id="ev_course"></select>
         <p class="help">Choose "No course" to make this a standalone video.</p>
@@ -3393,8 +3408,54 @@ function loadLocal() {
   }
   if (!DB.videos) DB.videos = [];
   if (!DB.courses) DB.courses = [];
+  runDataMigrations();
   bootRouter();
 }
+
+// One-time data migrations — each runs once and sets a localStorage flag so it
+// doesn't repeat.  Add new migrations at the bottom of the array.
+function runDataMigrations() {
+  const migrations = [
+    {
+      key: 'optimapd_migrate_ela_reading_v1',
+      run() {
+        // Normalise "ela / reading" and "ela/reading" → "ela"
+        let changed = 0;
+        DB.videos.forEach(v => {
+          const s = (v.subject || '').toLowerCase().replace(/\s+/g, ' ').trim();
+          if (s === 'ela / reading' || s === 'ela/reading') {
+            v.subject = 'ela';
+            changed++;
+          }
+        });
+        if (changed > 0) saveLocal();
+      }
+    }
+  ];
+  migrations.forEach(m => {
+    if (!localStorage.getItem(m.key)) {
+      m.run();
+      localStorage.setItem(m.key, Date.now());
+    }
+  });
+}
+
+// Firebase-aware version: fixes video subjects in Firestore too.
+function runFirebaseMigrations() {
+  const key = 'optimapd_migrate_ela_reading_fb_v1';
+  if (localStorage.getItem(key)) return;
+  if (!USE_FIREBASE || !window._fs) return;
+  const { doc, updateDoc } = window._fs;
+  DB.videos.forEach(v => {
+    const s = (v.subject || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    if (s === 'ela / reading' || s === 'ela/reading') {
+      v.subject = 'ela';
+      updateDoc(doc(firestore, 'videos', v.id), { subject: 'ela' }).catch(() => {});
+    }
+  });
+  localStorage.setItem(key, Date.now());
+}
+
 function saveLocal() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(DB));
 }
@@ -3407,7 +3468,10 @@ function subscribeFirestore() {
   let _vReady = false, _cReady = false;
 
   function _maybeBootRouter() {
-    if (_vReady && _cReady) bootRouter();
+    if (_vReady && _cReady) {
+      runFirebaseMigrations();
+      bootRouter();
+    }
   }
 
   unsubVideos = onSnapshot(collection(firestore, 'videos'), snap => {
@@ -5189,6 +5253,7 @@ function addSubject() {
 
 function renameSubject(idx, newName) {
   const subjects = getOptimaSubjects();
+  const oldName = subjects[idx];
   newName = (newName || '').trim();
   if (!newName) { renderSubjectEditor(); return; }
   if (subjects.some((s, i) => i !== idx && s.toLowerCase() === newName.toLowerCase())) {
@@ -5198,6 +5263,29 @@ function renameSubject(idx, newName) {
   }
   subjects[idx] = newName;
   saveOptimaSubjects(subjects);
+
+  // Cascade: update every video whose subject matched the old name
+  const oldLower = oldName.toLowerCase();
+  const newLower = newName.toLowerCase();
+  if (oldLower !== newLower) {
+    let changed = 0;
+    DB.videos.forEach(v => {
+      if ((v.subject || '').toLowerCase() === oldLower) {
+        v.subject = newLower;
+        changed++;
+      }
+    });
+    if (changed > 0) {
+      saveLocal();
+      if (USE_FIREBASE && window._fs) {
+        const { doc, updateDoc } = window._fs;
+        DB.videos.filter(v => v.subject === newLower).forEach(v => {
+          updateDoc(doc(firestore, 'videos', v.id), { subject: newLower }).catch(() => {});
+        });
+      }
+    }
+  }
+
   refreshSubjectDropdowns();
 }
 
@@ -5885,6 +5973,18 @@ function openEditVideoModal(videoId) {
   // Populate chips for the video's category, pre-selecting its existing subcategories.
   // getSubcategories() handles both new array form and legacy single-string form.
   renderSubcategoryChips('ev_subcategoryChips', v.category || 'tech', getSubcategories(v));
+  // Populate subject dropdown from admin-managed subjects list
+  const evSubjectSel = document.getElementById('ev_subject');
+  if (evSubjectSel) {
+    const subjects = getOptimaSubjects();
+    evSubjectSel.innerHTML = `<option value="">— none —</option>` +
+      subjects.map(s => `<option value="${escapeHtml(s.toLowerCase())}">${escapeHtml(s)}</option>`).join('');
+    evSubjectSel.value = (v.subject || '').toLowerCase();
+  }
+  // Populate grade dropdown
+  const evGradeSel = document.getElementById('ev_grade');
+  if (evGradeSel) evGradeSel.value = (v.grade || '').toLowerCase();
+
   document.getElementById('ev_course').value = v.courseId || '';
   document.getElementById('ev_duration').value = v.duration || '';
   document.getElementById('ev_tags').value = (v.tags || []).join(', ');
@@ -5928,6 +6028,8 @@ async function saveEditVideo() {
     // Save both forms: `subcategories` (array, canonical) + `subcategory` (string, legacy).
     subcategory: evSubcats[0] || '',
     subcategories: evSubcats,
+    subject: (document.getElementById('ev_subject')?.value || '').toLowerCase() || null,
+    grade: (document.getElementById('ev_grade')?.value || '').toLowerCase() || null,
     courseId: document.getElementById('ev_course').value || null,
     duration: document.getElementById('ev_duration').value.trim(),
     tags: document.getElementById('ev_tags').value.split(',').map(t => t.trim()).filter(Boolean),
